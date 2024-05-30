@@ -7,28 +7,62 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B9ABA232C088F8300E986BA /* DCMonthCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA222C088F8300E986BA /* DCMonthCollectionViewCell.swift */; };
+		3B9ABA252C08901200E986BA /* DCalendarDaysLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA242C08901200E986BA /* DCalendarDaysLayout.swift */; };
+		3B9ABA272C08907B00E986BA /* DCalendarMonthItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA262C08907B00E986BA /* DCalendarMonthItem.swift */; };
+		3B9ABA2A2C08969400E986BA /* DeltaCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */; };
+		3B9ABA2D2C08A68E00E986BA /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */; };
+		3B9ABA312C08B27B00E986BA /* DCalendarYearItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA302C08B27B00E986BA /* DCalendarYearItem.swift */; };
 		3BB07A7D2C07596700D9E052 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A7C2C07596700D9E052 /* AppDelegate.swift */; };
 		3BB07A7F2C07596700D9E052 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A7E2C07596700D9E052 /* SceneDelegate.swift */; };
 		3BB07A862C07596800D9E052 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07A852C07596800D9E052 /* Assets.xcassets */; };
 		3BB07A912C0759CA00D9E052 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07A902C0759CA00D9E052 /* LaunchScreen.storyboard */; };
-		3BB07A952C075AFD00D9E052 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A942C075AFD00D9E052 /* ViewController.swift */; };
+		3BB07A952C075AFD00D9E052 /* DCTestingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A942C075AFD00D9E052 /* DCTestingViewController.swift */; };
 		3BB07A982C075B9200D9E052 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3BB07A972C075B9200D9E052 /* SnapKit */; };
 		3BB07A9D2C075BDE00D9E052 /* DeltaCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A9C2C075BDE00D9E052 /* DeltaCalendarView.swift */; };
-		3BB07AA02C075C6900D9E052 /* SizesResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A9F2C075C6900D9E052 /* SizesResources.swift */; };
-		3BB07AA22C075EE900D9E052 /* ColorsResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AA12C075EE900D9E052 /* ColorsResources.swift */; };
+		3BB07AA02C075C6900D9E052 /* DCSizesResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A9F2C075C6900D9E052 /* DCSizesResources.swift */; };
+		3BB07AA42C076E8A00D9E052 /* DCTextResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AA32C076E8A00D9E052 /* DCTextResources.swift */; };
+		3BB07AA72C076F3900D9E052 /* DCalendarTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AA62C076F3900D9E052 /* DCalendarTheme.swift */; };
+		3BB07AA92C0770BD00D9E052 /* DCalendarSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AA82C0770BD00D9E052 /* DCalendarSection.swift */; };
+		3BB07AAD2C0775C200D9E052 /* DCDayCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AAC2C0775C200D9E052 /* DCDayCollectionViewCell.swift */; };
+		3BB07AB12C0776BA00D9E052 /* segoe_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07AAF2C0776BA00D9E052 /* segoe_bold.ttf */; };
+		3BB07AB22C0776BA00D9E052 /* segoe.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07AB02C0776BA00D9E052 /* segoe.ttf */; };
+		3BB07AB62C077D5E00D9E052 /* DCalendarDayItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AB52C077D5E00D9E052 /* DCalendarDayItem.swift */; };
+		3BB07AB82C077E3D00D9E052 /* DCCalendarColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AB72C077E3D00D9E052 /* DCCalendarColors.swift */; };
+		3BB07ABC2C07805700D9E052 /* DCalendarMonthLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07ABB2C07805700D9E052 /* DCalendarMonthLayout.swift */; };
+		3BB07ABE2C0780DC00D9E052 /* DColorsResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07ABD2C0780DC00D9E052 /* DColorsResources.swift */; };
+		3BB07AC02C07814800D9E052 /* DCFontsResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07ABF2C07814800D9E052 /* DCFontsResources.swift */; };
+		3BB07AC22C07830700D9E052 /* DCResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AC12C07830700D9E052 /* DCResources.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B9ABA222C088F8300E986BA /* DCMonthCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCMonthCollectionViewCell.swift; sourceTree = "<group>"; };
+		3B9ABA242C08901200E986BA /* DCalendarDaysLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCalendarDaysLayout.swift; sourceTree = "<group>"; };
+		3B9ABA262C08907B00E986BA /* DCalendarMonthItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCalendarMonthItem.swift; sourceTree = "<group>"; };
+		3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaCalendarViewModel.swift; sourceTree = "<group>"; };
+		3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
+		3B9ABA302C08B27B00E986BA /* DCalendarYearItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCalendarYearItem.swift; sourceTree = "<group>"; };
 		3BB07A792C07596700D9E052 /* DeltaCalendarIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaCalendarIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BB07A7C2C07596700D9E052 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3BB07A7E2C07596700D9E052 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		3BB07A852C07596800D9E052 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3BB07A8A2C07596800D9E052 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3BB07A902C0759CA00D9E052 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		3BB07A942C075AFD00D9E052 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3BB07A942C075AFD00D9E052 /* DCTestingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCTestingViewController.swift; sourceTree = "<group>"; };
 		3BB07A9C2C075BDE00D9E052 /* DeltaCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaCalendarView.swift; sourceTree = "<group>"; };
-		3BB07A9F2C075C6900D9E052 /* SizesResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizesResources.swift; sourceTree = "<group>"; };
-		3BB07AA12C075EE900D9E052 /* ColorsResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsResources.swift; sourceTree = "<group>"; };
+		3BB07A9F2C075C6900D9E052 /* DCSizesResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCSizesResources.swift; sourceTree = "<group>"; };
+		3BB07AA32C076E8A00D9E052 /* DCTextResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCTextResources.swift; sourceTree = "<group>"; };
+		3BB07AA62C076F3900D9E052 /* DCalendarTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCalendarTheme.swift; sourceTree = "<group>"; };
+		3BB07AA82C0770BD00D9E052 /* DCalendarSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCalendarSection.swift; sourceTree = "<group>"; };
+		3BB07AAC2C0775C200D9E052 /* DCDayCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCDayCollectionViewCell.swift; sourceTree = "<group>"; };
+		3BB07AAF2C0776BA00D9E052 /* segoe_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = segoe_bold.ttf; sourceTree = "<group>"; };
+		3BB07AB02C0776BA00D9E052 /* segoe.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = segoe.ttf; sourceTree = "<group>"; };
+		3BB07AB52C077D5E00D9E052 /* DCalendarDayItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCalendarDayItem.swift; sourceTree = "<group>"; };
+		3BB07AB72C077E3D00D9E052 /* DCCalendarColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCCalendarColors.swift; sourceTree = "<group>"; };
+		3BB07ABB2C07805700D9E052 /* DCalendarMonthLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCalendarMonthLayout.swift; sourceTree = "<group>"; };
+		3BB07ABD2C0780DC00D9E052 /* DColorsResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DColorsResources.swift; sourceTree = "<group>"; };
+		3BB07ABF2C07814800D9E052 /* DCFontsResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DCFontsResources.swift; sourceTree = "<group>"; };
+		3BB07AC12C07830700D9E052 /* DCResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCResources.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +77,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B9ABA282C08967400E986BA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3B9ABA2B2C08A68000E986BA /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		3BB07A702C07596700D9E052 = {
 			isa = PBXGroup;
 			children = (
@@ -71,9 +121,12 @@
 		3BB07A922C075A0100D9E052 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				3BB07A9E2C075C5A00D9E052 /* Resources */,
-				3BB07A992C075BBF00D9E052 /* Components */,
 				3BB07A932C075A0700D9E052 /* Application */,
+				3BB07A992C075BBF00D9E052 /* Components */,
+				3B9ABA2B2C08A68000E986BA /* Extensions */,
+				3BB07AA52C076F2500D9E052 /* Models */,
+				3BB07A9E2C075C5A00D9E052 /* Resources */,
+				3B9ABA282C08967400E986BA /* ViewModels */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -85,7 +138,7 @@
 				3BB07A902C0759CA00D9E052 /* LaunchScreen.storyboard */,
 				3BB07A7C2C07596700D9E052 /* AppDelegate.swift */,
 				3BB07A7E2C07596700D9E052 /* SceneDelegate.swift */,
-				3BB07A942C075AFD00D9E052 /* ViewController.swift */,
+				3BB07A942C075AFD00D9E052 /* DCTestingViewController.swift */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -101,26 +154,80 @@
 		3BB07A9A2C075BC700D9E052 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				3BB07A9B2C075BD000D9E052 /* View */,
+				3BB07AAA2C07755E00D9E052 /* Collection */,
+				3BB07A9B2C075BD000D9E052 /* Views */,
 			);
 			path = UI;
 			sourceTree = "<group>";
 		};
-		3BB07A9B2C075BD000D9E052 /* View */ = {
+		3BB07A9B2C075BD000D9E052 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				3BB07A9C2C075BDE00D9E052 /* DeltaCalendarView.swift */,
 			);
-			path = View;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		3BB07A9E2C075C5A00D9E052 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3BB07A9F2C075C6900D9E052 /* SizesResources.swift */,
-				3BB07AA12C075EE900D9E052 /* ColorsResources.swift */,
+				3BB07ABD2C0780DC00D9E052 /* DColorsResources.swift */,
+				3BB07AC12C07830700D9E052 /* DCResources.swift */,
+				3BB07A9F2C075C6900D9E052 /* DCSizesResources.swift */,
+				3BB07AA32C076E8A00D9E052 /* DCTextResources.swift */,
+				3BB07AAE2C0776AC00D9E052 /* Fonts */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		3BB07AA52C076F2500D9E052 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3BB07AB52C077D5E00D9E052 /* DCalendarDayItem.swift */,
+				3B9ABA262C08907B00E986BA /* DCalendarMonthItem.swift */,
+				3BB07AA82C0770BD00D9E052 /* DCalendarSection.swift */,
+				3BB07AA62C076F3900D9E052 /* DCalendarTheme.swift */,
+				3B9ABA302C08B27B00E986BA /* DCalendarYearItem.swift */,
+				3BB07AB72C077E3D00D9E052 /* DCCalendarColors.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3BB07AAA2C07755E00D9E052 /* Collection */ = {
+			isa = PBXGroup;
+			children = (
+				3BB07AAB2C07756B00D9E052 /* Cells */,
+				3BB07ABA2C07802E00D9E052 /* Layouts */,
+			);
+			path = Collection;
+			sourceTree = "<group>";
+		};
+		3BB07AAB2C07756B00D9E052 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				3BB07AAC2C0775C200D9E052 /* DCDayCollectionViewCell.swift */,
+				3B9ABA222C088F8300E986BA /* DCMonthCollectionViewCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		3BB07AAE2C0776AC00D9E052 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				3BB07ABF2C07814800D9E052 /* DCFontsResources.swift */,
+				3BB07AAF2C0776BA00D9E052 /* segoe_bold.ttf */,
+				3BB07AB02C0776BA00D9E052 /* segoe.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		3BB07ABA2C07802E00D9E052 /* Layouts */ = {
+			isa = PBXGroup;
+			children = (
+				3B9ABA242C08901200E986BA /* DCalendarDaysLayout.swift */,
+				3BB07ABB2C07805700D9E052 /* DCalendarMonthLayout.swift */,
+			);
+			path = Layouts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,8 +294,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3BB07AB22C0776BA00D9E052 /* segoe.ttf in Resources */,
 				3BB07A862C07596800D9E052 /* Assets.xcassets in Resources */,
 				3BB07A912C0759CA00D9E052 /* LaunchScreen.storyboard in Resources */,
+				3BB07AB12C0776BA00D9E052 /* segoe_bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,12 +308,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BB07A952C075AFD00D9E052 /* ViewController.swift in Sources */,
-				3BB07AA02C075C6900D9E052 /* SizesResources.swift in Sources */,
+				3BB07A952C075AFD00D9E052 /* DCTestingViewController.swift in Sources */,
+				3BB07AAD2C0775C200D9E052 /* DCDayCollectionViewCell.swift in Sources */,
+				3BB07AA72C076F3900D9E052 /* DCalendarTheme.swift in Sources */,
+				3B9ABA2A2C08969400E986BA /* DeltaCalendarViewModel.swift in Sources */,
+				3BB07AA42C076E8A00D9E052 /* DCTextResources.swift in Sources */,
+				3B9ABA2D2C08A68E00E986BA /* Date+Extension.swift in Sources */,
+				3BB07ABE2C0780DC00D9E052 /* DColorsResources.swift in Sources */,
+				3BB07AA92C0770BD00D9E052 /* DCalendarSection.swift in Sources */,
+				3B9ABA272C08907B00E986BA /* DCalendarMonthItem.swift in Sources */,
+				3BB07AA02C075C6900D9E052 /* DCSizesResources.swift in Sources */,
+				3BB07AC02C07814800D9E052 /* DCFontsResources.swift in Sources */,
 				3BB07A9D2C075BDE00D9E052 /* DeltaCalendarView.swift in Sources */,
-				3BB07AA22C075EE900D9E052 /* ColorsResources.swift in Sources */,
+				3B9ABA312C08B27B00E986BA /* DCalendarYearItem.swift in Sources */,
+				3BB07AB82C077E3D00D9E052 /* DCCalendarColors.swift in Sources */,
 				3BB07A7D2C07596700D9E052 /* AppDelegate.swift in Sources */,
+				3BB07ABC2C07805700D9E052 /* DCalendarMonthLayout.swift in Sources */,
+				3B9ABA252C08901200E986BA /* DCalendarDaysLayout.swift in Sources */,
+				3B9ABA232C088F8300E986BA /* DCMonthCollectionViewCell.swift in Sources */,
 				3BB07A7F2C07596700D9E052 /* SceneDelegate.swift in Sources */,
+				3BB07AB62C077D5E00D9E052 /* DCalendarDayItem.swift in Sources */,
+				3BB07AC22C07830700D9E052 /* DCResources.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

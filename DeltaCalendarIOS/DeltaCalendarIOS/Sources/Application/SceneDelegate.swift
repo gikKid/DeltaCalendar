@@ -11,7 +11,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		self.window = .init(windowScene: windowScene)
 		self.window?.makeKeyAndVisible()
 
-		let vc = ViewController()
+		let vc = DCTestingViewController()
 		let navVC = UINavigationController(rootViewController: vc)
 
 		self.window?.rootViewController = navVC

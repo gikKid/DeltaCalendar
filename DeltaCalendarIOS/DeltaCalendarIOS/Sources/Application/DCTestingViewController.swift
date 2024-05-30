@@ -1,9 +1,9 @@
 import UIKit
 import SnapKit
 
-final class ViewController: UIViewController {
+final class DCTestingViewController: UIViewController {
 
-	let contentView = DeltaCalendarView(theme: .light)
+	let contentView = DeltaCalendarView(theme: .light, isShowYear: false, isShowTime: false)
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
