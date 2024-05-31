@@ -11,4 +11,5 @@ struct DCalendarDayItem: Identifiable {
 struct DeltaCalendarDay {
 	let title: String
 	let description: String
+	let weekday: Int
 }

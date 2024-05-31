@@ -11,12 +11,14 @@ enum DCRadiusResources {
 
 enum DCHeightResources {
 	static let button: CGFloat = 45.0
-	static let day: CGFloat = 50.0
+	static let day: CGFloat = 47.5
+	static let text: CGFloat = 30.0
 }
 
 // MARK: - DCSpaceResources
 
 enum DCSpaceResources {
+	static let small: CGFloat = 5.0
 	static let mid: CGFloat = 10.0
 	static let moreMid: CGFloat = 15.0
 }
@@ -24,6 +26,6 @@ enum DCSpaceResources {
 // MARK: - DCTextSizeResources
 
 enum DCTextSizeResources {
-	static let mid: CGFloat = 15.0
 	static let small: CGFloat = 12.0
+	static let mid: CGFloat = 17.0
 }

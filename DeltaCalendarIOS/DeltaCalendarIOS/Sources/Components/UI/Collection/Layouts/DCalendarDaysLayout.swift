@@ -1,35 +1,36 @@
 import UIKit
 
-protocol DCalendarMonthLayout {}
+protocol DCalendarDaysLayout {}
 
-extension DCalendarMonthLayout {
+extension DCalendarDaysLayout {
 
-	typealias DCMonthCellRegistration = UICollectionView
-		.CellRegistration<DCMonthCollectionViewCell, DCalendarMonthItem>
+	typealias DCDayCellRegistration = UICollectionView
+		.CellRegistration<DCDayCollectionViewCell, DCalendarDayItem>
 
-	func DCMonthLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
+	func DCDaysLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
 
-		let itemHeight = parentFrame.height / 3
-		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-											  heightDimension: .estimated(itemHeight))
+		let weekdaysCount = DCResources.weekdays.count
+		let itemHeight = DCHeightResources.day
+		let itemWidth = parentFrame.width / CGFloat(weekdaysCount)
+		let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth),
+											  heightDimension: .absolute(itemHeight))
 
-		let item = NSCollectionLayoutItem(layoutSize: itemSize)
+		let items = Range(1...weekdaysCount).map { _ in NSCollectionLayoutItem(layoutSize: itemSize) }
 
-		let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
+		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+											   heightDimension: .estimated(itemHeight))
+
+		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: items)
+
 		let section = NSCollectionLayoutSection(group: group)
-		section.orthogonalScrollingBehavior = .groupPaging
-
-		let sectionOffset = DCSpaceResources.moreMid
-
-		section.contentInsets = .init(top: 0.0, leading: sectionOffset,
-									  bottom: sectionOffset, trailing: sectionOffset)
+		section.interGroupSpacing = DCSpaceResources.mid
 
 		return section
 	}
 
-	func createDCMonthCellRegistration() -> DCMonthCellRegistration {
-		DCMonthCellRegistration { (cell, _, item) in
-			cell.configure(with: item.days)
+	func createDCDayCellRegistration() -> DCDayCellRegistration {
+		DCDayCellRegistration { (cell, _, item) in
+			cell.configure(with: item)
 		}
 	}
 }

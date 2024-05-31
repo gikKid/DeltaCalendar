@@ -19,8 +19,6 @@ final class DCDayCollectionViewCell: UICollectionViewCell {
 		return label
 	}()
 
-	private var colors: DCalendarDayColors?
-
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		self.setupView()
@@ -31,13 +29,24 @@ final class DCDayCollectionViewCell: UICollectionViewCell {
 	}
 
 	func configure(with data: DCalendarDayItem) {
-		self.colors = data.colors
 
 		self.centerLabel.text = data.data.title
-		self.centerLabel.textColor = data.colors.centerText
 
-		self.btmLabel.text = data.data.description
 		self.btmLabel.textColor = data.colors.btmText
+		self.btmLabel.text = data.data.description
+
+		self.isUserInteractionEnabled = !data.isDisabled
+
+		guard !data.isDisabled else {
+			self.contentView.backgroundColor = .clear
+			self.centerLabel.textColor = DCColorsResources.disabledColor
+			return
+		}
+
+		self.centerLabel.textColor = data.isSelected ? data.colors.centerTextSelected :
+		data.colors.centerText
+
+		self.contentView.backgroundColor = data.isSelected ? data.colors.selectedBack : .clear
 	}
 }
 
@@ -60,7 +69,7 @@ private extension DCDayCollectionViewCell {
 		self.btmLabel.snp.makeConstraints {
 			$0.top.equalTo(self.centerLabel.snp.bottom)
 			$0.bottom.equalTo(self.contentView)
-			$0.leading.trailing.equalTo(self.centerLabel)
+			$0.leading.trailing.equalTo(self.contentView).inset(DCSpaceResources.small)
 		}
 	}
 }

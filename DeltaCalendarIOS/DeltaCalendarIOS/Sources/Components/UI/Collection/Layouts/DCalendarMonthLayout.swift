@@ -1,38 +1,46 @@
 import UIKit
 
-protocol DCalendarDaysLayout {}
+protocol DCalendarMonthLayout {}
 
-extension DCalendarDaysLayout {
+extension DCalendarMonthLayout {
 
-	typealias DCDayCellRegistration = UICollectionView
-		.CellRegistration<DCDayCollectionViewCell, DCalendarDayItem>
+	typealias DCMonthCellRegistration = UICollectionView
+		.CellRegistration<DCMonthCollectionViewCell, DCalendarMonthItem>
 
-	func DCDaysLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
+	typealias DCWeekdaysHeaderRegistration = UICollectionView
+		.SupplementaryRegistration<DCWeekDaysCollectionReusableView>
 
-		let itemHeight = DCHeightResources.day
-		let itemWidth = parentFrame.width / CGFloat(DCResources.daysInWeek)
-		let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(itemWidth),
-											  heightDimension: .estimated(itemHeight))
+	func DCMonthLayout() -> NSCollectionLayoutSection {
 
-		let items = Range(1...DCResources.daysInWeek).map { _ in NSCollectionLayoutItem(layoutSize: itemSize) }
+		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+											  heightDimension: .fractionalHeight(1))
 
-		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-											   heightDimension: .estimated(itemHeight))
+		let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-		let space = DCSpaceResources.mid
+		let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
 
-		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: items)
-		group.interItemSpacing = .fixed(space)
+		let headerHeight = DCHeightResources.text
+		let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+												heightDimension: .estimated(headerHeight))
+
+		let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize,
+																	 elementKind: UICollectionView.elementKindSectionHeader,
+																	 alignment: .top)
 
 		let section = NSCollectionLayoutSection(group: group)
-		section.interGroupSpacing = space
+		section.orthogonalScrollingBehavior = .groupPaging
+		section.boundarySupplementaryItems = [headerItem]
 
 		return section
 	}
 
-	func createDCDayCellRegistration() -> DCDayCellRegistration {
-		DCDayCellRegistration { (cell, _, item) in
-			cell.configure(with: item)
+	func createDCMonthCellRegistration(_ theme: DCalendarTheme) -> DCMonthCellRegistration {
+		DCMonthCellRegistration { (cell, _, item) in
+			cell.configure(with: item.days, isWeekendsDisabled: item.isWeekendsDisabled, theme: theme)
 		}
+	}
+
+	func createWeekdaysHeaderRegistration() -> DCWeekdaysHeaderRegistration {
+		DCWeekdaysHeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) { (_, _, _) in }
 	}
 }
