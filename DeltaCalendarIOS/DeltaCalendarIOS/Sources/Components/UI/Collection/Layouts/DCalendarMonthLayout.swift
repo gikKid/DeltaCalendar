@@ -1,14 +1,20 @@
 import UIKit
 
-protocol DCalendarMonthLayout {}
+protocol DCalendarMonthLayout {
+	func monthTitle(at: IndexPath) -> String
+	func nextMonthTapped()
+	func prevMonthTapped()
+}
 
-extension DCalendarMonthLayout {
+extension DCalendarMonthLayout where Self: AnyObject {
 
 	typealias DCMonthCellRegistration = UICollectionView
 		.CellRegistration<DCMonthCollectionViewCell, DCalendarMonthItem>
 
-	typealias DCWeekdaysHeaderRegistration = UICollectionView
-		.SupplementaryRegistration<DCWeekDaysCollectionReusableView>
+	typealias DCMonthHeaderRegistration = UICollectionView
+		.SupplementaryRegistration<DCMonthCollectionReusableView>
+
+	// MARK: - Layout
 
 	func DCMonthLayout() -> NSCollectionLayoutSection {
 
@@ -34,13 +40,27 @@ extension DCalendarMonthLayout {
 		return section
 	}
 
-	func createDCMonthCellRegistration(_ theme: DCalendarTheme) -> DCMonthCellRegistration {
+	// MARK: - Registration
+
+	func createDCMonthCellRegistration(_ theme: DeltaCalendarTheme) -> DCMonthCellRegistration {
 		DCMonthCellRegistration { (cell, _, item) in
 			cell.configure(with: item.days, isWeekendsDisabled: item.isWeekendsDisabled, theme: theme)
 		}
 	}
 
-	func createWeekdaysHeaderRegistration() -> DCWeekdaysHeaderRegistration {
-		DCWeekdaysHeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) { (_, _, _) in }
+	func createMonthHeaderRegistration(_ theme: DeltaCalendarTheme) -> DCMonthHeaderRegistration {
+		DCMonthHeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) {
+			[weak self] (view, _, indexPath) in
+			let title = self?.monthTitle(at: indexPath) ?? "-"
+
+			view.configure(monthTitle: title, theme: theme)
+
+			view.eventHandler = { event in
+				switch event {
+				case .nextMonth: self?.nextMonthTapped()
+				case .prevMonth: self?.prevMonthTapped()
+				}
+			}
+		}
 	}
 }

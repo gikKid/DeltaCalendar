@@ -6,8 +6,9 @@ struct DCalendarDayColors {
 	let btmText: UIColor
 	let centerTextSelected: UIColor
 	let selectedBack: UIColor
+	let selectedBtmText: UIColor
 
-	init(theme: DCalendarTheme) {
+	init(theme: DeltaCalendarTheme) {
 		self.centerText = theme == .dark ? DCColorsResources.textLightColor! :
 		DCColorsResources.textDarkColor!
 
@@ -18,5 +19,7 @@ struct DCalendarDayColors {
 
 		self.centerTextSelected = theme == .dark ? DCColorsResources.textDarkColor! :
 		DCColorsResources.textLightColor!
+
+		self.selectedBtmText = self.centerTextSelected
 	}
 }

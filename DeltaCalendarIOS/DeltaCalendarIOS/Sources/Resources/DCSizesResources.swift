@@ -13,6 +13,7 @@ enum DCHeightResources {
 	static let button: CGFloat = 45.0
 	static let day: CGFloat = 47.5
 	static let text: CGFloat = 30.0
+	static let icon: CGFloat = 30.0
 }
 
 // MARK: - DCSpaceResources
@@ -28,4 +29,5 @@ enum DCSpaceResources {
 enum DCTextSizeResources {
 	static let small: CGFloat = 12.0
 	static let mid: CGFloat = 17.0
+	static let big: CGFloat = 20.0
 }

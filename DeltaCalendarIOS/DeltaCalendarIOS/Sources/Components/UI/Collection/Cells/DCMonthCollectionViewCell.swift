@@ -10,6 +10,7 @@ final class DCMonthCollectionViewCell: UICollectionViewCell {
 		collectionView.bounces = false
 		collectionView.showsVerticalScrollIndicator = false
 		collectionView.showsHorizontalScrollIndicator = false
+		collectionView.delegate = self
 		collectionView.collectionViewLayout = self.createCompositionLayout()
 		return collectionView
 	}()
@@ -33,7 +34,7 @@ final class DCMonthCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(with data: [DeltaCalendarDay], isWeekendsDisabled: Bool, theme: DCalendarTheme) {
+	func configure(with data: [DeltaCalendarDay], isWeekendsDisabled: Bool, theme: DeltaCalendarTheme) {
 		let colors = DCalendarDayColors(theme: theme)
 
 		let days = self.addExtraEmptyDays(data)
@@ -47,7 +48,34 @@ final class DCMonthCollectionViewCell: UICollectionViewCell {
 	}
 }
 
-// MARK: - DCalendarDaysLayout
+// MARK: - CollectionViewDelegate
+
+extension DCMonthCollectionViewCell: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+		var ids = [DeltaCalendarItemID]()
+
+		if let prevSelectedIndex = self.items.firstIndex(where: { $0.isSelected }),
+		   prevSelectedIndex != indexPath.row {
+			self.items[prevSelectedIndex].isSelected.toggle()
+
+			let id = self.items[prevSelectedIndex].id
+			ids.append(id)
+		}
+
+		self.items[indexPath.row].isSelected.toggle()
+
+		let id = self.items[indexPath.row].id
+		ids.append(id)
+
+		var snapshot = self.dataSource.snapshot()
+		snapshot.reloadItems(ids)
+
+		self.dataSource.apply(snapshot, animatingDifferences: true)
+	}
+}
+
+// MARK: - DaysLayout
 
 extension DCMonthCollectionViewCell: DCalendarDaysLayout {}
 
@@ -61,11 +89,12 @@ private extension DCMonthCollectionViewCell {
 		guard let first = days.first, first.weekday != firstWeekDayIndex
 		else { return days }
 
-		let dif = first.weekday - firstWeekDayIndex
-
 		var currentDays = days
 
-		(0...dif).forEach { _ in
+		let dif: Int = first.weekday >= firstWeekDayIndex ? (first.weekday - firstWeekDayIndex) :
+		(DCResources.weekdays.count - 1) /// case when sunday is first day of month, at gregorian calendar index is 1.
+
+		(0..<dif).forEach { _ in
 			currentDays.insert(.init(title: "", description: "", weekday: 0), at: 0)
 		}
 

@@ -23,7 +23,7 @@ extension DCalendarDaysLayout {
 		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: items)
 
 		let section = NSCollectionLayoutSection(group: group)
-		section.interGroupSpacing = DCSpaceResources.mid
+		section.interGroupSpacing = DCSpaceResources.small
 
 		return section
 	}

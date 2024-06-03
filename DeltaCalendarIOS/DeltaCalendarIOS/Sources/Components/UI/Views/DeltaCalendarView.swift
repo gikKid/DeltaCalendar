@@ -1,8 +1,11 @@
 import UIKit
+import Combine
 
 final class DeltaCalendarView: UIView {
 
 	typealias DeltaCalendarDataSource = UICollectionViewDiffableDataSource<DCalendarSection, DeltaCalendarItemID>
+
+	private var subscriptions = Set<AnyCancellable>()
 
 	private lazy var collectionView: UICollectionView = {
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
@@ -10,6 +13,7 @@ final class DeltaCalendarView: UIView {
 		collectionView.bounces = false
 		collectionView.showsHorizontalScrollIndicator = false
 		collectionView.showsVerticalScrollIndicator = false
+		collectionView.delegate = self
 		collectionView.collectionViewLayout = self.compositionLayout()
 		return collectionView
 	}()
@@ -27,13 +31,8 @@ final class DeltaCalendarView: UIView {
 		self.createDataSource()
 	}()
 	private lazy var viewModel: DeltaCalendarViewModel = {
-		DeltaCalendarViewModel(isWeekendsDisabled: false)
+		.init(theme: .light, isShowTime: false, isWeekendsDisabled: false)
 	}()
-
-	convenience init(theme: DCalendarTheme, isShowTime: Bool, isWeekendsDisabled: Bool) {
-		self.init(frame: .zero)
-		self.viewModel.update(theme: theme, isShowTime: isShowTime, isWeekendsDisabled: isWeekendsDisabled)
-	}
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -54,9 +53,32 @@ final class DeltaCalendarView: UIView {
 	}
 }
 
+// MARK: - CollectionViewDelegate
+
+extension DeltaCalendarView: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, 
+						forItemAt indexPath: IndexPath) {
+		guard let currentIndexPath = self.collectionView.currentIndexPath() else { return }
+
+		self.viewModel.itemScrolled(currentItem: currentIndexPath, at: self.dataSource)
+	}
+}
+
 // MARK: - MonthLayout
 
-extension DeltaCalendarView: DCalendarMonthLayout {}
+extension DeltaCalendarView: DCalendarMonthLayout {
+	func monthTitle(at: IndexPath) -> String {
+		self.viewModel.monthTitle(at: self.dataSource)
+	}
+
+	func nextMonthTapped() {
+		self.viewModel.makeNextMonth(at: self.dataSource)
+	}
+
+	func prevMonthTapped() {
+		self.viewModel.makePrevMonth(at: self.dataSource)
+	}
+}
 
 private extension DeltaCalendarView {
 
@@ -71,11 +93,31 @@ private extension DeltaCalendarView {
 		self.setConstraints()
 		self.setWeekdaysHeader()
 
-		self.viewModel.setupDataSource(self.dataSource)
+		self.viewModel.monthIndexPublisher
+			.dropFirst()
+			.sink { [weak self] indexPath in
+				self?.scrollTo(at: indexPath, deadline: .now(), animated: true)
+			}.store(in: &self.subscriptions)
+
+		self.viewModel.setupDataSource(at: self.dataSource) { [weak self] in
+			guard let dataSource = self?.dataSource,
+				  let indexPath = self?.viewModel.currentMonth(at: dataSource)
+			else { return }
+
+			self?.scrollTo(at: indexPath, deadline: .now() + 0.1, animated: false)
+		}
+	}
+
+	func scrollTo(at item: IndexPath, deadline: DispatchTime, animated: Bool) {
+		DispatchQueue.main.asyncAfter(deadline: deadline) {
+			self.collectionView.isPagingEnabled = false // bug at iOS 14
+			self.collectionView.scrollToItem(at: item, at: .centeredHorizontally, animated: animated)
+			self.collectionView.isPagingEnabled = true
+		}
 	}
 
 	func setDefaultColors() {
-		self.backgroundColor = self.viewModel.theme == .dark ? DCColorsResources.darkBackColor
+		self.backgroundColor = self.viewModel.startData.theme == .dark ? DCColorsResources.darkBackColor
 		: DCColorsResources.lightBackColor
 
 		self.confirmButton.setTitleColor(DCColorsResources.activeBtnTextColor, for: .normal)
@@ -98,7 +140,7 @@ private extension DeltaCalendarView {
 
 	func createDataSource() -> DeltaCalendarDataSource {
 
-		let monthRegistration = self.createDCMonthCellRegistration(self.viewModel.theme)
+		let monthRegistration = self.createDCMonthCellRegistration(self.viewModel.startData.theme)
 
 		return DeltaCalendarDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
@@ -119,7 +161,7 @@ private extension DeltaCalendarView {
 
 	func setWeekdaysHeader() {
 
-		let headerRegistration = self.createWeekdaysHeaderRegistration()
+		let headerRegistration = self.createMonthHeaderRegistration(self.viewModel.startData.theme)
 
 		self.dataSource.supplementaryViewProvider = { [weak self] (_, _, indexPath) in
 			return self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)

@@ -3,9 +3,9 @@ import UIKit
 typealias DeltaCalendarItemID = String
 typealias DCSectionSnapshot = NSDiffableDataSourceSectionSnapshot<DeltaCalendarItemID>
 
-enum DCalendarSection {
+enum DCalendarSection: Int {
 //	case year, month, days, time
-	case days
+	case month
 
 //	init?(section: Int, isShowYear: Bool, isShowTime: Bool) {
 //

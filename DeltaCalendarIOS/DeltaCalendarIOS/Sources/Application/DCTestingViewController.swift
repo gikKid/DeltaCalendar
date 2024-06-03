@@ -3,7 +3,7 @@ import SnapKit
 
 final class DCTestingViewController: UIViewController {
 
-	let contentView = DeltaCalendarView(theme: .light, isShowTime: false, isWeekendsDisabled: false)
+	let contentView = DeltaCalendarView()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
