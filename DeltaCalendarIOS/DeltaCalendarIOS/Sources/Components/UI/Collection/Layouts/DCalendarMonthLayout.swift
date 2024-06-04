@@ -4,6 +4,7 @@ protocol DCalendarMonthLayout {
 	func monthTitle(at: IndexPath) -> String
 	func nextMonthTapped()
 	func prevMonthTapped()
+	func daySelected(at index: Int)
 }
 
 extension DCalendarMonthLayout where Self: AnyObject {
@@ -42,9 +43,13 @@ extension DCalendarMonthLayout where Self: AnyObject {
 
 	// MARK: - Registration
 
-	func createDCMonthCellRegistration(_ theme: DeltaCalendarTheme) -> DCMonthCellRegistration {
-		DCMonthCellRegistration { (cell, _, item) in
-			cell.configure(with: item.days, isWeekendsDisabled: item.isWeekendsDisabled, theme: theme)
+	func createDCMonthCellRegistration() -> DCMonthCellRegistration {
+		DCMonthCellRegistration { [weak self] (cell, _, item) in
+			cell.configure(with: item.days)
+
+			cell.daySelectedHandler = { index in
+				self?.daySelected(at: index)
+			}
 		}
 	}
 

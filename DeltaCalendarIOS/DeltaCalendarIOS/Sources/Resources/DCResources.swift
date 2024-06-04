@@ -6,4 +6,5 @@ enum DCResources {
 									 DCTextResources.wed, DCTextResources.thu,
 									 DCTextResources.fri, DCTextResources.sat,
 									 DCTextResources.sun]
+	static let monthCount: Int = 12
 }

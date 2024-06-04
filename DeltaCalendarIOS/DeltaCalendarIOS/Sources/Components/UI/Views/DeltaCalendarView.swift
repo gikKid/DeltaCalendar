@@ -1,10 +1,15 @@
 import UIKit
 import Combine
 
+protocol DeltaCalendarViewDelegate {
+	func dateSelected(_ date: Date)
+}
+
 final class DeltaCalendarView: UIView {
 
 	typealias DeltaCalendarDataSource = UICollectionViewDiffableDataSource<DCalendarSection, DeltaCalendarItemID>
 
+	private var delegate: DeltaCalendarViewDelegate?
 	private var subscriptions = Set<AnyCancellable>()
 
 	private lazy var collectionView: UICollectionView = {
@@ -31,7 +36,12 @@ final class DeltaCalendarView: UIView {
 		self.createDataSource()
 	}()
 	private lazy var viewModel: DeltaCalendarViewModel = {
-		.init(theme: .light, isShowTime: false, isWeekendsDisabled: false)
+		let startData = DCStartModel(theme: .light, isWeekendsDisabled: false,
+									 isShowTime: false, isPickingYear: false)
+		return .init(with: startData)
+	}()
+	private lazy var presenter: DeltaCalendarViewPresentable = {
+		DeltaCalendarViewPresenter(self.dataSource, self.viewModel)
 	}()
 
 	override init(frame: CGRect) {
@@ -60,7 +70,7 @@ extension DeltaCalendarView: UICollectionViewDelegate {
 						forItemAt indexPath: IndexPath) {
 		guard let currentIndexPath = self.collectionView.currentIndexPath() else { return }
 
-		self.viewModel.itemScrolled(currentItem: currentIndexPath, at: self.dataSource)
+		self.presenter.itemScrolled(currentItem: currentIndexPath)
 	}
 }
 
@@ -68,15 +78,19 @@ extension DeltaCalendarView: UICollectionViewDelegate {
 
 extension DeltaCalendarView: DCalendarMonthLayout {
 	func monthTitle(at: IndexPath) -> String {
-		self.viewModel.monthTitle(at: self.dataSource)
+		self.presenter.monthTitle()
 	}
 
 	func nextMonthTapped() {
-		self.viewModel.makeNextMonth(at: self.dataSource)
+		self.presenter.makeNextMonth()
 	}
 
 	func prevMonthTapped() {
-		self.viewModel.makePrevMonth(at: self.dataSource)
+		self.presenter.makePrevMonth()
+	}
+
+	func daySelected(at index: Int) {
+		self.presenter.updateDaySelecting(at: index)
 	}
 }
 
@@ -93,15 +107,19 @@ private extension DeltaCalendarView {
 		self.setConstraints()
 		self.setWeekdaysHeader()
 
-		self.viewModel.monthIndexPublisher
+		self.presenter.monthIndexPublisher
 			.dropFirst()
 			.sink { [weak self] indexPath in
 				self?.scrollTo(at: indexPath, deadline: .now(), animated: true)
 			}.store(in: &self.subscriptions)
 
-		self.viewModel.setupDataSource(at: self.dataSource) { [weak self] in
-			guard let dataSource = self?.dataSource,
-				  let indexPath = self?.viewModel.currentMonth(at: dataSource)
+		self.presenter.selectedDatePublisher.sink { [weak self] date in
+			guard let date else { return }
+			self?.delegate?.dateSelected(date)
+		}.store(in: &self.subscriptions)
+
+		self.presenter.setupDS() { [weak self] in
+			guard let indexPath = self?.presenter.currentMonth()
 			else { return }
 
 			self?.scrollTo(at: indexPath, deadline: .now() + 0.1, animated: false)
@@ -140,12 +158,12 @@ private extension DeltaCalendarView {
 
 	func createDataSource() -> DeltaCalendarDataSource {
 
-		let monthRegistration = self.createDCMonthCellRegistration(self.viewModel.startData.theme)
+		let monthRegistration = self.createDCMonthCellRegistration()
 
 		return DeltaCalendarDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
 
-			let item = self?.viewModel.month(at: indexPath.row)
+			let item = self?.presenter.month(at: indexPath.row)
 			return collectionView.dequeueConfiguredReusableCell(using: monthRegistration, for: indexPath, item: item)
 //			guard let section = self?.viewModel.section(at: indexPath.section)
 //			else { return nil }

@@ -1,7 +1,7 @@
 import Foundation
 
 struct DCalendarYearItem: Identifiable {
-	let title: String
-	let months: [DCalendarMonthItem]
+	let value: Int
+	var months: [DCalendarMonthItem]
 	let id: String = UUID().uuidString
 }

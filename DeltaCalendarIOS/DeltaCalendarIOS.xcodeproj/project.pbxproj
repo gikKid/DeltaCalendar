@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B1BC54D2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC54C2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift */; };
+		3B1BC5502C0F598F00AED782 /* DCSelectedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC54F2C0F598F00AED782 /* DCSelectedModel.swift */; };
+		3B1BC5522C0F5FE100AED782 /* DCViewPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */; };
 		3B4FC82E2C0DE21B00C41968 /* DCImageResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FC82D2C0DE21B00C41968 /* DCImageResources.swift */; };
 		3B4FC8302C0DE2A100C41968 /* DCMonthCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FC82F2C0DE2A100C41968 /* DCMonthCollectionReusableView.swift */; };
 		3B4FC8322C0E106400C41968 /* DCStartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FC8312C0E106400C41968 /* DCStartModel.swift */; };
@@ -39,6 +42,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B1BC54C2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaCalendarViewPresenter.swift; sourceTree = "<group>"; };
+		3B1BC54F2C0F598F00AED782 /* DCSelectedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCSelectedModel.swift; sourceTree = "<group>"; };
+		3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCViewPresentable.swift; sourceTree = "<group>"; };
 		3B4FC82D2C0DE21B00C41968 /* DCImageResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCImageResources.swift; sourceTree = "<group>"; };
 		3B4FC82F2C0DE2A100C41968 /* DCMonthCollectionReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DCMonthCollectionReusableView.swift; sourceTree = "<group>"; };
 		3B4FC8312C0E106400C41968 /* DCStartModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCStartModel.swift; sourceTree = "<group>"; };
@@ -83,6 +89,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B1BC54E2C0F4F8600AED782 /* Presenters */ = {
+			isa = PBXGroup;
+			children = (
+				3B1BC54C2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift */,
+				3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */,
+			);
+			path = Presenters;
+			sourceTree = "<group>";
+		};
 		3B9777D02C0A00A300C64E72 /* CustomFonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +156,7 @@
 				3BB07A992C075BBF00D9E052 /* Components */,
 				3B9ABA2B2C08A68000E986BA /* Extensions */,
 				3BB07AA52C076F2500D9E052 /* Models */,
+				3B1BC54E2C0F4F8600AED782 /* Presenters */,
 				3BB07A9E2C075C5A00D9E052 /* Resources */,
 				3B9ABA282C08967400E986BA /* ViewModels */,
 			);
@@ -206,6 +222,7 @@
 				3BB07AA82C0770BD00D9E052 /* DCalendarSection.swift */,
 				3B9ABA302C08B27B00E986BA /* DCalendarYearItem.swift */,
 				3BB07AB72C077E3D00D9E052 /* DCCalendarColors.swift */,
+				3B1BC54F2C0F598F00AED782 /* DCSelectedModel.swift */,
 				3B4FC8312C0E106400C41968 /* DCStartModel.swift */,
 			);
 			path = Models;
@@ -328,6 +345,7 @@
 				3BB07A952C075AFD00D9E052 /* DCTestingViewController.swift in Sources */,
 				3BB07AAD2C0775C200D9E052 /* DCDayCollectionViewCell.swift in Sources */,
 				3B9ABA2A2C08969400E986BA /* DeltaCalendarViewModel.swift in Sources */,
+				3B1BC54D2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift in Sources */,
 				3BB07AA42C076E8A00D9E052 /* DCTextResources.swift in Sources */,
 				3B9ABA2D2C08A68E00E986BA /* Date+Extension.swift in Sources */,
 				3B4FC82E2C0DE21B00C41968 /* DCImageResources.swift in Sources */,
@@ -347,7 +365,9 @@
 				3B4FC8322C0E106400C41968 /* DCStartModel.swift in Sources */,
 				3BB07A7F2C07596700D9E052 /* SceneDelegate.swift in Sources */,
 				3B4FC8302C0DE2A100C41968 /* DCMonthCollectionReusableView.swift in Sources */,
+				3B1BC5502C0F598F00AED782 /* DCSelectedModel.swift in Sources */,
 				3BB07AB62C077D5E00D9E052 /* DCalendarDayItem.swift in Sources */,
+				3B1BC5522C0F5FE100AED782 /* DCViewPresentable.swift in Sources */,
 				3BB07AC22C07830700D9E052 /* DCResources.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

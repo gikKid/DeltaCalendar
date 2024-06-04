@@ -3,6 +3,8 @@ import UIKit
 
 final class DCMonthCollectionReusableView: UICollectionReusableView {
 
+	private let feedbackVal: CGFloat = 0.5
+
 	private let monthLabel: UILabel = {
 		let size = DCTextSizeResources.big
 
@@ -129,10 +131,12 @@ private extension DCMonthCollectionReusableView {
 	}
 
 	@objc func prevBtnTapped(_ sender: UIButton) {
+		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: self.feedbackVal)
 		self.eventHandler?(.prevMonth)
 	}
 
 	@objc func nextBtnTapped(_ sender: UIButton) {
+		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: self.feedbackVal)
 		self.eventHandler?(.nextMonth)
 	}
 }

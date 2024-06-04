@@ -17,13 +17,13 @@ final class DCMonthCollectionViewCell: UICollectionViewCell {
 	private lazy var dataSource: DCMonthDataSource = {
 		self.createDataSource()
 	}()
-
 	private var items: [DCalendarDayItem] = [] {
 		didSet {
 			let ids = self.items.map { $0.id }
 			self.setupCollection(by: ids)
 		}
 	}
+	public var daySelectedHandler: ((Int) -> Void)?
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -34,17 +34,8 @@ final class DCMonthCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(with data: [DeltaCalendarDay], isWeekendsDisabled: Bool, theme: DeltaCalendarTheme) {
-		let colors = DCalendarDayColors(theme: theme)
-
-		let days = self.addExtraEmptyDays(data)
-
-		self.items = days.map {
-			let isWeekDay = DCResources.weekends.contains($0.weekday)
-			let isDisabled = isWeekDay && isWeekendsDisabled
-
-			return .init(data: $0, colors: colors, isDisabled: isDisabled)
-		}
+	func configure(with data: [DCalendarDayItem]) {
+		self.items = data
 	}
 }
 
@@ -65,6 +56,8 @@ extension DCMonthCollectionViewCell: UICollectionViewDelegate {
 
 		self.items[indexPath.row].isSelected.toggle()
 
+		self.daySelectedHandler?(indexPath.row)
+
 		let id = self.items[indexPath.row].id
 		ids.append(id)
 
@@ -80,26 +73,6 @@ extension DCMonthCollectionViewCell: UICollectionViewDelegate {
 extension DCMonthCollectionViewCell: DCalendarDaysLayout {}
 
 private extension DCMonthCollectionViewCell {
-
-	/// Adding empty days for right shifting.
-	func addExtraEmptyDays(_ days: [DeltaCalendarDay]) -> [DeltaCalendarDay] {
-
-		let firstWeekDayIndex = DCResources.mondayIndex
-
-		guard let first = days.first, first.weekday != firstWeekDayIndex
-		else { return days }
-
-		var currentDays = days
-
-		let dif: Int = first.weekday >= firstWeekDayIndex ? (first.weekday - firstWeekDayIndex) :
-		(DCResources.weekdays.count - 1) /// case when sunday is first day of month, at gregorian calendar index is 1.
-
-		(0..<dif).forEach { _ in
-			currentDays.insert(.init(title: "", description: "", weekday: 0), at: 0)
-		}
-
-		return currentDays
-	}
 
 	// MARK: - Configuring
 
