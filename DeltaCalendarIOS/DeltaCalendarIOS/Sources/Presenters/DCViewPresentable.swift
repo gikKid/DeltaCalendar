@@ -21,4 +21,6 @@ protocol DeltaCalendarViewPresentable: AnyObject {
 	func updateDaySelecting(at dayIndex: Int)
 	func month(at index: Int) -> DCalendarMonthItem?
 	func monthTitle() -> String
+	func disableWeekendsChanged(isDisable: Bool)
+	func disablePastDays(isDisable: Bool)
 }

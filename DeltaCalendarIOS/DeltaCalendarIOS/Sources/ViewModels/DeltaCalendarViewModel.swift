@@ -6,6 +6,8 @@ protocol DeltaCalendarViewModelProtocol: AnyObject {
 	var data: [DCalendarYearItem] { get }
 
 	func toggleSelecting(at date: DCSelectedModel)
+	func onDisableWeekendsChanged(isDisable: Bool)
+	func onDisablePastDays(isDisable: Bool)
 }
 
 final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
@@ -28,6 +30,43 @@ final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 //		DCalendarSection(section: index, isShowYear: self.isShowYear,
 //						 isShowTime: self.isShowTime)
 //	}
+
+	func onDisableWeekendsChanged(isDisable: Bool) {
+		self.startData.isWeekendsDisabled = isDisable
+
+		for(y, year) in self.data.enumerated() {
+			for(m, month) in year.months.enumerated() {
+				let days = month.days
+
+				self.data[y].months[m].days = days.map {
+					var day = $0
+					day.isDisabled = DCResources.weekends.contains($0.data.weekday) && isDisable
+					return day
+				}
+			}
+		}
+	}
+
+	func onDisablePastDays(isDisable: Bool) {
+		let today = Date()
+
+		for (y, year) in self.data.enumerated() {
+			for (m, month) in year.months.enumerated() {
+				let days = month.days
+
+				self.data[y].months[m].days = days.map {
+					var day = $0
+
+					if let date = $0.data.date, !DCResources.weekends.contains($0.data.weekday) {
+						let isPrev = self.calendar.compare(date, to: today, toGranularity: .day) == .orderedAscending
+						day.isDisabled = isDisable && isPrev
+					}
+
+					return day
+				}
+			}
+		}
+	}
 }
 
 private extension DeltaCalendarViewModel {
@@ -72,7 +111,8 @@ private extension DeltaCalendarViewModel {
 
 		let items = data.map {
 			let dayDate = DateComponents(calendar: calendar, year: year, month: month, day: $0).date!
-			let description = today == dayDate ? DCTextResources.today : ""
+			let isSame = calendar.compare(dayDate, to: today, toGranularity: .day) == .orderedSame
+			let description = isSame ? DCTextResources.today : ""
 			let weekday = calendar.component(.weekday, from: dayDate)
 
 			let dayData = DeltaCalendarDay(title: String($0), description: description, 

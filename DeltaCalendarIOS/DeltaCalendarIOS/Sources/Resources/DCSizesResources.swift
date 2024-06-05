@@ -3,14 +3,12 @@ import Foundation
 // MARK: - DCRadiusResources
 
 enum DCRadiusResources {
-	static let button: CGFloat = 13.0
 	static let day: CGFloat = 12.0
 }
 
 // MARK: - DCHeightResources
 
 enum DCHeightResources {
-	static let button: CGFloat = 45.0
 	static let day: CGFloat = 47.5
 	static let text: CGFloat = 30.0
 	static let icon: CGFloat = 30.0

@@ -1,6 +1,7 @@
 struct DCStartModel {
 	let theme: DeltaCalendarTheme
-	let isWeekendsDisabled: Bool
+	var isWeekendsDisabled: Bool
+	let isPastDaysDisabled: Bool
 	let isShowTime: Bool
 	let isPickingYear: Bool
 }

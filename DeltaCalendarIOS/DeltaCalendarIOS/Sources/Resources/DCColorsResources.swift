@@ -1,8 +1,6 @@
 import UIKit
 
 enum DCColorsResources {
-	static let activeBtnBackColor = UIColor(named: "ActiveBtnBackColor")
-	static let activeBtnTextColor = UIColor(named: "ActiveBtnTextColor")
 	static let darkBackColor = UIColor(named: "DarkBackColor")
 	static let dayDescriptColor = UIColor(named: "DayDescriptColor")
 	static let disabledColor = UIColor(named: "DisabledColor")

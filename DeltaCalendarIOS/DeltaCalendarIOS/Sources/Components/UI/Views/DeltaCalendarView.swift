@@ -22,22 +22,13 @@ final class DeltaCalendarView: UIView {
 		collectionView.collectionViewLayout = self.compositionLayout()
 		return collectionView
 	}()
-	private let confirmButton: UIButton = {
-		let size = DCTextSizeResources.mid
-
-		let button = UIButton()
-		button.setTitle(DCTextResources.confirm, for: .normal)
-		button.titleLabel?.textAlignment = .center
-		button.titleLabel?.font = UIFont(name: DCFontsResources.segoe, size: size)
-		button.layer.cornerRadius = DCRadiusResources.button
-		return button
-	}()
 	private lazy var dataSource: DeltaCalendarDataSource = {
 		self.createDataSource()
 	}()
 	private lazy var viewModel: DeltaCalendarViewModel = {
 		let startData = DCStartModel(theme: .light, isWeekendsDisabled: false,
-									 isShowTime: false, isPickingYear: false)
+									 isPastDaysDisabled: false, isShowTime: false,
+									 isPickingYear: false)
 		return .init(with: startData)
 	}()
 	private lazy var presenter: DeltaCalendarViewPresentable = {
@@ -53,13 +44,12 @@ final class DeltaCalendarView: UIView {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(confirmText: String) {
-		self.confirmButton.setTitle(confirmText, for: .normal)
+	func disableWeekends(isDisable: Bool) {
+		self.presenter.disableWeekendsChanged(isDisable: isDisable)
 	}
 
-	func updateConfirmBtn(text: String, font: UIFont?) {
-		self.confirmButton.setTitle(text, for: .normal)
-		self.confirmButton.titleLabel?.font = font
+	func disablePastDays(isDisable: Bool) {
+		self.presenter.disablePastDays(isDisable: isDisable)
 	}
 }
 
@@ -101,7 +91,6 @@ private extension DeltaCalendarView {
 	func setupView() {
 		self.setDefaultColors()
 
-		self.addSubview(self.confirmButton)
 		self.addSubview(self.collectionView)
 
 		self.setConstraints()
@@ -137,20 +126,11 @@ private extension DeltaCalendarView {
 	func setDefaultColors() {
 		self.backgroundColor = self.viewModel.startData.theme == .dark ? DCColorsResources.darkBackColor
 		: DCColorsResources.lightBackColor
-
-		self.confirmButton.setTitleColor(DCColorsResources.activeBtnTextColor, for: .normal)
-		self.confirmButton.backgroundColor = DCColorsResources.activeBtnBackColor
 	}
 
 	func setConstraints() {
 		self.collectionView.snp.makeConstraints {
-			$0.top.leading.trailing.equalTo(self)
-			$0.bottom.equalTo(self.confirmButton.snp.top).offset(-DCSpaceResources.mid)
-		}
-
-		self.confirmButton.snp.makeConstraints {
-			$0.height.equalTo(DCHeightResources.button)
-			$0.bottom.leading.trailing.equalTo(self).inset(DCSpaceResources.moreMid)
+			$0.edges.equalTo(self)
 		}
 	}
 

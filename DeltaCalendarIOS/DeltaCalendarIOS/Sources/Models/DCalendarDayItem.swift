@@ -3,7 +3,7 @@ import Foundation
 struct DCalendarDayItem: Identifiable {
 	let data: DeltaCalendarDay
 	let colors: DCalendarDayColors
-	let isDisabled: Bool
+	var isDisabled: Bool
 	let id: String = UUID().uuidString
 	var isSelected: Bool = false
 }

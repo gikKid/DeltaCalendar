@@ -11,4 +11,7 @@ Custom configuring calendar.
 ```swift
 let view = DeltaCalendarView()
 view.delegate = self
+
+view.disableWeekends(isDisable: true)
+view.disablePastDays(isDisable: true)
 ```

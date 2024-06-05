@@ -3,7 +3,12 @@ import SnapKit
 
 final class DCTestingViewController: UIViewController {
 
-	let contentView = DeltaCalendarView()
+	private let contentView: DeltaCalendarView = {
+		let view = DeltaCalendarView()
+		view.disableWeekends(isDisable: true)
+		view.disablePastDays(isDisable: true)
+		return view
+	}()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()

@@ -44,8 +44,10 @@ final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 		monthSectionSnapshot.append(ids)
 
 		self.dataSource?.apply(monthSectionSnapshot, to: .month, animatingDifferences: false,
-						 completion: completion)
+							   completion: completion)
 	}
+
+	// MARK: - Updating state methods
 
 	func updateDaySelecting(at dayIndex: Int) {
 		if let selectedData = self.selectedData {
@@ -89,6 +91,16 @@ final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 		else { return }
 
 		self.onItemScrolled(currentIndex: currentItem, section: section)
+	}
+
+	func disableWeekendsChanged(isDisable: Bool) {
+		self.viewModel?.onDisableWeekendsChanged(isDisable: isDisable)
+		self.reloadSections(sections: [.month], animated: true)
+	}
+
+	func disablePastDays(isDisable: Bool) {
+		self.viewModel?.onDisablePastDays(isDisable: isDisable)
+		self.reloadSections(sections: [.month], animated: true)
 	}
 
 	// MARK: - Getting methods
