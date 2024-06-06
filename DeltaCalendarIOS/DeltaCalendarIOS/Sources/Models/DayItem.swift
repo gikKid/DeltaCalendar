@@ -1,14 +1,14 @@
 import Foundation
 
-struct DCalendarDayItem: Identifiable {
-	let data: DeltaCalendarDay
-	let colors: DCalendarDayColors
+internal struct DayItem: Identifiable {
+	let data: Day
+	let colors: DayColors
 	var isDisabled: Bool
 	let id: String = UUID().uuidString
 	var isSelected: Bool = false
 }
 
-struct DeltaCalendarDay {
+internal struct Day {
 	let title: String
 	let description: String
 	let weekday: Int

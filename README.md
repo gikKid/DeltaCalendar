@@ -3,7 +3,7 @@ Custom configuring calendar.
 
 ## Opportunities
 1. Disabling specific days.
-2. Configuring time offset at day.
+2. Configuring time range at day and minutes offset.
 3. Show/hide picking years and time.
 4. Dark/light theme.
 
@@ -12,6 +12,5 @@ Custom configuring calendar.
 let view = DeltaCalendarView()
 view.delegate = self
 
-view.disableWeekends(isDisable: true)
-view.disablePastDays(isDisable: true)
+let pickingYearsData = PickingYearModel(from: 1970, to: 2023) // from parameter must be less than "to" parameter, otherwise it woudnt be build.
 ```

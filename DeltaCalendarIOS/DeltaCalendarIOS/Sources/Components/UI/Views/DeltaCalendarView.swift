@@ -7,10 +7,11 @@ protocol DeltaCalendarViewDelegate {
 
 final class DeltaCalendarView: UIView {
 
-	typealias DeltaCalendarDataSource = UICollectionViewDiffableDataSource<DCalendarSection, DeltaCalendarItemID>
+	typealias DeltaCalendarDataSource = UICollectionViewDiffableDataSource<Section, ItemID>
 
 	private var delegate: DeltaCalendarViewDelegate?
 	private var subscriptions = Set<AnyCancellable>()
+	private let startData: StartModel
 
 	private lazy var collectionView: UICollectionView = {
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
@@ -26,30 +27,26 @@ final class DeltaCalendarView: UIView {
 		self.createDataSource()
 	}()
 	private lazy var viewModel: DeltaCalendarViewModel = {
-		let startData = DCStartModel(theme: .light, isWeekendsDisabled: false,
-									 isPastDaysDisabled: false, isShowTime: false,
-									 isPickingYear: false)
-		return .init(with: startData)
+		.init(with: self.startData)
 	}()
 	private lazy var presenter: DeltaCalendarViewPresentable = {
 		DeltaCalendarViewPresenter(self.dataSource, self.viewModel)
 	}()
 
-	override init(frame: CGRect) {
-		super.init(frame: frame)
+	init(weekendsOff: Bool = false, pastDaysOff: Bool = false,
+		 theme: Theme = .light, pickingYearData: PickingYearModel? = nil,
+		 showTimeData: ShowTimeModel? = nil) {
+
+		self.startData = .init(theme: theme, weekendsOff: weekendsOff, pastDaysOff: pastDaysOff,
+							   pickingYearData: pickingYearData, showTimeData: showTimeData)
+
+		super.init(frame: .zero)
+
 		self.setupView()
 	}
 
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
-	}
-
-	func disableWeekends(isDisable: Bool) {
-		self.presenter.disableWeekendsChanged(isDisable: isDisable)
-	}
-
-	func disablePastDays(isDisable: Bool) {
-		self.presenter.disablePastDays(isDisable: isDisable)
 	}
 }
 
@@ -64,9 +61,17 @@ extension DeltaCalendarView: UICollectionViewDelegate {
 	}
 }
 
+// MARK: - YearsListLayout
+
+extension DeltaCalendarView: YearsListLayout {
+	func yearSelected(year: Int) {
+		
+	}
+}
+
 // MARK: - MonthLayout
 
-extension DeltaCalendarView: DCalendarMonthLayout {
+extension DeltaCalendarView: MonthLayout {
 	func monthTitle(at: IndexPath) -> String {
 		self.presenter.monthTitle()
 	}
@@ -98,7 +103,11 @@ private extension DeltaCalendarView {
 
 		self.presenter.monthIndexPublisher
 			.dropFirst()
-			.sink { [weak self] indexPath in
+			.sink { [weak self] index in
+				guard let section = self?.dataSource.snapshot().indexOfSection(.month)
+				else { return }
+
+				let indexPath = IndexPath(row: index, section: section)
 				self?.scrollTo(at: indexPath, deadline: .now(), animated: true)
 			}.store(in: &self.subscriptions)
 
@@ -107,12 +116,10 @@ private extension DeltaCalendarView {
 			self?.delegate?.dateSelected(date)
 		}.store(in: &self.subscriptions)
 
-		self.presenter.setupDS() { [weak self] in
-			guard let indexPath = self?.presenter.currentMonth()
-			else { return }
+		self.presenter.setupDS(with: self.startData)
 
-			self?.scrollTo(at: indexPath, deadline: .now() + 0.1, animated: false)
-		}
+		guard let indexPath = self.presenter.currentMonth() else { return }
+		self.scrollTo(at: indexPath, deadline: .now() + 0.1, animated: false)
 	}
 
 	func scrollTo(at item: IndexPath, deadline: DispatchTime, animated: Bool) {
@@ -124,8 +131,8 @@ private extension DeltaCalendarView {
 	}
 
 	func setDefaultColors() {
-		self.backgroundColor = self.viewModel.startData.theme == .dark ? DCColorsResources.darkBackColor
-		: DCColorsResources.lightBackColor
+		self.backgroundColor = self.startData.theme == .dark ? ColorsResources.darkBackColor
+		: ColorsResources.lightBackColor
 	}
 
 	func setConstraints() {
@@ -138,28 +145,30 @@ private extension DeltaCalendarView {
 
 	func createDataSource() -> DeltaCalendarDataSource {
 
-		let monthRegistration = self.createDCMonthCellRegistration()
+		let monthRegistration = self.createMonthCellRegistration()
+		let yearsRegistration = self.createYearsCellRegistration()
 
 		return DeltaCalendarDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
 
-			let item = self?.presenter.month(at: indexPath.row)
-			return collectionView.dequeueConfiguredReusableCell(using: monthRegistration, for: indexPath, item: item)
-//			guard let section = self?.viewModel.section(at: indexPath.section)
-//			else { return nil }
-//
-//			switch section {
-//			case .days:
-//				let item = self?.viewModel.month(at: indexPath.row)
-//				return collectionView.dequeueConfiguredReusableCell(using: monthRegistration, for: indexPath, item: item)
-//			default: return nil
-//			}
+			guard let startData = self?.startData,
+				  let section = self?.presenter.section(at: indexPath.section, startData: startData)
+			else { return nil }
+
+			switch section {
+			case .year:
+				let item = self?.presenter.yearsItem
+				return collectionView.dequeueConfiguredReusableCell(using: yearsRegistration, for: indexPath, item: item)
+			case .month:
+				let item = self?.presenter.month(at: indexPath.row)
+				return collectionView.dequeueConfiguredReusableCell(using: monthRegistration, for: indexPath, item: item)
+			}
 		}
 	}
 
 	func setWeekdaysHeader() {
 
-		let headerRegistration = self.createMonthHeaderRegistration(self.viewModel.startData.theme)
+		let headerRegistration = self.createMonthHeaderRegistration(self.startData.theme)
 
 		self.dataSource.supplementaryViewProvider = { [weak self] (_, _, indexPath) in
 			return self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
@@ -173,15 +182,16 @@ private extension DeltaCalendarView {
 		let sectionProvider = { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
 			-> NSCollectionLayoutSection? in
 
-			return self?.DCMonthLayout()
-//			guard let section = self?.viewModel.section(at: sectionIndex) else { return nil }
-//
-//			let frame = self?.frame ?? .zero
-//
-//			switch section {
-//			case .days: return self?.DCMonthLayout(parentFrame: frame)
-//			default: 	return nil
-//			}
+			guard let startData = self?.startData,
+				  let section = self?.presenter.section(at: sectionIndex, startData: startData) 
+			else { return nil }
+
+			let frame = self?.frame ?? .zero
+
+			switch section {
+			case .year: return self?.yearsLayout()
+			case .month: return self?.monthLayout(parentFrame: frame)
+			}
 		}
 
 		return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)

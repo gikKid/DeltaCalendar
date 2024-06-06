@@ -1,8 +1,8 @@
 import UIKit
 
-final class DCMonthCollectionViewCell: UICollectionViewCell {
+internal final class MonthCollectionViewCell: UICollectionViewCell {
 
-	typealias DCMonthDataSource = UICollectionViewDiffableDataSource<DCBaseSection, DeltaCalendarItemID>
+	typealias DCMonthDataSource = UICollectionViewDiffableDataSource<BaseSection, ItemID>
 
 	private lazy var collectionView: UICollectionView = {
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
@@ -17,7 +17,7 @@ final class DCMonthCollectionViewCell: UICollectionViewCell {
 	private lazy var dataSource: DCMonthDataSource = {
 		self.createDataSource()
 	}()
-	private var items: [DCalendarDayItem] = [] {
+	private var items: [DayItem] = [] {
 		didSet {
 			let ids = self.items.map { $0.id }
 			self.setupCollection(by: ids)
@@ -34,17 +34,17 @@ final class DCMonthCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(with data: [DCalendarDayItem]) {
+	func configure(with data: [DayItem]) {
 		self.items = data
 	}
 }
 
 // MARK: - CollectionViewDelegate
 
-extension DCMonthCollectionViewCell: UICollectionViewDelegate {
+extension MonthCollectionViewCell: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 
-		var ids = [DeltaCalendarItemID]()
+		var ids = [ItemID]()
 
 		if let prevSelectedIndex = self.items.firstIndex(where: { $0.isSelected }),
 		   prevSelectedIndex != indexPath.row {
@@ -70,9 +70,9 @@ extension DCMonthCollectionViewCell: UICollectionViewDelegate {
 
 // MARK: - DaysLayout
 
-extension DCMonthCollectionViewCell: DCalendarDaysLayout {}
+extension MonthCollectionViewCell: DaysLayout {}
 
-private extension DCMonthCollectionViewCell {
+private extension MonthCollectionViewCell {
 
 	// MARK: - Configuring
 
@@ -84,7 +84,7 @@ private extension DCMonthCollectionViewCell {
 		}
 	}
 
-	func setupCollection(by ids: [DeltaCalendarItemID]) {
+	func setupCollection(by ids: [ItemID]) {
 		guard !ids.isEmpty else { return }
 
 		var snapshot = self.dataSource.snapshot()
@@ -97,7 +97,7 @@ private extension DCMonthCollectionViewCell {
 
 		self.dataSource.apply(snapshot, animatingDifferences: false)
 
-		var sectionSnapshot = DCSectionSnapshot()
+		var sectionSnapshot = SectionSnapshot()
 		sectionSnapshot.append(ids)
 
 		self.dataSource.apply(sectionSnapshot, to: .main, animatingDifferences: false)
@@ -112,7 +112,7 @@ private extension DCMonthCollectionViewCell {
 
 			let frame = self?.contentView.frame ?? .zero
 
-			return self?.DCDaysLayout(parentFrame: frame)
+			return self?.daysLayout(parentFrame: frame)
 		}
 
 		return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
@@ -122,7 +122,7 @@ private extension DCMonthCollectionViewCell {
 
 	func createDataSource() -> DCMonthDataSource {
 
-		let dayRegistration = self.createDCDayCellRegistration()
+		let dayRegistration = self.createDayCellRegistration()
 
 		return DCMonthDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in

@@ -1,16 +1,16 @@
 import UIKit
 
-protocol DCalendarDaysLayout {}
+internal protocol DaysLayout {}
 
-extension DCalendarDaysLayout {
+extension DaysLayout {
 
-	typealias DCDayCellRegistration = UICollectionView
-		.CellRegistration<DCDayCollectionViewCell, DCalendarDayItem>
+	typealias DayCellRegistration = UICollectionView
+		.CellRegistration<DayCollectionViewCell, DayItem>
 
-	func DCDaysLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
+	func daysLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
 
-		let weekdaysCount = DCResources.weekdays.count
-		let itemHeight = DCHeightResources.day
+		let weekdaysCount = Resources.weekdays.count
+		let itemHeight = HeightResources.day
 		let itemWidth = parentFrame.width / CGFloat(weekdaysCount)
 		let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(itemWidth),
 											  heightDimension: .absolute(itemHeight))
@@ -23,13 +23,13 @@ extension DCalendarDaysLayout {
 		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: items)
 
 		let section = NSCollectionLayoutSection(group: group)
-		section.interGroupSpacing = DCSpaceResources.small
+		section.interGroupSpacing = SpaceResources.small
 
 		return section
 	}
 
-	func createDCDayCellRegistration() -> DCDayCellRegistration {
-		DCDayCellRegistration { (cell, _, item) in
+	func createDayCellRegistration() -> DayCellRegistration {
+		DayCellRegistration { (cell, _, item) in
 			cell.configure(with: item)
 		}
 	}

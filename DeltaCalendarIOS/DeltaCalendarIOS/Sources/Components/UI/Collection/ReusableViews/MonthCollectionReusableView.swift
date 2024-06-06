@@ -1,21 +1,19 @@
 import Foundation
 import UIKit
 
-final class DCMonthCollectionReusableView: UICollectionReusableView {
-
-	private let feedbackVal: CGFloat = 0.5
+internal final class MonthCollectionReusableView: UICollectionReusableView {
 
 	private let monthLabel: UILabel = {
-		let size = DCTextSizeResources.big
+		let size = TextSizeResources.big
 
 		let label = UILabel()
 		label.textAlignment = .center
-		label.font = UIFont(name: DCFontsResources.segoeBold, size: size)
+		label.font = UIFont(name: FontsResources.segoeBold, size: size)
 		return label
 	}()
 	private let nextButton: UIButton = {
 		let imgConfig = UIImage.SymbolConfiguration(scale: .large)
-		let image = DCImageResources.chevronRight?.withConfiguration(imgConfig)
+		let image = ImageResources.chevronRight?.withConfiguration(imgConfig)
 
 		let button = UIButton()
 		button.setImage(image, for: .normal)
@@ -23,7 +21,7 @@ final class DCMonthCollectionReusableView: UICollectionReusableView {
 	}()
 	private let prevButton: UIButton = {
 		let imgConfig = UIImage.SymbolConfiguration(scale: .large)
-		let image = DCImageResources.chevronLeft?.withConfiguration(imgConfig)
+		let image = ImageResources.chevronLeft?.withConfiguration(imgConfig)
 
 		let button = UIButton()
 		button.setImage(image, for: .normal)
@@ -50,11 +48,11 @@ final class DCMonthCollectionReusableView: UICollectionReusableView {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(monthTitle: String, theme: DeltaCalendarTheme) {
+	func configure(monthTitle: String, theme: Theme) {
 		self.monthLabel.text = monthTitle
 
-		let color = theme == .dark ? DCColorsResources.textLightColor :
-		DCColorsResources.textDarkColor
+		let color = theme == .dark ? ColorsResources.textLightColor :
+		ColorsResources.textDarkColor
 
 		self.monthLabel.textColor = color
 		self.nextButton.imageView?.tintColor = color
@@ -62,7 +60,7 @@ final class DCMonthCollectionReusableView: UICollectionReusableView {
 	}
 }
 
-private extension DCMonthCollectionReusableView {
+private extension MonthCollectionReusableView {
 
 	func setupView() {
 		self.addSubview(self.monthLabel)
@@ -75,18 +73,18 @@ private extension DCMonthCollectionReusableView {
 		self.prevButton.addTarget(self, action: #selector(self.prevBtnTapped), for: .touchUpInside)
 		self.nextButton.addTarget(self, action: #selector(self.nextBtnTapped), for: .touchUpInside)
 
-		let width = self.frame.width / CGFloat(DCResources.weekdays.count)
+		let width = self.frame.width / CGFloat(Resources.weekdays.count)
 		self.setWeekdays(weekdayWidth: width)
 	}
 
 	func setConstraints() {
 
-		let xOffset = DCSpaceResources.moreMid
+		let xOffset = SpaceResources.moreMid
 
 		self.prevButton.snp.makeConstraints {
 			$0.top.equalTo(self)
 			$0.leading.equalTo(self).offset(xOffset)
-			$0.width.height.equalTo(DCHeightResources.icon)
+			$0.width.height.equalTo(HeightResources.icon)
 		}
 
 		self.nextButton.snp.makeConstraints {
@@ -95,7 +93,7 @@ private extension DCMonthCollectionReusableView {
 			$0.width.height.equalTo(self.prevButton)
 		}
 
-		let labelOffset = DCSpaceResources.small
+		let labelOffset = SpaceResources.small
 
 		self.monthLabel.snp.makeConstraints {
 			$0.centerY.equalTo(self.prevButton)
@@ -105,13 +103,13 @@ private extension DCMonthCollectionReusableView {
 		}
 
 		self.stackView.snp.makeConstraints {
-			$0.top.equalTo(self.monthLabel.snp.bottom).offset(DCSpaceResources.moreMid)
+			$0.top.equalTo(self.monthLabel.snp.bottom).offset(SpaceResources.moreMid)
 			$0.leading.trailing.bottom.equalTo(self)
 		}
 	}
 
 	func setWeekdays(weekdayWidth: CGFloat) {
-		let weekdays = DCResources.weekdays
+		let weekdays = Resources.weekdays
 
 		weekdays.forEach {
 			let label = self.createLabel(text: $0)
@@ -125,18 +123,18 @@ private extension DCMonthCollectionReusableView {
 		let label = UILabel()
 		label.text = text
 		label.textAlignment = .center
-		label.textColor = DCColorsResources.secondaryTextColor
-		label.font = UIFont(name: DCFontsResources.segoe, size: DCTextSizeResources.small)
+		label.textColor = ColorsResources.secondaryTextColor
+		label.font = UIFont(name: FontsResources.segoe, size: TextSizeResources.small)
 		return label
 	}
 
 	@objc func prevBtnTapped(_ sender: UIButton) {
-		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: self.feedbackVal)
+		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: Resources.feedbackVal)
 		self.eventHandler?(.prevMonth)
 	}
 
 	@objc func nextBtnTapped(_ sender: UIButton) {
-		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: self.feedbackVal)
+		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: Resources.feedbackVal)
 		self.eventHandler?(.nextMonth)
 	}
 }

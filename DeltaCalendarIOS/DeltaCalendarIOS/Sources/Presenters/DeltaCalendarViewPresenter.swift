@@ -1,15 +1,16 @@
 import Foundation
 import Combine
 
-final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
+internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 
-	@Published private(set) var selectedData: DCSelectedModel?
-	@Published private(set) var currentMonthIndex: IndexPath
+	@Published private(set) var selectedData: SelectedModel?
+	@Published private(set) var currentMonthIndex: Int = 0
 	private(set) var currentYearIndex: Int = 0
+	private(set) var yearsItem: YearsItem?
 	weak var viewModel: DeltaCalendarViewModelProtocol?
 	weak var dataSource: DataSource?
 
-	public var monthIndexPublisher: AnyPublisher<IndexPath, Never> {
+	public var monthIndexPublisher: AnyPublisher<Int, Never> {
 		self.$currentMonthIndex.eraseToAnyPublisher()
 	}
 	public var selectedDatePublisher: AnyPublisher<Date?, Never> {
@@ -25,41 +26,43 @@ final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 
 	// MARK: - Setting methods
 
-	init(_ dataSource: DataSource,_ viewModel: DeltaCalendarViewModelProtocol) {
+	init(_ dataSource: DataSource, _ viewModel: DeltaCalendarViewModelProtocol) {
 		self.dataSource = dataSource
 		self.viewModel = viewModel
-		self.currentMonthIndex = .init(row: 0, section: DCalendarSection.month.rawValue)
 	}
 
-	func setupDS(with completion: @escaping () -> Void) {
+	func setupDS(with startData: StartModel) {
 		guard var snapshot = self.dataSource?.snapshot() else { return }
 
-		snapshot.appendSections([.month])
+		var sections: [Section] = [.month]
+
+		let isShowYearsSection = startData.pickingYearData != nil
+
+		isShowYearsSection ? sections.insert(.year, at: 0) : ()
+
+		snapshot.appendSections(sections)
 
 		self.dataSource?.apply(snapshot, animatingDifferences: false)
 
-		var monthSectionSnapshot = DCSectionSnapshot()
+		isShowYearsSection ? self.configureYearsSection() : ()
 
-		let ids = self.viewModel?.data[self.currentYearIndex].months.map { $0.id } ?? []
-		monthSectionSnapshot.append(ids)
-
-		self.dataSource?.apply(monthSectionSnapshot, to: .month, animatingDifferences: false,
-							   completion: completion)
+		self.reconfigureMonths(animated: false)
 	}
 
 	// MARK: - Updating state methods
 
 	func updateDaySelecting(at dayIndex: Int) {
 		if let selectedData = self.selectedData {
-			let unselectModel = DCSelectedModel(yearIndex: selectedData.yearIndex,
-												monthIndex: selectedData.monthIndex,
-												dayIndex: selectedData.dayIndex)
+			let unselectModel = SelectedModel(yearIndex: selectedData.yearIndex,
+											  monthIndex: selectedData.monthIndex,
+											  dayIndex: selectedData.dayIndex)
 
 			self.viewModel?.toggleSelecting(at: unselectModel)
 		}
 
-		let selectModel = DCSelectedModel(yearIndex: self.currentYearIndex,
-										  monthIndex: self.currentMonthIndex.row, dayIndex: dayIndex)
+		let selectModel = SelectedModel(yearIndex: self.currentYearIndex,
+										monthIndex: self.currentMonthIndex,
+										dayIndex: dayIndex)
 
 		self.viewModel?.toggleSelecting(at: selectModel)
 
@@ -67,23 +70,23 @@ final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	}
 
 	func makeNextMonth() {
-		let nextMonth = self.currentMonthIndex.row + 1
+		let nextMonth = self.currentMonthIndex + 1
 
-		guard nextMonth <= DCResources.monthCount - 1 else {
+		guard nextMonth <= Resources.monthCount - 1 else {
 			self.configureNextYear(); return
 		}
 
-		self.currentMonthIndex.row = nextMonth
+		self.currentMonthIndex = nextMonth
 	}
 
 	func makePrevMonth() {
-		let prevMonth = self.currentMonthIndex.row - 1
+		let prevMonth = self.currentMonthIndex - 1
 
 		guard prevMonth >= 0 else {
 			self.configurePrevYear(); return
 		}
 
-		self.currentMonthIndex.row = prevMonth
+		self.currentMonthIndex = prevMonth
 	}
 
 	func itemScrolled(currentItem: IndexPath) {
@@ -91,16 +94,6 @@ final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 		else { return }
 
 		self.onItemScrolled(currentIndex: currentItem, section: section)
-	}
-
-	func disableWeekendsChanged(isDisable: Bool) {
-		self.viewModel?.onDisableWeekendsChanged(isDisable: isDisable)
-		self.reloadSections(sections: [.month], animated: true)
-	}
-
-	func disablePastDays(isDisable: Bool) {
-		self.viewModel?.onDisablePastDays(isDisable: isDisable)
-		self.reloadSections(sections: [.month], animated: true)
 	}
 
 	// MARK: - Getting methods
@@ -115,7 +108,7 @@ final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 		return IndexPath(item: month - 1, section: monthSection)
 	}
 
-	func month(at index: Int) -> DCalendarMonthItem? {
+	func month(at index: Int) -> MonthItem? {
 		guard let data = self.viewModel?.data else { return nil }
 
 		return data[self.currentYearIndex].months[index]
@@ -124,7 +117,14 @@ final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	func monthTitle() -> String {
 		guard let data = self.viewModel?.data else { return "-" }
 
-		return data[self.currentYearIndex].months[self.currentMonthIndex.row].title
+		return data[self.currentYearIndex].months[self.currentMonthIndex].title
+	}
+
+	func section(at index: Int, startData: StartModel) -> Section? {
+		let isShowYear = startData.pickingYearData != nil
+		let isShowTime = startData.showTimeData != nil
+
+		return Section(section: index, isShowYear: isShowYear, isShowTime: isShowTime)
 	}
 }
 
@@ -132,74 +132,93 @@ private extension DeltaCalendarViewPresenter {
 
 	func setSelectedDate(by dayIndex: Int) {
 		self.selectedData = .init(yearIndex: self.currentYearIndex,
-								  monthIndex: self.currentMonthIndex.row,
+								  monthIndex: self.currentMonthIndex,
 								  dayIndex: dayIndex)
 	}
 
 	// MARK: - Configuring sections
+
+	func configureYearsSection() {
+		guard let data = self.viewModel?.data else { return }
+
+		self.yearsItem = .init(data: data)
+
+		guard let id = self.yearsItem?.id else { return }
+
+		var sectionSnapshot = SectionSnapshot()
+		sectionSnapshot.append([id])
+
+		self.dataSource?.apply(sectionSnapshot, to: .year, animatingDifferences: false)
+	}
 
 	func configureNextYear() {
 		guard let data = self.viewModel?.data, self.currentYearIndex < data.count - 1
 		else { return }
 
 		self.currentYearIndex += 1
-		self.currentMonthIndex.row = 0
+		self.currentMonthIndex = 0
 
 		self.selectedData = nil
 
-		self.reconfigureMonths()
+		self.reconfigureMonths(animated: true)
 	}
 
 	func configurePrevYear() {
 		guard self.currentYearIndex != 0 else { return }
 
 		self.currentYearIndex -= 1
-		self.currentMonthIndex.row = DCResources.monthCount - 1
+		self.currentMonthIndex = Resources.monthCount - 1
 
 		self.selectedData = nil
 
-		self.reconfigureMonths()
+		self.reconfigureMonths(animated: true)
 	}
 
-	func reconfigureMonths() {
+	func reconfigureMonths(animated: Bool) {
 		guard let data = self.viewModel?.data else { return }
 
 		let ids = data[self.currentYearIndex].months.map { $0.id }
-		var sectionSnapshot = DCSectionSnapshot()
+		var sectionSnapshot = SectionSnapshot()
 		sectionSnapshot.append(ids)
 
-		self.dataSource?.apply(sectionSnapshot, to: .month, animatingDifferences: true)
+		self.dataSource?.apply(sectionSnapshot, to: .month, animatingDifferences: animated)
 	}
 
 	// MARK: - Scrolling logic
 
-	func onItemScrolled(currentIndex: IndexPath, section: DCalendarSection) {
+	func onItemScrolled(currentIndex: IndexPath, section: Section) {
+
+		let index = currentIndex.row
 
 		switch section {
-		case .month:
-			self.monthScrolled(to: currentIndex.row)
+		case .year: self.yearScrolled(to: index)
+		case .month: self.monthScrolled(to: index)
 		}
 	}
 
 	func monthScrolled(to index: Int) {
-		self.currentMonthIndex.row = index
-		self.reloadSections(sections: [.month], animated: true)
+		self.currentMonthIndex = index
+		self.reloadSections(sections: [.month])
+	}
+
+	func yearScrolled(to index: Int) {
+
 	}
 
 	// MARK: - Section managing
 
-	func reloadSections(sections: [DCalendarSection], animated: Bool) {
+	func reloadSections(sections: [Section]) {
 		guard var snapshot = self.dataSource?.snapshot() else { return }
 
 		if #available(iOS 15, *) {
 			self.dataSource?.applySnapshotUsingReloadData(snapshot)
 		} else {
 			snapshot.reloadSections(sections)
-			self.dataSource?.apply(snapshot, animatingDifferences: animated)
+			self.dataSource?.apply(snapshot, animatingDifferences: true)
 		}
 	}
 
-	func section(index: IndexPath) -> DCalendarSection? {
+	func section(index: IndexPath) -> Section? {
 		if #available(iOS 15, *) {
 			guard let section = self.dataSource?.sectionIdentifier(for: index.section)
 			else { return nil }

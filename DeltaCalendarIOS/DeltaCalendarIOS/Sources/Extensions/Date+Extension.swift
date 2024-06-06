@@ -1,6 +1,6 @@
 import Foundation
 
-extension Date {
+internal extension Date {
 	func year(using calendar: Calendar = .current) -> Int {
 		calendar.component(.year, from: self)
 	}

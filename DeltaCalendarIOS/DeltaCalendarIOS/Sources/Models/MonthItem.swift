@@ -1,7 +1,7 @@
 import Foundation
 
-struct DCalendarMonthItem: Identifiable {
+internal struct MonthItem: Identifiable {
 	let title: String
-	var days: [DCalendarDayItem]
+	var days: [DayItem]
 	let id: String = UUID().uuidString
 }

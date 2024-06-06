@@ -1,32 +1,33 @@
 import UIKit
 
-protocol DCalendarMonthLayout {
+internal protocol MonthLayout {
 	func monthTitle(at: IndexPath) -> String
 	func nextMonthTapped()
 	func prevMonthTapped()
 	func daySelected(at index: Int)
 }
 
-extension DCalendarMonthLayout where Self: AnyObject {
+extension MonthLayout where Self: AnyObject {
 
-	typealias DCMonthCellRegistration = UICollectionView
-		.CellRegistration<DCMonthCollectionViewCell, DCalendarMonthItem>
+	typealias MonthCellRegistration = UICollectionView
+		.CellRegistration<MonthCollectionViewCell, MonthItem>
 
-	typealias DCMonthHeaderRegistration = UICollectionView
-		.SupplementaryRegistration<DCMonthCollectionReusableView>
+	typealias MonthHeaderRegistration = UICollectionView
+		.SupplementaryRegistration<MonthCollectionReusableView>
 
 	// MARK: - Layout
 
-	func DCMonthLayout() -> NSCollectionLayoutSection {
+	func monthLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
 
+		let itemHeight: CGFloat = parentFrame.height / 1.5
 		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-											  heightDimension: .fractionalHeight(1))
+											  heightDimension: .estimated(itemHeight))
 
 		let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
 		let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
 
-		let headerHeight = DCHeightResources.text
+		let headerHeight = HeightResources.text
 		let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
 												heightDimension: .estimated(headerHeight))
 
@@ -43,8 +44,8 @@ extension DCalendarMonthLayout where Self: AnyObject {
 
 	// MARK: - Registration
 
-	func createDCMonthCellRegistration() -> DCMonthCellRegistration {
-		DCMonthCellRegistration { [weak self] (cell, _, item) in
+	func createMonthCellRegistration() -> MonthCellRegistration {
+		MonthCellRegistration { [weak self] (cell, _, item) in
 			cell.configure(with: item.days)
 
 			cell.daySelectedHandler = { index in
@@ -53,8 +54,8 @@ extension DCalendarMonthLayout where Self: AnyObject {
 		}
 	}
 
-	func createMonthHeaderRegistration(_ theme: DeltaCalendarTheme) -> DCMonthHeaderRegistration {
-		DCMonthHeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) {
+	func createMonthHeaderRegistration(_ theme: Theme) -> MonthHeaderRegistration {
+		MonthHeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) {
 			[weak self] (view, _, indexPath) in
 			let title = self?.monthTitle(at: indexPath) ?? "-"
 
