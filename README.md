@@ -12,7 +12,7 @@ Custom configuring calendar.
 let view = DeltaCalendarView()
 view.delegate = self
 
-let pickingYearsData = PickingYearModel(from: 1970, to: 2023) // from parameter must be less than "to" parameter, otherwise it woudnt be build.
+let pickingYearsData = PickingYearModel(from: 1970, to: 2023) // parameter "from" must be less than parameter "to", otherwise it woudnt be build.
 ```
 
 ## Technologies
