@@ -2,7 +2,7 @@
 Custom configuring calendar.
 
 ## Opportunities
-1. Disabling wekeends and past days.
+1. Disabling wekeends and past days. Off-time days also would be disabled.
 2. Configuring time range at day and minutes offset.
 3. Show/hide picking years and time.
 4. Dark/light theme.
