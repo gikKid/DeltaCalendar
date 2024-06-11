@@ -13,4 +13,5 @@ internal enum Resources {
 	static let selectingYearGap: Int = 18
 	static let minValScale: CGFloat = 0.7
 	static let maxValScale: CGFloat = 1.1
+	static let timeFormat: String = "HH:mm"
 }

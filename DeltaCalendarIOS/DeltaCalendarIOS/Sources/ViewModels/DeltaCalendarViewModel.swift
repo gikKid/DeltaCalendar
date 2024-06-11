@@ -99,16 +99,25 @@ private extension DeltaCalendarViewModel {
 			let description = isSame ? TextResources.today : ""
 			let weekday = self.calendar.component(.weekday, from: dayDate)
 
-			let dayData = Day(title: String($0), description: description, 
-										   weekday: weekday, date: dayDate)
+			let time: [Date]
+			if let showTimeData = startData.showTimeData {
+				time = self.dayTime(weekDay: weekday, resource: showTimeData)
+			} else {
+				time = []
+			}
+
+			let dayData = Day(title: String($0), description: description,
+							  weekday: weekday, date: dayDate, time: time)
 
 
-			let isDisabled = (startData.weekendsOff && self.isWeekday(at: dayDate)) ||
-			(startData.pastDaysOff && self.isPastDay(at: dayDate))
+			let isDisabled = startData.showTimeData != nil ? time.isEmpty : 
+			((startData.weekendsOff && self.isWeekday(at: dayDate)) ||
+			(startData.pastDaysOff && self.isPastDay(at: dayDate)))
 
 			let colors = DayColors(theme: startData.theme)
+			let isSelected = startData.pickingYearData == nil && isSame
 
-			return DayItem(data: dayData, colors: colors, isDisabled: isDisabled)
+			return DayItem(data: dayData, colors: colors, isDisabled: isDisabled, isSelected: isSelected)
 		}
 
 		return self.addExtraEmptyDays(items, startData.theme)
@@ -121,6 +130,21 @@ private extension DeltaCalendarViewModel {
 
 	func isPastDay(at date: Date) -> Bool {
 		self.calendar.compare(Date(), to: date, toGranularity: .day) == .orderedDescending
+	}
+
+	func dayTime(weekDay: Int, resource: ShowTimeModel) -> [Date] {
+		guard let dayData = resource.data.first(where: { $0.weekday == weekDay })
+		else { return [] }
+
+		var startDate = dayData.startDate
+		var timeData: [Date] = [startDate]
+
+		while startDate < dayData.endDate {
+			startDate = startDate.addingTimeInterval(Double(resource.offset) * 60.0)
+			timeData.append(startDate)
+		}
+
+		return timeData
 	}
 
 	/// Adding empty days for right shifting.
@@ -137,10 +161,11 @@ private extension DeltaCalendarViewModel {
 		(Resources.weekdays.count - 1) /// case when sunday is first day of month, at gregorian calendar index is 1.
 
 		(0..<dif).forEach { _ in
-			let dayData = Day(title: "", description: "", weekday: 0, date: nil)
+			let dayData = Day(title: "", description: "", weekday: 0, date: nil, time: [])
 			let colors = DayColors(theme: theme)
+			let mockItem = DayItem(data: dayData, colors: colors, isDisabled: true, isSelected: false)
 
-			currentDays.insert(.init(data: dayData, colors: colors, isDisabled: true), at: 0)
+			currentDays.insert(mockItem, at: 0)
 		}
 
 		return currentDays

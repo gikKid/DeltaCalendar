@@ -12,4 +12,12 @@ internal extension Date {
 	func day(using calendar: Calendar = .current) -> Int {
 		calendar.component(.day, from: self)
 	}
+
+	func hours(using calendar: Calendar = .current) -> Int {
+		calendar.component(.hour, from: self)
+	}
+
+	func minutes(using calendar: Calendar = .current) -> Int {
+		calendar.component(.minute, from: self)
+	}
 }
