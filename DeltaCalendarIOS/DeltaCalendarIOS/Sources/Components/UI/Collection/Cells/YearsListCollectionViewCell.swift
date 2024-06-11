@@ -3,7 +3,6 @@ import UIKit
 internal final class YearsListCollectionViewCell: UICollectionViewCell, ValueLayout {
 
 	typealias YearsDataSource = UICollectionViewDiffableDataSource<BaseSection, ItemID>
-	typealias value = Int
 
 	private lazy var collectionView: UICollectionView = {
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
@@ -12,20 +11,16 @@ internal final class YearsListCollectionViewCell: UICollectionViewCell, ValueLay
 		collectionView.showsVerticalScrollIndicator = false
 		collectionView.bounces = false
 		collectionView.delegate = self
+		collectionView.decelerationRate = .fast
 		collectionView.collectionViewLayout = self.createCompositionLayout()
 		return collectionView
 	}()
 	private lazy var dataSource: YearsDataSource = {
 		self.createDataSource()
 	}()
-	private var data: [YearItem] = [] {
-		didSet {
-			let ids = self.data.map { $0.id }
-			self.configureCollection(with: ids)
-		}
-	}
+	private var data: [YearItem] = []
 
-	public var selectHandler: ((Int) -> Void)?
+	public var selectHandler: ((UpdateSelectingModel) -> Void)?
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -39,14 +34,25 @@ internal final class YearsListCollectionViewCell: UICollectionViewCell, ValueLay
 	func configure(with data: [YearItem]) {
 		guard self.data.isEmpty else { return }
 		self.data = data
+
+		self.configureCollection(with: data)
 	}
 }
 
-// MARK: - CollectionViewDelegate
-
 extension YearsListCollectionViewCell: UICollectionViewDelegate {
-	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		
+
+	func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, 
+						forItemAt indexPath: IndexPath) {
+		UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: Resources.feedbackVal)
+	}
+
+	func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+		guard !decelerate else { return }
+		self.selectYear()
+	}
+
+	func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+		self.selectYear()
 	}
 }
 
@@ -57,18 +63,46 @@ private extension YearsListCollectionViewCell {
 		self.collectionView.snp.makeConstraints { $0.edges.equalTo(self.contentView) }
 	}
 
-	func configureCollection(with ids: [ItemID]) {
-		guard !ids.isEmpty else { return }
+	func configureCollection(with data: [YearItem]) {
+		guard !data.isEmpty, let selectedRow = self.data.firstIndex(where: { $0.isSelected })
+		else { return }
 
 		var snapshot = self.dataSource.snapshot()
 		snapshot.appendSections([.main])
 
 		self.dataSource.apply(snapshot, animatingDifferences: false)
 
+		let ids = self.data.map { $0.id }
+		let selectedIndexPath = IndexPath(row: selectedRow, section: BaseSection.main.rawValue)
+
 		var section = SectionSnapshot()
 		section.append(ids)
 
-		self.dataSource.apply(section, to: .main, animatingDifferences: false)
+		self.dataSource.apply(section, to: .main, animatingDifferences: true) { [weak self] in
+			self?.collectionView.scrollToItem(at: selectedIndexPath, at: .centeredHorizontally, animated: false)
+		}
+	}
+
+	func selectYear() {
+		guard let index = self.collectionView.currentIndexPath()?.row,
+			  let prevIndex = self.data.firstIndex(where: { $0.isSelected }), index != prevIndex
+		else { return }
+
+		self.data[index].isSelected.toggle()
+		self.data[prevIndex].isSelected.toggle()
+
+		self.collectionView.scrollToItem(at: IndexPath(row: index, section: BaseSection.main.rawValue),
+										 at: .centeredHorizontally, animated: true)
+
+		let ids = [self.data[index].id, self.data[prevIndex].id]
+
+		var snapshot = self.dataSource.snapshot()
+		snapshot.reloadItems(ids)
+
+		self.dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			let updateData = UpdateSelectingModel(prevIndex: prevIndex, index: index)
+			self?.selectHandler?(updateData)
+		}
 	}
 
 	// MARK: - DataSource
@@ -82,7 +116,7 @@ private extension YearsListCollectionViewCell {
 			
 			guard let year = self?.data[indexPath.row] else { return nil }
 
-			let item = ValueItem(value: year.value, isSelected: false, id: year.id)
+			let item = ValueItem(value: year.value, isMock: year.isMock, isSelected: year.isSelected, id: year.id)
 			return collectionView.dequeueConfiguredReusableCell(using: valueRegistratrion, for: indexPath, item: item)
 		}
 	}
@@ -93,12 +127,16 @@ private extension YearsListCollectionViewCell {
 		
 		let sectionProvider = { [weak self] (sectionIndex: Int, environment: NSCollectionLayoutEnvironment)
 			-> NSCollectionLayoutSection? in
-			let frame = self?.contentView.frame ?? .zero
 			let dataCount = self?.data.count ?? 0
 
-			return self?.valueLayout(parentFrame: frame, dataCount: dataCount)
+			return self?.valueLayout(dataCount: dataCount)
 		}
 
-		return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
+		/// create config for scroll methods will be called.
+		let config = UICollectionViewCompositionalLayoutConfiguration()
+		config.scrollDirection = .horizontal
+		return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider, configuration: config)
 	}
 }
+
+extension YearsListCollectionViewCell: ValueCellRegistratable {}

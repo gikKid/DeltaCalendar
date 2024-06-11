@@ -4,9 +4,6 @@ internal protocol DaysLayout {}
 
 extension DaysLayout {
 
-	typealias DayCellRegistration = UICollectionView
-		.CellRegistration<DayCollectionViewCell, DayItem>
-
 	func daysLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
 
 		let weekdaysCount = Resources.weekdays.count
@@ -26,11 +23,5 @@ extension DaysLayout {
 		section.interGroupSpacing = SpaceResources.small
 
 		return section
-	}
-
-	func createDayCellRegistration() -> DayCellRegistration {
-		DayCellRegistration { (cell, _, item) in
-			cell.configure(with: item)
-		}
 	}
 }

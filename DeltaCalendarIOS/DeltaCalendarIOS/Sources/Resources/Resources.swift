@@ -10,4 +10,7 @@ internal enum Resources {
 									 TextResources.sun]
 	static let monthCount: Int = 12
 	static let feedbackVal: CGFloat = 0.5
+	static let selectingYearGap: Int = 18
+	static let minValScale: CGFloat = 0.7
+	static let maxValScale: CGFloat = 1.1
 }

@@ -1,21 +1,8 @@
 import UIKit
 
-internal protocol MonthLayout {
-	func monthTitle(at: IndexPath) -> String
-	func nextMonthTapped()
-	func prevMonthTapped()
-	func daySelected(at index: Int)
-}
+internal protocol MonthLayout {}
 
-extension MonthLayout where Self: AnyObject {
-
-	typealias MonthCellRegistration = UICollectionView
-		.CellRegistration<MonthCollectionViewCell, MonthItem>
-
-	typealias MonthHeaderRegistration = UICollectionView
-		.SupplementaryRegistration<MonthCollectionReusableView>
-
-	// MARK: - Layout
+extension MonthLayout {
 
 	func monthLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
 
@@ -40,33 +27,5 @@ extension MonthLayout where Self: AnyObject {
 		section.boundarySupplementaryItems = [headerItem]
 
 		return section
-	}
-
-	// MARK: - Registration
-
-	func createMonthCellRegistration() -> MonthCellRegistration {
-		MonthCellRegistration { [weak self] (cell, _, item) in
-			cell.configure(with: item.days)
-
-			cell.daySelectedHandler = { index in
-				self?.daySelected(at: index)
-			}
-		}
-	}
-
-	func createMonthHeaderRegistration(_ theme: Theme) -> MonthHeaderRegistration {
-		MonthHeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) {
-			[weak self] (view, _, indexPath) in
-			let title = self?.monthTitle(at: indexPath) ?? "-"
-
-			view.configure(monthTitle: title, theme: theme)
-
-			view.eventHandler = { event in
-				switch event {
-				case .nextMonth: self?.nextMonthTapped()
-				case .prevMonth: self?.prevMonthTapped()
-				}
-			}
-		}
 	}
 }

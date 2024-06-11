@@ -13,6 +13,7 @@ final class DeltaCalendarView: UIView {
 	private var subscriptions = Set<AnyCancellable>()
 	private let startData: StartModel
 
+	private weak var monthHeader: MonthCollectionReusableView?
 	private lazy var collectionView: UICollectionView = {
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
 		collectionView.backgroundColor = .clear
@@ -61,19 +62,19 @@ extension DeltaCalendarView: UICollectionViewDelegate {
 	}
 }
 
-// MARK: - YearsListLayout
+// MARK: - YearsListCellRegistratable
 
-extension DeltaCalendarView: YearsListLayout {
-	func yearSelected(year: Int) {
-		
+extension DeltaCalendarView: YearsListCellRegistratable {
+	func yearSelected(_ data: UpdateSelectingModel) {
+		self.presenter.yearSelected(data)
 	}
 }
 
-// MARK: - MonthLayout
+// MARK: - MonthHeaderRegistratable
 
-extension DeltaCalendarView: MonthLayout {
-	func monthTitle(at: IndexPath) -> String {
-		self.presenter.monthTitle()
+extension DeltaCalendarView: MonthHeaderRegistratable {
+	func monthTitle(at index: Int) -> String {
+		self.presenter.month(at: index)?.title ?? "-"
 	}
 
 	func nextMonthTapped() {
@@ -83,7 +84,11 @@ extension DeltaCalendarView: MonthLayout {
 	func prevMonthTapped() {
 		self.presenter.makePrevMonth()
 	}
+}
 
+// MARK: - MonthCellRegistratable
+
+extension DeltaCalendarView: MonthCellRegistratable {
 	func daySelected(at index: Int) {
 		self.presenter.updateDaySelecting(at: index)
 	}
@@ -104,11 +109,7 @@ private extension DeltaCalendarView {
 		self.presenter.monthIndexPublisher
 			.dropFirst()
 			.sink { [weak self] index in
-				guard let section = self?.dataSource.snapshot().indexOfSection(.month)
-				else { return }
-
-				let indexPath = IndexPath(row: index, section: section)
-				self?.scrollTo(at: indexPath, deadline: .now(), animated: true)
+				self?.scrollToMonth(to: index)
 			}.store(in: &self.subscriptions)
 
 		self.presenter.selectedDatePublisher.sink { [weak self] date in
@@ -120,6 +121,20 @@ private extension DeltaCalendarView {
 
 		guard let indexPath = self.presenter.currentMonth() else { return }
 		self.scrollTo(at: indexPath, deadline: .now() + 0.1, animated: false)
+	}
+
+	func scrollToMonth(to index: Int) {
+		guard let section = self.dataSource.snapshot().indexOfSection(.month)
+		else { return }
+
+		let indexPath = IndexPath(row: index, section: section)
+		self.scrollTo(at: indexPath, deadline: .now(), animated: true)
+
+		let isSwitchingOff = self.startData.pickingYearData != nil
+		let title = self.monthTitle(at: indexPath.row)
+
+		self.monthHeader?.configure(monthTitle: title, theme: self.startData.theme,
+									isSwitchingOff: isSwitchingOff)
 	}
 
 	func scrollTo(at item: IndexPath, deadline: DispatchTime, animated: Bool) {
@@ -168,10 +183,14 @@ private extension DeltaCalendarView {
 
 	func setWeekdaysHeader() {
 
-		let headerRegistration = self.createMonthHeaderRegistration(self.startData.theme)
+		let isSwitchingOff = self.startData.pickingYearData != nil
+		let headerRegistration = self.createMonthHeaderRegistration(isSwitchingOff: isSwitchingOff,
+																	theme: self.startData.theme)
 
 		self.dataSource.supplementaryViewProvider = { [weak self] (_, _, indexPath) in
-			return self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+			let header = self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+			self?.monthHeader = header
+			return header
 		}
 	}
 
@@ -197,3 +216,5 @@ private extension DeltaCalendarView {
 		return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
 	}
 }
+
+extension DeltaCalendarView: MonthLayout, YearsListLayout {}

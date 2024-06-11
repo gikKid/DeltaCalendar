@@ -22,6 +22,6 @@ internal enum Section {
 	}
 }
 
-internal enum BaseSection {
+internal enum BaseSection: Int {
 	case main
 }

@@ -1,17 +1,12 @@
 import UIKit
 
-internal protocol YearsListLayout {
-	func yearSelected(year: Int)
-}
+internal protocol YearsListLayout {}
 
-extension YearsListLayout where Self: AnyObject {
-
-	typealias YearsListCellRegistration = UICollectionView
-		.CellRegistration<YearsListCollectionViewCell, YearsItem>
+extension YearsListLayout {
 
 	func yearsLayout() -> NSCollectionLayoutSection {
 
-		let itemHeight = TextSizeResources.moreBig
+		let itemHeight = HeightResources.text
 		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
 											  heightDimension: .estimated(itemHeight))
 
@@ -27,15 +22,5 @@ extension YearsListLayout where Self: AnyObject {
 									  bottom: yOffset * 2, trailing: xOffset)
 
 		return section
-	}
-
-	func createYearsCellRegistration() -> YearsListCellRegistration {
-		YearsListCellRegistration { [weak self] (cell, _, item) in
-			cell.configure(with: item.data)
-
-			cell.selectHandler = { [weak self] year in
-				self?.yearSelected(year: year)
-			}
-		}
 	}
 }

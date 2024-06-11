@@ -68,10 +68,6 @@ extension MonthCollectionViewCell: UICollectionViewDelegate {
 	}
 }
 
-// MARK: - DaysLayout
-
-extension MonthCollectionViewCell: DaysLayout {}
-
 private extension MonthCollectionViewCell {
 
 	// MARK: - Configuring
@@ -132,3 +128,5 @@ private extension MonthCollectionViewCell {
 		}
 	}
 }
+
+extension MonthCollectionViewCell: DaysLayout, DayCellRegistratable {}

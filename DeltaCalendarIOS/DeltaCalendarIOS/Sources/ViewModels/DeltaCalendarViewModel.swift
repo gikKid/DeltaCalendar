@@ -6,6 +6,7 @@ internal protocol DeltaCalendarViewModelProtocol: AnyObject {
 	var data: [YearItem] { get }
 
 	func toggleSelecting(at date: SelectedModel)
+	func toggleYearSelecting(_ data: UpdateSelectingModel)
 }
 
 internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
@@ -29,6 +30,11 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 		self.data[date.yearIndex].months[date.monthIndex].days[date.dayIndex]
 			.isSelected.toggle()
 	}
+
+	func toggleYearSelecting(_ data: UpdateSelectingModel) {
+		self.data[data.prevIndex].isSelected.toggle()
+		self.data[data.index].isSelected.toggle()
+	}
 }
 
 private extension DeltaCalendarViewModel {
@@ -41,10 +47,16 @@ private extension DeltaCalendarViewModel {
 
 		let monthsText = DateFormatter().monthSymbols!
 
-		let years = (from...to)
+		let isPickingYear = startData.pickingYearData != nil
+
+		let yearsRange = (from...to)
+		let selectedDifYear = to - Resources.selectingYearGap
+		let selectedYear = yearsRange.contains(selectedDifYear) ? selectedDifYear : to
+
+		let years = yearsRange
 			.map { DateComponents(calendar: self.calendar, year: $0).date! }
 
-		return years.map { year in
+		var items = years.map { year in
 
 			let digitYear = year.year()
 
@@ -64,8 +76,17 @@ private extension DeltaCalendarViewModel {
 				return MonthItem(title: title, days: days)
 			}
 
-			return .init(value: digitYear, months: monthItems, isSelected: false)
+			let isSelected = isPickingYear ? digitYear == selectedYear : from == digitYear
+
+			return YearItem(value: digitYear, months: monthItems, isSelected: isSelected, isMock: false)
 		}
+
+		if isPickingYear {
+			items.insert(.init(value: 0, months: [], isSelected: false, isMock: true), at: 0)
+			items.append(.init(value: 0, months: [], isSelected: false, isMock: true))
+		}
+
+		return items
 	}
 
 	func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel) -> [DayItem] {

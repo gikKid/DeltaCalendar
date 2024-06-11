@@ -3,9 +3,11 @@ import Combine
 
 internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 
+	typealias DataSource = DeltaCalendarView.DeltaCalendarDataSource
+
 	@Published private(set) var selectedData: SelectedModel?
-	@Published private(set) var currentMonthIndex: Int = 0
-	private(set) var currentYearIndex: Int = 0
+	@Published private var currentMonthIndex: Int = 0
+	private var currentYearIndex: Int
 	private(set) var yearsItem: YearsItem?
 	weak var viewModel: DeltaCalendarViewModelProtocol?
 	weak var dataSource: DataSource?
@@ -29,6 +31,11 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	init(_ dataSource: DataSource, _ viewModel: DeltaCalendarViewModelProtocol) {
 		self.dataSource = dataSource
 		self.viewModel = viewModel
+
+		guard let selectedYearIndex = viewModel.data.firstIndex(where: { $0.isSelected })
+		else { fatalError("[ERROR]: Year was not selected.") }
+
+		self.currentYearIndex = selectedYearIndex
 	}
 
 	func setupDS(with startData: StartModel) {
@@ -50,6 +57,18 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	}
 
 	// MARK: - Updating state methods
+
+	func yearSelected(_ data: UpdateSelectingModel) {
+		guard data.index != self.currentYearIndex else { return }
+
+		self.viewModel?.toggleYearSelecting(data)
+
+		self.currentYearIndex = data.index
+		self.currentMonthIndex = 0
+		self.selectedData = nil
+
+		self.reconfigureMonths(animated: true)
+	}
 
 	func updateDaySelecting(at dayIndex: Int) {
 		if let selectedData = self.selectedData {
@@ -114,12 +133,6 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 		return data[self.currentYearIndex].months[index]
 	}
 
-	func monthTitle() -> String {
-		guard let data = self.viewModel?.data else { return "-" }
-
-		return data[self.currentYearIndex].months[self.currentMonthIndex].title
-	}
-
 	func section(at index: Int, startData: StartModel) -> Section? {
 		let isShowYear = startData.pickingYearData != nil
 		let isShowTime = startData.showTimeData != nil
@@ -157,7 +170,6 @@ private extension DeltaCalendarViewPresenter {
 
 		self.currentYearIndex += 1
 		self.currentMonthIndex = 0
-
 		self.selectedData = nil
 
 		self.reconfigureMonths(animated: true)
@@ -168,7 +180,6 @@ private extension DeltaCalendarViewPresenter {
 
 		self.currentYearIndex -= 1
 		self.currentMonthIndex = Resources.monthCount - 1
-
 		self.selectedData = nil
 
 		self.reconfigureMonths(animated: true)
@@ -191,31 +202,15 @@ private extension DeltaCalendarViewPresenter {
 		let index = currentIndex.row
 
 		switch section {
-		case .year: self.yearScrolled(to: index)
 		case .month: self.monthScrolled(to: index)
+		case .year: break
 		}
 	}
 
 	func monthScrolled(to index: Int) {
+		guard self.currentMonthIndex != index else { return }
+
 		self.currentMonthIndex = index
-		self.reloadSections(sections: [.month])
-	}
-
-	func yearScrolled(to index: Int) {
-
-	}
-
-	// MARK: - Section managing
-
-	func reloadSections(sections: [Section]) {
-		guard var snapshot = self.dataSource?.snapshot() else { return }
-
-		if #available(iOS 15, *) {
-			self.dataSource?.applySnapshotUsingReloadData(snapshot)
-		} else {
-			snapshot.reloadSections(sections)
-			self.dataSource?.apply(snapshot, animatingDifferences: true)
-		}
 	}
 
 	func section(index: IndexPath) -> Section? {

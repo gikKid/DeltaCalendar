@@ -29,5 +29,4 @@ internal enum TextSizeResources {
 	static let small: CGFloat = 12.0
 	static let mid: CGFloat = 17.0
 	static let big: CGFloat = 20.0
-	static let moreBig: CGFloat = 25.0
 }

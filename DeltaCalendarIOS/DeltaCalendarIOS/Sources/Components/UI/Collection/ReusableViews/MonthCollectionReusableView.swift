@@ -48,15 +48,19 @@ internal final class MonthCollectionReusableView: UICollectionReusableView {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(monthTitle: String, theme: Theme) {
+	func configure(monthTitle: String, theme: Theme, isSwitchingOff: Bool) {
 		self.monthLabel.text = monthTitle
 
 		let color = theme == .dark ? ColorsResources.textLightColor :
 		ColorsResources.textDarkColor
 
 		self.monthLabel.textColor = color
+
 		self.nextButton.imageView?.tintColor = color
+		self.nextButton.isHidden = isSwitchingOff
+
 		self.prevButton.imageView?.tintColor = color
+		self.prevButton.isHidden = isSwitchingOff
 	}
 }
 

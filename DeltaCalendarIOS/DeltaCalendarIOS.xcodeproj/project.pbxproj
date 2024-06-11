@@ -11,6 +11,13 @@
 		3B1BC5522C0F5FE100AED782 /* DCViewPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */; };
 		3B4FC8302C0DE2A100C41968 /* MonthCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FC82F2C0DE2A100C41968 /* MonthCollectionReusableView.swift */; };
 		3B4FC8322C0E106400C41968 /* StartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FC8312C0E106400C41968 /* StartModel.swift */; };
+		3B5B13912C171D07005D5602 /* ValueCellRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13902C171D07005D5602 /* ValueCellRegistration.swift */; };
+		3B5B13932C172380005D5602 /* DayCellRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13922C172380005D5602 /* DayCellRegistratable.swift */; };
+		3B5B13952C1723DD005D5602 /* MonthCellRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13942C1723DD005D5602 /* MonthCellRegistratable.swift */; };
+		3B5B13982C1724A2005D5602 /* MonthHeaderRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13972C1724A2005D5602 /* MonthHeaderRegistratable.swift */; };
+		3B5B139A2C172594005D5602 /* YearsListCellRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13992C172594005D5602 /* YearsListCellRegistratable.swift */; };
+		3B5B139C2C1746E3005D5602 /* ValueModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B139B2C1746E3005D5602 /* ValueModel.swift */; };
+		3B5B139E2C174708005D5602 /* UpdateSelectingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B139D2C174708005D5602 /* UpdateSelectingModel.swift */; };
 		3B9ABA232C088F8300E986BA /* MonthCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA222C088F8300E986BA /* MonthCollectionViewCell.swift */; };
 		3B9ABA2A2C08969400E986BA /* DeltaCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */; };
 		3B9ABA2D2C08A68E00E986BA /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */; };
@@ -50,6 +57,13 @@
 		3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCViewPresentable.swift; sourceTree = "<group>"; };
 		3B4FC82F2C0DE2A100C41968 /* MonthCollectionReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthCollectionReusableView.swift; sourceTree = "<group>"; };
 		3B4FC8312C0E106400C41968 /* StartModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartModel.swift; sourceTree = "<group>"; };
+		3B5B13902C171D07005D5602 /* ValueCellRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueCellRegistration.swift; sourceTree = "<group>"; };
+		3B5B13922C172380005D5602 /* DayCellRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCellRegistratable.swift; sourceTree = "<group>"; };
+		3B5B13942C1723DD005D5602 /* MonthCellRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCellRegistratable.swift; sourceTree = "<group>"; };
+		3B5B13972C1724A2005D5602 /* MonthHeaderRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthHeaderRegistratable.swift; sourceTree = "<group>"; };
+		3B5B13992C172594005D5602 /* YearsListCellRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsListCellRegistratable.swift; sourceTree = "<group>"; };
+		3B5B139B2C1746E3005D5602 /* ValueModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueModel.swift; sourceTree = "<group>"; };
+		3B5B139D2C174708005D5602 /* UpdateSelectingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSelectingModel.swift; sourceTree = "<group>"; };
 		3B9ABA222C088F8300E986BA /* MonthCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCollectionViewCell.swift; sourceTree = "<group>"; };
 		3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaCalendarViewModel.swift; sourceTree = "<group>"; };
 		3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
@@ -104,6 +118,25 @@
 				3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */,
 			);
 			path = Presenters;
+			sourceTree = "<group>";
+		};
+		3B5B138F2C171CF6005D5602 /* Registration */ = {
+			isa = PBXGroup;
+			children = (
+				3B5B13922C172380005D5602 /* DayCellRegistratable.swift */,
+				3B5B13942C1723DD005D5602 /* MonthCellRegistratable.swift */,
+				3B5B13902C171D07005D5602 /* ValueCellRegistration.swift */,
+				3B5B13992C172594005D5602 /* YearsListCellRegistratable.swift */,
+			);
+			path = Registration;
+			sourceTree = "<group>";
+		};
+		3B5B13962C172484005D5602 /* Registration */ = {
+			isa = PBXGroup;
+			children = (
+				3B5B13972C1724A2005D5602 /* MonthHeaderRegistratable.swift */,
+			);
+			path = Registration;
 			sourceTree = "<group>";
 		};
 		3B9777D02C0A00A300C64E72 /* CustomFonts */ = {
@@ -231,6 +264,8 @@
 				3BB07AA82C0770BD00D9E052 /* Section.swift */,
 				3BFF5D1A2C10A2C7005BF0C4 /* SelectedModel.swift */,
 				3B4FC8312C0E106400C41968 /* StartModel.swift */,
+				3B5B139D2C174708005D5602 /* UpdateSelectingModel.swift */,
+				3B5B139B2C1746E3005D5602 /* ValueModel.swift */,
 				3BFF5D122C10920E005BF0C4 /* YearItem.swift */,
 			);
 			path = Models;
@@ -253,6 +288,7 @@
 				3B9ABA222C088F8300E986BA /* MonthCollectionViewCell.swift */,
 				3BEACA182C10B3BD0075E7FD /* ValueCollectionViewCell.swift */,
 				3BFF5D142C109F12005BF0C4 /* YearsListCollectionViewCell.swift */,
+				3B5B138F2C171CF6005D5602 /* Registration */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -272,6 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				3B4FC82F2C0DE2A100C41968 /* MonthCollectionReusableView.swift */,
+				3B5B13962C172484005D5602 /* Registration */,
 			);
 			path = ReusableViews;
 			sourceTree = "<group>";
@@ -368,23 +405,30 @@
 				3BFCEC3E2C0DD3AE0046FAD8 /* UICollectionView+Extension.swift in Sources */,
 				3BB07AA02C075C6900D9E052 /* SizesResources.swift in Sources */,
 				3BFF5D152C109F12005BF0C4 /* YearsListCollectionViewCell.swift in Sources */,
+				3B5B13912C171D07005D5602 /* ValueCellRegistration.swift in Sources */,
 				3BFF5D172C10A1EF005BF0C4 /* MonthItem.swift in Sources */,
+				3B5B13952C1723DD005D5602 /* MonthCellRegistratable.swift in Sources */,
 				3BB07AC02C07814800D9E052 /* FontsResources.swift in Sources */,
 				3BFF5D192C10A277005BF0C4 /* DayColors.swift in Sources */,
 				3BB07A9D2C075BDE00D9E052 /* DeltaCalendarView.swift in Sources */,
 				3BEACA192C10B3BD0075E7FD /* ValueCollectionViewCell.swift in Sources */,
 				3BFF5D1B2C10A2C7005BF0C4 /* SelectedModel.swift in Sources */,
 				3BDFEC202C09D91C00FE84F8 /* MonthLayout.swift in Sources */,
+				3B5B13982C1724A2005D5602 /* MonthHeaderRegistratable.swift in Sources */,
 				3BB07A7D2C07596700D9E052 /* AppDelegate.swift in Sources */,
 				3BFF5D1D2C10A332005BF0C4 /* ImageResources.swift in Sources */,
 				3BB07ABC2C07805700D9E052 /* DaysLayout.swift in Sources */,
 				3B9ABA232C088F8300E986BA /* MonthCollectionViewCell.swift in Sources */,
 				3B4FC8322C0E106400C41968 /* StartModel.swift in Sources */,
 				3BB07A7F2C07596700D9E052 /* SceneDelegate.swift in Sources */,
+				3B5B13932C172380005D5602 /* DayCellRegistratable.swift in Sources */,
 				3B4FC8302C0DE2A100C41968 /* MonthCollectionReusableView.swift in Sources */,
+				3B5B139A2C172594005D5602 /* YearsListCellRegistratable.swift in Sources */,
+				3B5B139E2C174708005D5602 /* UpdateSelectingModel.swift in Sources */,
 				3BB07AB62C077D5E00D9E052 /* DayItem.swift in Sources */,
 				3B1BC5522C0F5FE100AED782 /* DCViewPresentable.swift in Sources */,
 				3BB07AC22C07830700D9E052 /* Resources.swift in Sources */,
+				3B5B139C2C1746E3005D5602 /* ValueModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

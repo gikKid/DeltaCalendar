@@ -3,8 +3,11 @@ import UIKit
 internal final class ValueCollectionViewCell: UICollectionViewCell {
 
 	private let valueLabel: UILabel = {
+		let size = TextSizeResources.big
+
 		let label = UILabel()
 		label.textAlignment = .center
+		label.font = UIFont(name: FontsResources.segoe, size: size)
 		return label
 	}()
 
@@ -19,10 +22,6 @@ internal final class ValueCollectionViewCell: UICollectionViewCell {
 
 	func configure<T: CustomStringConvertible>(text: T, isSelected: Bool) {
 		self.valueLabel.text = text.description
-
-		let size = isSelected ? TextSizeResources.moreBig : TextSizeResources.big
-		self.valueLabel.font = UIFont(name: FontsResources.segoe, size: size)
-
 		self.valueLabel.textColor = isSelected ? ColorsResources.selectedValColor :
 		ColorsResources.disabledColor
 	}
