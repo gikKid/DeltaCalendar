@@ -48,13 +48,18 @@ extension YearsListCollectionViewCell: UICollectionViewDelegate {
 		UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: Resources.feedbackVal)
 	}
 
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		self.selectYear(at: indexPath.row)
+	}
+
 	func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-		guard !decelerate else { return }
-		self.selectYear()
+		guard !decelerate, let currentPath = self.collectionView.currentIndexPath() else { return }
+		self.selectYear(at: currentPath.row)
 	}
 
 	func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-		self.selectYear()
+		guard let currentPath = self.collectionView.currentIndexPath() else { return }
+		self.selectYear(at: currentPath.row)
 	}
 }
 
@@ -88,24 +93,24 @@ private extension YearsListCollectionViewCell {
 		}
 	}
 
-	func selectYear() {
-		guard let currentPath = self.collectionView.currentIndexPath(),
-			  let prevIndex = self.data.firstIndex(where: { $0.isSelected }),
-			  currentPath.row != prevIndex else { return }
+	func selectYear(at index: Int) {
+		guard let prevIndex = self.data.firstIndex(where: { $0.isSelected }), index != prevIndex
+		else { return }
 
-		self.data[currentPath.row].isSelected.toggle()
+		self.data[index].isSelected.toggle()
 		self.data[prevIndex].isSelected.toggle()
 
+		let currentPath = IndexPath(row: index, section: BaseSection.main.rawValue)
 		self.collectionView.scrollToItem(at: currentPath, at: .centeredHorizontally, animated: true)
 
-		let ids = [self.data[currentPath.row].id, self.data[prevIndex].id]
+		let ids = [self.data[index].id, self.data[prevIndex].id]
 
 		var snapshot = self.dataSource.snapshot()
 		snapshot.reloadItems(ids)
 
 		self.dataSource.apply(snapshot, animatingDifferences: false)
 
-		let updateData = UpdateSelectingModel(prevIndex: prevIndex, index: currentPath.row)
+		let updateData = UpdateSelectingModel(prevIndex: prevIndex, index: index)
 		self.selectHandler?(updateData)
 	}
 

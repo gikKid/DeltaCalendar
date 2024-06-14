@@ -7,7 +7,8 @@ final class DCTestingViewController: UIViewController {
 		let pickingYearsData = PickingYearModel(from: 2020, to: 2024)
 
 		let dayTimes: [DayTimeStartModel] =
-		[.init(weekday: 1, startDate: "10:00", endDate: "17:30"),
+		[
+		 .init(weekday: 1, startDate: "10:00", endDate: "17:30"),
 		 .init(weekday: 2, startDate: "09:00", endDate: "18:00")
 		]
 
