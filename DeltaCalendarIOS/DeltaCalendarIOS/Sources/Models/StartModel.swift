@@ -28,10 +28,10 @@ struct PickingYearModel {
 // MARK: - ShowTimeModel
 
 struct ShowTimeModel {
-	let data: [DayTimeModel]
+	let data: [DayTimeStartModel]
 	let offset: Int
 
-	init(data: [DayTimeModel], offset: Int) {
+	init(data: [DayTimeStartModel], offset: Int) {
 
 		guard offset >= 1 else { fatalError("[ERROR]: Time offset must be equal or more than 1.") }
 
@@ -40,9 +40,9 @@ struct ShowTimeModel {
 	}
 }
 
-// MARK: - DayTimeModel
+// MARK: - DayTimeStartModel
 
-struct DayTimeModel {
+struct DayTimeStartModel {
 	let weekday: Int
 	let startDate: Date
 	let endDate: Date
@@ -53,15 +53,12 @@ struct DayTimeModel {
 			fatalError("[ERROR]: Weekday is not correct. It must be value between 1 and 7 (\(weekday)")
 		}
 
-		let timeFormat = Resources.timeFormat
-		let dateFormatte = DateFormatter()
-		dateFormatte.locale = .current
-		dateFormatte.timeZone = .init(secondsFromGMT: 0)
-		dateFormatte.dateFormat = timeFormat
+		let format = Resources.timeFormat
+		let timeFormatter = DateFormatter.build(format: format)
 
-		guard let start = dateFormatte.date(from: startDate),
-			  let end = dateFormatte.date(from: endDate)
-		else { fatalError("[ERROR]: Date format is '\(timeFormat)'") }
+		guard let start = timeFormatter.date(from: startDate),
+			  let end = timeFormatter.date(from: endDate)
+		else { fatalError("[ERROR]: Time format is '\(format)'") }
 
 		guard start.hours() <= end.hours(), start.minutes() <= end.minutes() else {
 			fatalError("[ERROR]: 'Start date' parameter must be less than 'end date' parameter at time in day")

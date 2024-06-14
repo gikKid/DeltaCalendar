@@ -7,15 +7,16 @@ internal protocol DeltaCalendarViewModelProtocol: AnyObject {
 
 	func toggleSelecting(at date: SelectedModel)
 	func toggleYearSelecting(_ data: UpdateSelectingModel)
+	func date(selectedData: SelectedModel, timeIndex: Int) -> Date?
 }
 
 internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
-	private let calendar = Calendar.current
+	private let timeFormatter = DateFormatter.build(format: Resources.timeFormat)
 	private(set) var data: [YearItem] = []
 	private let defMaxYear: Int = Resources.maxYear
 	private lazy var defStartYear: Int = {
-		Date().year(using: self.calendar)
+		Date().year(using: self.timeFormatter.calendar)
 	}()
 
 	init(with data: StartModel) {
@@ -35,6 +36,19 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 		self.data[data.prevIndex].isSelected.toggle()
 		self.data[data.index].isSelected.toggle()
 	}
+
+	func date(selectedData: SelectedModel, timeIndex: Int) -> Date? {
+
+		let day = self.data[selectedData.yearIndex].months[selectedData.monthIndex]
+			.days[selectedData.dayIndex].data
+		let time = day.timeData[timeIndex].title
+
+		guard let date = day.date else { return nil }
+
+		let dayText = DateFormatter.build(format: Resources.isoFormat).string(from: date)
+
+		return DateFormatter.build(format: Resources.dateFormat).date(from: "\(dayText) \(time)")
+	}
 }
 
 private extension DeltaCalendarViewModel {
@@ -46,6 +60,8 @@ private extension DeltaCalendarViewModel {
 		guard from <= to else { return [] }
 
 		let monthsText = DateFormatter().monthSymbols!
+		let calendar = self.timeFormatter.calendar ?? .current
+		let timeZone = self.timeFormatter.timeZone
 
 		let isPickingYear = startData.pickingYearData != nil
 
@@ -54,19 +70,20 @@ private extension DeltaCalendarViewModel {
 		let selectedYear = yearsRange.contains(selectedDifYear) ? selectedDifYear : to
 
 		let years = yearsRange
-			.map { DateComponents(calendar: self.calendar, year: $0).date! }
+			.map { DateComponents(calendar: calendar, timeZone: timeZone ,year: $0).date! }
 
 		var items = years.map { year in
 
 			let digitYear = year.year()
 
-			let months = self.calendar.range(of: .month, in: .year, for: year)!
+			let months = calendar.range(of: .month, in: .year, for: year)!
 
 			let monthItems: [MonthItem] = months.map { month in
 
-				let monthDate = DateComponents(calendar: self.calendar, year: digitYear, month: month).date!
+				let monthDate = DateComponents(calendar: calendar, timeZone: timeZone,
+											   year: digitYear, month: month).date!
 
-				let daysRange = self.calendar.range(of: .day, in: .month, for: monthDate)!
+				let daysRange = calendar.range(of: .day, in: .month, for: monthDate)!
 				let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData)
 
 				let monthTitle = monthsText[month - 1]
@@ -92,25 +109,30 @@ private extension DeltaCalendarViewModel {
 	func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel) -> [DayItem] {
 
 		let today = Date()
+		let calendar = self.timeFormatter.calendar ?? .current
+		let timeZone = self.timeFormatter.timeZone
 
 		let items = data.map {
-			let dayDate = DateComponents(calendar: calendar, year: year, month: month, day: $0).date!
-			let isSame = self.calendar.compare(dayDate, to: today, toGranularity: .day) == .orderedSame
-			let description = isSame ? TextResources.today : ""
-			let weekday = self.calendar.component(.weekday, from: dayDate)
 
-			let time: [Date]
+			let dayDate = DateComponents(calendar: calendar, timeZone: timeZone,
+										 year: year, month: month, day: $0).date!
+
+			let isSame = calendar.compare(dayDate, to: today, toGranularity: .day) == .orderedSame
+			let description = isSame ? TextResources.today : ""
+			let weekday = calendar.component(.weekday, from: dayDate)
+
+			let timeData: [DayTime]
 			if let showTimeData = startData.showTimeData {
-				time = self.dayTime(weekDay: weekday, resource: showTimeData)
+				timeData = self.dayTime(weekDay: weekday, resource: showTimeData)
 			} else {
-				time = []
+				timeData = []
 			}
 
 			let dayData = Day(title: String($0), description: description,
-							  weekday: weekday, date: dayDate, time: time)
+							  weekday: weekday, date: dayDate, timeData: timeData)
 
 
-			let isDisabled = startData.showTimeData != nil ? time.isEmpty : 
+			let isDisabled = startData.showTimeData != nil ? timeData.isEmpty : 
 			((startData.weekendsOff && self.isWeekday(at: dayDate)) ||
 			(startData.pastDaysOff && self.isPastDay(at: dayDate)))
 
@@ -124,25 +146,35 @@ private extension DeltaCalendarViewModel {
 	}
 
 	func isWeekday(at date: Date) -> Bool {
-		let weekday = self.calendar.component(.weekday, from: date)
+		let calendar = self.timeFormatter.calendar ?? .current
+		let weekday = calendar.component(.weekday, from: date)
+
 		return Resources.weekends.contains(weekday)
 	}
 
 	func isPastDay(at date: Date) -> Bool {
-		self.calendar.compare(Date(), to: date, toGranularity: .day) == .orderedDescending
+		let calendar = self.timeFormatter.calendar ?? .current
+		return calendar.compare(Date(), to: date, toGranularity: .day) == .orderedDescending
 	}
 
-	func dayTime(weekDay: Int, resource: ShowTimeModel) -> [Date] {
+	func dayTime(weekDay: Int, resource: ShowTimeModel) -> [DayTime] {
 		guard let dayData = resource.data.first(where: { $0.weekday == weekDay })
 		else { return [] }
 
-		var startDate = dayData.startDate
-		var timeData: [Date] = [startDate]
+		var firstTime = dayData.startDate
+		let firstMockTime = DayTime(value: Date(), isSelected: false, isMock: true)
+		let startDate = DayTime(value: firstTime, isSelected: true, isMock: false)
 
-		while startDate < dayData.endDate {
-			startDate = startDate.addingTimeInterval(Double(resource.offset) * 60.0)
-			timeData.append(startDate)
+		var timeData: [DayTime] = [firstMockTime, startDate]
+
+		while firstTime < dayData.endDate {
+			firstTime = firstTime.addingTimeInterval(Double(resource.offset) * 60.0)
+			let time = DayTime(value: firstTime, isSelected: false, isMock: false)
+			timeData.append(time)
 		}
+
+		let lastMockItem = DayTime(value: Date(), isSelected: false, isMock: true)
+		timeData.append(lastMockItem)
 
 		return timeData
 	}
@@ -161,7 +193,7 @@ private extension DeltaCalendarViewModel {
 		(Resources.weekdays.count - 1) /// case when sunday is first day of month, at gregorian calendar index is 1.
 
 		(0..<dif).forEach { _ in
-			let dayData = Day(title: "", description: "", weekday: 0, date: nil, time: [])
+			let dayData = Day(title: "", description: "", weekday: 0, date: nil, timeData: [])
 			let colors = DayColors(theme: theme)
 			let mockItem = DayItem(data: dayData, colors: colors, isDisabled: true, isSelected: false)
 

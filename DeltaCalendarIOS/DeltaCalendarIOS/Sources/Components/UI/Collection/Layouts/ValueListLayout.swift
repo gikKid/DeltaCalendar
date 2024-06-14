@@ -1,10 +1,10 @@
 import UIKit
 
-internal protocol YearsListLayout {}
+internal protocol ValueListLayout {}
 
-extension YearsListLayout {
+extension ValueListLayout {
 
-	func yearsLayout() -> NSCollectionLayoutSection {
+	func valueListLayout() -> NSCollectionLayoutSection {
 
 		let itemHeight = HeightResources.text
 		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),

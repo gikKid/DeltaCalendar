@@ -13,7 +13,7 @@ extension YearsListCellRegistratable where Self: AnyObject {
 		YearsListCellRegistration { [weak self] (cell, _, item) in
 			cell.configure(with: item.data)
 
-			cell.selectHandler = { [weak self] updateData in
+			cell.selectHandler = { updateData in
 				self?.yearSelected(updateData)
 			}
 		}

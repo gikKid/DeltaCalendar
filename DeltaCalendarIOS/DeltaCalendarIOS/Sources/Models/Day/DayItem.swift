@@ -4,7 +4,7 @@ internal struct DayItem: Identifiable {
 	let data: Day
 	let colors: DayColors
 	var isDisabled: Bool
-	let id: String = UUID().uuidString
+	let id: ItemID = UUID().uuidString
 	var isSelected: Bool
 }
 
@@ -13,5 +13,5 @@ internal struct Day {
 	let description: String
 	let weekday: Int
 	let date: Date?
-	let time: [Date]
+	let timeData: [DayTime]
 }

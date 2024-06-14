@@ -1,6 +1,6 @@
 import UIKit
 
-internal final class YearsListCollectionViewCell: UICollectionViewCell, ValueLayout {
+internal final class YearsListCollectionViewCell: UICollectionViewCell {
 
 	typealias YearsDataSource = UICollectionViewDiffableDataSource<BaseSection, ItemID>
 
@@ -39,6 +39,8 @@ internal final class YearsListCollectionViewCell: UICollectionViewCell, ValueLay
 	}
 }
 
+// MARK: - UICollectionViewDelegate
+
 extension YearsListCollectionViewCell: UICollectionViewDelegate {
 
 	func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, 
@@ -57,6 +59,9 @@ extension YearsListCollectionViewCell: UICollectionViewDelegate {
 }
 
 private extension YearsListCollectionViewCell {
+
+	// MARK: - Setting logic
+
 	func setupView() {
 		self.contentView.addSubview(self.collectionView)
 
@@ -84,25 +89,24 @@ private extension YearsListCollectionViewCell {
 	}
 
 	func selectYear() {
-		guard let index = self.collectionView.currentIndexPath()?.row,
-			  let prevIndex = self.data.firstIndex(where: { $0.isSelected }), index != prevIndex
-		else { return }
+		guard let currentPath = self.collectionView.currentIndexPath(),
+			  let prevIndex = self.data.firstIndex(where: { $0.isSelected }),
+			  currentPath.row != prevIndex else { return }
 
-		self.data[index].isSelected.toggle()
+		self.data[currentPath.row].isSelected.toggle()
 		self.data[prevIndex].isSelected.toggle()
 
-		self.collectionView.scrollToItem(at: IndexPath(row: index, section: BaseSection.main.rawValue),
-										 at: .centeredHorizontally, animated: true)
+		self.collectionView.scrollToItem(at: currentPath, at: .centeredHorizontally, animated: true)
 
-		let ids = [self.data[index].id, self.data[prevIndex].id]
+		let ids = [self.data[currentPath.row].id, self.data[prevIndex].id]
 
 		var snapshot = self.dataSource.snapshot()
 		snapshot.reloadItems(ids)
 
-		self.dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			let updateData = UpdateSelectingModel(prevIndex: prevIndex, index: index)
-			self?.selectHandler?(updateData)
-		}
+		self.dataSource.apply(snapshot, animatingDifferences: false)
+
+		let updateData = UpdateSelectingModel(prevIndex: prevIndex, index: currentPath.row)
+		self.selectHandler?(updateData)
 	}
 
 	// MARK: - DataSource
@@ -135,8 +139,9 @@ private extension YearsListCollectionViewCell {
 		/// create config for scroll methods will be called.
 		let config = UICollectionViewCompositionalLayoutConfiguration()
 		config.scrollDirection = .horizontal
+
 		return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider, configuration: config)
 	}
 }
 
-extension YearsListCollectionViewCell: ValueCellRegistratable {}
+extension YearsListCollectionViewCell: ValueCellRegistratable, ValueLayout {}

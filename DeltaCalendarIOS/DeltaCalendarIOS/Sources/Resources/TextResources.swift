@@ -7,4 +7,5 @@ internal enum TextResources {
 	static let fri = "Fri"
 	static let sat = "Sat"
 	static let sun = "Sun"
+	static let chooseDay = "Choose a day"
 }

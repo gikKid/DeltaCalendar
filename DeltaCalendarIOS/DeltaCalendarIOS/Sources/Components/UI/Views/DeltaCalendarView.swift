@@ -9,7 +9,7 @@ final class DeltaCalendarView: UIView {
 
 	typealias DeltaCalendarDataSource = UICollectionViewDiffableDataSource<Section, ItemID>
 
-	private var delegate: DeltaCalendarViewDelegate?
+	public var delegate: DeltaCalendarViewDelegate?
 	private var subscriptions = Set<AnyCancellable>()
 	private let startData: StartModel
 
@@ -94,6 +94,15 @@ extension DeltaCalendarView: MonthCellRegistratable {
 	}
 }
 
+// MARK: - DayTimeCellRegistratable
+
+extension DeltaCalendarView: DayTimeCellRegistratable {
+	func timeSelected(_ data: UpdateSelectingModel) {
+		guard let date = self.presenter.timeSelected(data) else { return }
+		self.delegate?.dateSelected(date)
+	}
+}
+
 private extension DeltaCalendarView {
 
 	// MARK: - Setting
@@ -151,9 +160,7 @@ private extension DeltaCalendarView {
 	}
 
 	func setConstraints() {
-		self.collectionView.snp.makeConstraints {
-			$0.edges.equalTo(self)
-		}
+		self.collectionView.snp.makeConstraints { $0.edges.equalTo(self) }
 	}
 
 	// MARK: - DataSource
@@ -162,6 +169,7 @@ private extension DeltaCalendarView {
 
 		let monthRegistration = self.createMonthCellRegistration()
 		let yearsRegistration = self.createYearsCellRegistration()
+		let dayTimeRegistration = self.createDayTimeRegistration()
 
 		return DeltaCalendarDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
@@ -177,6 +185,9 @@ private extension DeltaCalendarView {
 			case .month:
 				let item = self?.presenter.month(at: indexPath.row)
 				return collectionView.dequeueConfiguredReusableCell(using: monthRegistration, for: indexPath, item: item)
+			case .time:
+				let item = self?.presenter.dayTimeData()
+				return collectionView.dequeueConfiguredReusableCell(using: dayTimeRegistration, for: indexPath, item: item)
 			}
 		}
 	}
@@ -208,8 +219,8 @@ private extension DeltaCalendarView {
 			let frame = self?.frame ?? .zero
 
 			switch section {
-			case .year: return self?.yearsLayout()
-			case .month: return self?.monthLayout(parentFrame: frame)
+			case .year, .time: return self?.valueListLayout()
+			case .month: 	   return self?.monthLayout(parentFrame: frame)
 			}
 		}
 
@@ -217,4 +228,4 @@ private extension DeltaCalendarView {
 	}
 }
 
-extension DeltaCalendarView: MonthLayout, YearsListLayout {}
+extension DeltaCalendarView: MonthLayout, ValueListLayout {}

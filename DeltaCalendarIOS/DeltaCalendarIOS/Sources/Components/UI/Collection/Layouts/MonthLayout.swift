@@ -6,7 +6,7 @@ extension MonthLayout {
 
 	func monthLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
 
-		let itemHeight: CGFloat = parentFrame.height / 1.5
+		let itemHeight: CGFloat = parentFrame.height / 1.75
 		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
 											  heightDimension: .estimated(itemHeight))
 
