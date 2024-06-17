@@ -7,7 +7,7 @@ internal final class MonthCollectionReusableView: UICollectionReusableView {
 
 		let label = UILabel()
 		label.textAlignment = .center
-		label.font = UIFont(name: FontsResources.segoeBold, size: size)
+		label.font = UIFont.systemFont(ofSize: size, weight: .bold)
 		return label
 	}()
 	private let nextButton: UIButton = {
@@ -127,7 +127,7 @@ private extension MonthCollectionReusableView {
 		label.text = text
 		label.textAlignment = .center
 		label.textColor = ColorsResources.secondaryTextColor
-		label.font = UIFont(name: FontsResources.segoe, size: TextSizeResources.small)
+		label.font = UIFont.systemFont(ofSize: TextSizeResources.small)
 		return label
 	}
 

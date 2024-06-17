@@ -2,11 +2,11 @@ import UIKit
 import Combine
 import SnapKit
 
-protocol DeltaCalendarViewDelegate {
+public protocol DeltaCalendarViewDelegate {
 	func dateSelected(_ date: Date)
 }
 
-final class DeltaCalendarView: UIView {
+public final class DeltaCalendarView: UIView {
 
 	typealias DeltaCalendarDataSource = UICollectionViewDiffableDataSource<Section, ItemID>
 
@@ -35,9 +35,9 @@ final class DeltaCalendarView: UIView {
 		DeltaCalendarViewPresenter(self.dataSource, self.viewModel)
 	}()
 
-	init(weekendsOff: Bool = false, pastDaysOff: Bool = false,
-		 theme: Theme = .light, pickingYearData: PickingYearModel? = nil,
-		 showTimeData: ShowTimeModel? = nil) {
+	public init(weekendsOff: Bool = false, pastDaysOff: Bool = false,
+				theme: Theme = .light, pickingYearData: PickingYearModel? = nil,
+				showTimeData: ShowTimeModel? = nil) {
 
 		self.startData = .init(theme: theme, weekendsOff: weekendsOff, pastDaysOff: pastDaysOff,
 							   pickingYearData: pickingYearData, showTimeData: showTimeData)
@@ -55,8 +55,8 @@ final class DeltaCalendarView: UIView {
 // MARK: - CollectionViewDelegate
 
 extension DeltaCalendarView: UICollectionViewDelegate {
-	func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, 
-						forItemAt indexPath: IndexPath) {
+	public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell,
+							   forItemAt indexPath: IndexPath) {
 		guard let currentIndexPath = self.collectionView.currentIndexPath() else { return }
 
 		self.presenter.itemScrolled(currentItem: currentIndexPath)

@@ -12,11 +12,11 @@ internal struct StartModel {
 
 // MARK: - PickingYearModel
 
-struct PickingYearModel {
+public struct PickingYearModel {
 	let from: Int
 	let to: Int
 
-	init(from: Int, to: Int) {
+	public init(from: Int, to: Int) {
 
 		guard from <= to else { fatalError("[ERROR]: 'From' year must be equal or less than 'to' year.") }
 
@@ -27,11 +27,11 @@ struct PickingYearModel {
 
 // MARK: - ShowTimeModel
 
-struct ShowTimeModel {
+public struct ShowTimeModel {
 	let data: [DayTimeStartModel]
 	let offset: Int
 
-	init(data: [DayTimeStartModel], offset: Int) {
+	public init(data: [DayTimeStartModel], offset: Int) {
 
 		guard offset >= 1 else { fatalError("[ERROR]: Time offset must be equal or more than 1.") }
 
@@ -42,12 +42,12 @@ struct ShowTimeModel {
 
 // MARK: - DayTimeStartModel
 
-struct DayTimeStartModel {
+public struct DayTimeStartModel {
 	let weekday: Int
 	let startDate: Date
 	let endDate: Date
 
-	init(weekday: Int, startDate: String, endDate: String) {
+	public init(weekday: Int, startDate: String, endDate: String) {
 
 		guard (1...7).contains(weekday) else {
 			fatalError("[ERROR]: Weekday is not correct. It must be value between 1 and 7 (\(weekday)")
@@ -72,6 +72,6 @@ struct DayTimeStartModel {
 
 // MARK: - Theme
 
-enum Theme {
+public enum Theme {
 	case light, dark
 }

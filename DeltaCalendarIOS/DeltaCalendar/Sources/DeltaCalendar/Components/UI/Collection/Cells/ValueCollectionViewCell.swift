@@ -7,7 +7,7 @@ internal final class ValueCollectionViewCell: UICollectionViewCell {
 
 		let label = UILabel()
 		label.textAlignment = .center
-		label.font = UIFont(name: FontsResources.segoe, size: size)
+		label.font = UIFont.systemFont(ofSize: size)
 		return label
 	}()
 
