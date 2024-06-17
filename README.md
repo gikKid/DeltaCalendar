@@ -1,7 +1,7 @@
 # DeltaCalendar
 Custom configuring calendar.
 
-<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5318.jpg" title="Picking year, configue custom days with time and offset by 15 min" width="600" height="600"/>&nbsp;
+<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5318.jpg" title="Picking year, configue custom days with time and offset by 15 min" width="550" height="650"/>&nbsp;
 <img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5319.jpg" title="Default view with disabled weekends" width="500" height="500"/>&nbsp;
 <img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5320.jpg" title="Dark theme" width="500" height="500"/>&nbsp;
 
