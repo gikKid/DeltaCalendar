@@ -1,11 +1,9 @@
 # DeltaCalendar
 Custom configuring calendar.
 
-![Picking year, configue custom days with time and offset by 15 min](https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5318.jpg?raw=true)
-
-![Default view with disabled weekends](https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5319.jpg?raw=true)
-
-![Dark theme](https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5320.jpg?raw=true)
+<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5318.jpg" title="Picking year, configue custom days with time and offset by 15 min" width="200" height="200"/>&nbsp;
+<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5319.jpg" title="Default view with disabled weekends" width="200" height="200"/>&nbsp;
+<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/IMG_5320.jpg" title="Dark theme" width="200" height="200"/>&nbsp;
 
 ## Opportunities
 1. Disabling wekeends and past days. Off-time days also would be disabled.
