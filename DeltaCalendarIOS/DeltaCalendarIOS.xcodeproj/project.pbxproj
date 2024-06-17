@@ -7,75 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3B1BC54D2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC54C2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift */; };
-		3B1BC5522C0F5FE100AED782 /* DCViewPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */; };
-		3B4FC8302C0DE2A100C41968 /* MonthCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FC82F2C0DE2A100C41968 /* MonthCollectionReusableView.swift */; };
-		3B4FC8322C0E106400C41968 /* StartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4FC8312C0E106400C41968 /* StartModel.swift */; };
-		3B5B13912C171D07005D5602 /* ValueCellRegistration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13902C171D07005D5602 /* ValueCellRegistration.swift */; };
-		3B5B13932C172380005D5602 /* DayCellRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13922C172380005D5602 /* DayCellRegistratable.swift */; };
-		3B5B13952C1723DD005D5602 /* MonthCellRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13942C1723DD005D5602 /* MonthCellRegistratable.swift */; };
-		3B5B13982C1724A2005D5602 /* MonthHeaderRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13972C1724A2005D5602 /* MonthHeaderRegistratable.swift */; };
-		3B5B139A2C172594005D5602 /* YearsListCellRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B13992C172594005D5602 /* YearsListCellRegistratable.swift */; };
-		3B5B139C2C1746E3005D5602 /* ValueModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B139B2C1746E3005D5602 /* ValueModel.swift */; };
-		3B5B139E2C174708005D5602 /* UpdateSelectingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5B139D2C174708005D5602 /* UpdateSelectingModel.swift */; };
-		3B788CFF2C1AFB2000C9B381 /* ValueListLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B788CFE2C1AFB2000C9B381 /* ValueListLayout.swift */; };
-		3B788D022C1AFD3800C9B381 /* DayTimeListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B788D012C1AFD3800C9B381 /* DayTimeListCollectionViewCell.swift */; };
-		3B788D042C1AFD6400C9B381 /* DayTimeCellRegistratable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B788D032C1AFD6400C9B381 /* DayTimeCellRegistratable.swift */; };
-		3B788D072C1B06B400C9B381 /* DayTimeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B788D062C1B06B400C9B381 /* DayTimeModel.swift */; };
-		3B788D092C1B4B1A00C9B381 /* DateFormatter+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B788D082C1B4B1A00C9B381 /* DateFormatter+Extension.swift */; };
-		3B9ABA232C088F8300E986BA /* MonthCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA222C088F8300E986BA /* MonthCollectionViewCell.swift */; };
-		3B9ABA2A2C08969400E986BA /* DeltaCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */; };
-		3B9ABA2D2C08A68E00E986BA /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */; };
 		3BB07A7D2C07596700D9E052 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A7C2C07596700D9E052 /* AppDelegate.swift */; };
 		3BB07A7F2C07596700D9E052 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A7E2C07596700D9E052 /* SceneDelegate.swift */; };
 		3BB07A862C07596800D9E052 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07A852C07596800D9E052 /* Assets.xcassets */; };
 		3BB07A912C0759CA00D9E052 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07A902C0759CA00D9E052 /* LaunchScreen.storyboard */; };
 		3BB07A952C075AFD00D9E052 /* DCTestingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A942C075AFD00D9E052 /* DCTestingViewController.swift */; };
 		3BB07A982C075B9200D9E052 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3BB07A972C075B9200D9E052 /* SnapKit */; };
-		3BB07A9D2C075BDE00D9E052 /* DeltaCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A9C2C075BDE00D9E052 /* DeltaCalendarView.swift */; };
-		3BB07AA02C075C6900D9E052 /* SizesResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A9F2C075C6900D9E052 /* SizesResources.swift */; };
-		3BB07AA42C076E8A00D9E052 /* TextResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AA32C076E8A00D9E052 /* TextResources.swift */; };
-		3BB07AA92C0770BD00D9E052 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AA82C0770BD00D9E052 /* Section.swift */; };
-		3BB07AAD2C0775C200D9E052 /* DayCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AAC2C0775C200D9E052 /* DayCollectionViewCell.swift */; };
-		3BB07AB62C077D5E00D9E052 /* DayItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AB52C077D5E00D9E052 /* DayItem.swift */; };
-		3BB07ABC2C07805700D9E052 /* DaysLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07ABB2C07805700D9E052 /* DaysLayout.swift */; };
-		3BB07ABE2C0780DC00D9E052 /* ColorsResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07ABD2C0780DC00D9E052 /* ColorsResources.swift */; };
-		3BB07AC02C07814800D9E052 /* FontsResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07ABF2C07814800D9E052 /* FontsResources.swift */; };
-		3BB07AC22C07830700D9E052 /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07AC12C07830700D9E052 /* Resources.swift */; };
-		3BDFEC202C09D91C00FE84F8 /* MonthLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BDFEC1F2C09D91C00FE84F8 /* MonthLayout.swift */; };
-		3BE0C41C2C0A10BB00915A6B /* Segoe UI.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3BE0C41A2C0A10B700915A6B /* Segoe UI.ttf */; };
-		3BE0C41D2C0A10BD00915A6B /* Segoe UI Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3BE0C41B2C0A10B700915A6B /* Segoe UI Bold.ttf */; };
-		3BEACA172C10B1DF0075E7FD /* ValueLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BEACA162C10B1DF0075E7FD /* ValueLayout.swift */; };
-		3BEACA192C10B3BD0075E7FD /* ValueCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BEACA182C10B3BD0075E7FD /* ValueCollectionViewCell.swift */; };
-		3BFCEC3E2C0DD3AE0046FAD8 /* UICollectionView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFCEC3D2C0DD3AE0046FAD8 /* UICollectionView+Extension.swift */; };
-		3BFF5D132C10920E005BF0C4 /* YearItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF5D122C10920E005BF0C4 /* YearItem.swift */; };
-		3BFF5D152C109F12005BF0C4 /* YearsListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF5D142C109F12005BF0C4 /* YearsListCollectionViewCell.swift */; };
-		3BFF5D172C10A1EF005BF0C4 /* MonthItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF5D162C10A1EF005BF0C4 /* MonthItem.swift */; };
-		3BFF5D192C10A277005BF0C4 /* DayColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF5D182C10A277005BF0C4 /* DayColors.swift */; };
-		3BFF5D1B2C10A2C7005BF0C4 /* SelectedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF5D1A2C10A2C7005BF0C4 /* SelectedModel.swift */; };
-		3BFF5D1D2C10A332005BF0C4 /* ImageResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF5D1C2C10A332005BF0C4 /* ImageResources.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3B1BC54C2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaCalendarViewPresenter.swift; sourceTree = "<group>"; };
-		3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCViewPresentable.swift; sourceTree = "<group>"; };
-		3B4FC82F2C0DE2A100C41968 /* MonthCollectionReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthCollectionReusableView.swift; sourceTree = "<group>"; };
-		3B4FC8312C0E106400C41968 /* StartModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartModel.swift; sourceTree = "<group>"; };
-		3B5B13902C171D07005D5602 /* ValueCellRegistration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueCellRegistration.swift; sourceTree = "<group>"; };
-		3B5B13922C172380005D5602 /* DayCellRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCellRegistratable.swift; sourceTree = "<group>"; };
-		3B5B13942C1723DD005D5602 /* MonthCellRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCellRegistratable.swift; sourceTree = "<group>"; };
-		3B5B13972C1724A2005D5602 /* MonthHeaderRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthHeaderRegistratable.swift; sourceTree = "<group>"; };
-		3B5B13992C172594005D5602 /* YearsListCellRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsListCellRegistratable.swift; sourceTree = "<group>"; };
-		3B5B139B2C1746E3005D5602 /* ValueModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueModel.swift; sourceTree = "<group>"; };
-		3B5B139D2C174708005D5602 /* UpdateSelectingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateSelectingModel.swift; sourceTree = "<group>"; };
-		3B788CFE2C1AFB2000C9B381 /* ValueListLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValueListLayout.swift; sourceTree = "<group>"; };
-		3B788D012C1AFD3800C9B381 /* DayTimeListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimeListCollectionViewCell.swift; sourceTree = "<group>"; };
-		3B788D032C1AFD6400C9B381 /* DayTimeCellRegistratable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimeCellRegistratable.swift; sourceTree = "<group>"; };
-		3B788D062C1B06B400C9B381 /* DayTimeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimeModel.swift; sourceTree = "<group>"; };
-		3B788D082C1B4B1A00C9B381 /* DateFormatter+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extension.swift"; sourceTree = "<group>"; };
-		3B9ABA222C088F8300E986BA /* MonthCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthCollectionViewCell.swift; sourceTree = "<group>"; };
-		3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaCalendarViewModel.swift; sourceTree = "<group>"; };
-		3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		3BB07A792C07596700D9E052 /* DeltaCalendarIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeltaCalendarIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BB07A7C2C07596700D9E052 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3BB07A7E2C07596700D9E052 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -83,28 +23,6 @@
 		3BB07A8A2C07596800D9E052 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3BB07A902C0759CA00D9E052 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3BB07A942C075AFD00D9E052 /* DCTestingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCTestingViewController.swift; sourceTree = "<group>"; };
-		3BB07A9C2C075BDE00D9E052 /* DeltaCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeltaCalendarView.swift; sourceTree = "<group>"; };
-		3BB07A9F2C075C6900D9E052 /* SizesResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizesResources.swift; sourceTree = "<group>"; };
-		3BB07AA32C076E8A00D9E052 /* TextResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextResources.swift; sourceTree = "<group>"; };
-		3BB07AA82C0770BD00D9E052 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
-		3BB07AAC2C0775C200D9E052 /* DayCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCollectionViewCell.swift; sourceTree = "<group>"; };
-		3BB07AB52C077D5E00D9E052 /* DayItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayItem.swift; sourceTree = "<group>"; };
-		3BB07ABB2C07805700D9E052 /* DaysLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysLayout.swift; sourceTree = "<group>"; };
-		3BB07ABD2C0780DC00D9E052 /* ColorsResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorsResources.swift; sourceTree = "<group>"; };
-		3BB07ABF2C07814800D9E052 /* FontsResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontsResources.swift; sourceTree = "<group>"; };
-		3BB07AC12C07830700D9E052 /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
-		3BDFEC1F2C09D91C00FE84F8 /* MonthLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthLayout.swift; sourceTree = "<group>"; };
-		3BE0C41A2C0A10B700915A6B /* Segoe UI.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Segoe UI.ttf"; sourceTree = "<group>"; };
-		3BE0C41B2C0A10B700915A6B /* Segoe UI Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Segoe UI Bold.ttf"; sourceTree = "<group>"; };
-		3BEACA162C10B1DF0075E7FD /* ValueLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueLayout.swift; sourceTree = "<group>"; };
-		3BEACA182C10B3BD0075E7FD /* ValueCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueCollectionViewCell.swift; sourceTree = "<group>"; };
-		3BFCEC3D2C0DD3AE0046FAD8 /* UICollectionView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extension.swift"; sourceTree = "<group>"; };
-		3BFF5D122C10920E005BF0C4 /* YearItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YearItem.swift; sourceTree = "<group>"; };
-		3BFF5D142C109F12005BF0C4 /* YearsListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearsListCollectionViewCell.swift; sourceTree = "<group>"; };
-		3BFF5D162C10A1EF005BF0C4 /* MonthItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonthItem.swift; sourceTree = "<group>"; };
-		3BFF5D182C10A277005BF0C4 /* DayColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DayColors.swift; sourceTree = "<group>"; };
-		3BFF5D1A2C10A2C7005BF0C4 /* SelectedModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedModel.swift; sourceTree = "<group>"; };
-		3BFF5D1C2C10A332005BF0C4 /* ImageResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageResources.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,72 +37,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3B1BC54E2C0F4F8600AED782 /* Presenters */ = {
-			isa = PBXGroup;
-			children = (
-				3B1BC54C2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift */,
-				3B1BC5512C0F5FE100AED782 /* DCViewPresentable.swift */,
-			);
-			path = Presenters;
-			sourceTree = "<group>";
-		};
-		3B5B138F2C171CF6005D5602 /* Registration */ = {
-			isa = PBXGroup;
-			children = (
-				3B5B13922C172380005D5602 /* DayCellRegistratable.swift */,
-				3B788D032C1AFD6400C9B381 /* DayTimeCellRegistratable.swift */,
-				3B5B13942C1723DD005D5602 /* MonthCellRegistratable.swift */,
-				3B5B13902C171D07005D5602 /* ValueCellRegistration.swift */,
-				3B5B13992C172594005D5602 /* YearsListCellRegistratable.swift */,
-			);
-			path = Registration;
-			sourceTree = "<group>";
-		};
-		3B5B13962C172484005D5602 /* Registration */ = {
-			isa = PBXGroup;
-			children = (
-				3B5B13972C1724A2005D5602 /* MonthHeaderRegistratable.swift */,
-			);
-			path = Registration;
-			sourceTree = "<group>";
-		};
-		3B788D052C1B06A300C9B381 /* Day */ = {
-			isa = PBXGroup;
-			children = (
-				3BFF5D182C10A277005BF0C4 /* DayColors.swift */,
-				3BB07AB52C077D5E00D9E052 /* DayItem.swift */,
-				3B788D062C1B06B400C9B381 /* DayTimeModel.swift */,
-			);
-			path = Day;
-			sourceTree = "<group>";
-		};
-		3B9777D02C0A00A300C64E72 /* CustomFonts */ = {
-			isa = PBXGroup;
-			children = (
-				3BE0C41B2C0A10B700915A6B /* Segoe UI Bold.ttf */,
-				3BE0C41A2C0A10B700915A6B /* Segoe UI.ttf */,
-			);
-			path = CustomFonts;
-			sourceTree = "<group>";
-		};
-		3B9ABA282C08967400E986BA /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				3B9ABA292C08969400E986BA /* DeltaCalendarViewModel.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		3B9ABA2B2C08A68000E986BA /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				3B9ABA2C2C08A68E00E986BA /* Date+Extension.swift */,
-				3B788D082C1B4B1A00C9B381 /* DateFormatter+Extension.swift */,
-				3BFCEC3D2C0DD3AE0046FAD8 /* UICollectionView+Extension.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
 		3BB07A702C07596700D9E052 = {
 			isa = PBXGroup;
 			children = (
@@ -214,12 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				3BB07A932C075A0700D9E052 /* Application */,
-				3BB07A992C075BBF00D9E052 /* Components */,
-				3B9ABA2B2C08A68000E986BA /* Extensions */,
-				3BB07AA52C076F2500D9E052 /* Models */,
-				3B1BC54E2C0F4F8600AED782 /* Presenters */,
-				3BB07A9E2C075C5A00D9E052 /* Resources */,
-				3B9ABA282C08967400E986BA /* ViewModels */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -234,103 +80,6 @@
 				3BB07A942C075AFD00D9E052 /* DCTestingViewController.swift */,
 			);
 			path = Application;
-			sourceTree = "<group>";
-		};
-		3BB07A992C075BBF00D9E052 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				3BB07A9A2C075BC700D9E052 /* UI */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
-		3BB07A9A2C075BC700D9E052 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				3BB07AAA2C07755E00D9E052 /* Collection */,
-				3BB07A9B2C075BD000D9E052 /* Views */,
-			);
-			path = UI;
-			sourceTree = "<group>";
-		};
-		3BB07A9B2C075BD000D9E052 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				3BB07A9C2C075BDE00D9E052 /* DeltaCalendarView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		3BB07A9E2C075C5A00D9E052 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				3BFF5D1C2C10A332005BF0C4 /* ImageResources.swift */,
-				3BB07ABD2C0780DC00D9E052 /* ColorsResources.swift */,
-				3BB07ABF2C07814800D9E052 /* FontsResources.swift */,
-				3BB07AC12C07830700D9E052 /* Resources.swift */,
-				3BB07A9F2C075C6900D9E052 /* SizesResources.swift */,
-				3BB07AA32C076E8A00D9E052 /* TextResources.swift */,
-				3B9777D02C0A00A300C64E72 /* CustomFonts */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		3BB07AA52C076F2500D9E052 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				3BFF5D162C10A1EF005BF0C4 /* MonthItem.swift */,
-				3BB07AA82C0770BD00D9E052 /* Section.swift */,
-				3BFF5D1A2C10A2C7005BF0C4 /* SelectedModel.swift */,
-				3B4FC8312C0E106400C41968 /* StartModel.swift */,
-				3B5B139D2C174708005D5602 /* UpdateSelectingModel.swift */,
-				3B5B139B2C1746E3005D5602 /* ValueModel.swift */,
-				3BFF5D122C10920E005BF0C4 /* YearItem.swift */,
-				3B788D052C1B06A300C9B381 /* Day */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		3BB07AAA2C07755E00D9E052 /* Collection */ = {
-			isa = PBXGroup;
-			children = (
-				3BB07AAB2C07756B00D9E052 /* Cells */,
-				3BB07ABA2C07802E00D9E052 /* Layouts */,
-				3BE0C41E2C0A160200915A6B /* ReusableViews */,
-			);
-			path = Collection;
-			sourceTree = "<group>";
-		};
-		3BB07AAB2C07756B00D9E052 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				3BB07AAC2C0775C200D9E052 /* DayCollectionViewCell.swift */,
-				3B788D012C1AFD3800C9B381 /* DayTimeListCollectionViewCell.swift */,
-				3B9ABA222C088F8300E986BA /* MonthCollectionViewCell.swift */,
-				3BEACA182C10B3BD0075E7FD /* ValueCollectionViewCell.swift */,
-				3BFF5D142C109F12005BF0C4 /* YearsListCollectionViewCell.swift */,
-				3B5B138F2C171CF6005D5602 /* Registration */,
-			);
-			path = Cells;
-			sourceTree = "<group>";
-		};
-		3BB07ABA2C07802E00D9E052 /* Layouts */ = {
-			isa = PBXGroup;
-			children = (
-				3BB07ABB2C07805700D9E052 /* DaysLayout.swift */,
-				3BDFEC1F2C09D91C00FE84F8 /* MonthLayout.swift */,
-				3BEACA162C10B1DF0075E7FD /* ValueLayout.swift */,
-				3B788CFE2C1AFB2000C9B381 /* ValueListLayout.swift */,
-			);
-			path = Layouts;
-			sourceTree = "<group>";
-		};
-		3BE0C41E2C0A160200915A6B /* ReusableViews */ = {
-			isa = PBXGroup;
-			children = (
-				3B4FC82F2C0DE2A100C41968 /* MonthCollectionReusableView.swift */,
-				3B5B13962C172484005D5602 /* Registration */,
-			);
-			path = ReusableViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -397,10 +146,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BE0C41C2C0A10BB00915A6B /* Segoe UI.ttf in Resources */,
 				3BB07A862C07596800D9E052 /* Assets.xcassets in Resources */,
 				3BB07A912C0759CA00D9E052 /* LaunchScreen.storyboard in Resources */,
-				3BE0C41D2C0A10BD00915A6B /* Segoe UI Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,48 +158,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B788D022C1AFD3800C9B381 /* DayTimeListCollectionViewCell.swift in Sources */,
 				3BB07A952C075AFD00D9E052 /* DCTestingViewController.swift in Sources */,
-				3BEACA172C10B1DF0075E7FD /* ValueLayout.swift in Sources */,
-				3BB07AAD2C0775C200D9E052 /* DayCollectionViewCell.swift in Sources */,
-				3B9ABA2A2C08969400E986BA /* DeltaCalendarViewModel.swift in Sources */,
-				3B1BC54D2C0F4F6F00AED782 /* DeltaCalendarViewPresenter.swift in Sources */,
-				3BB07AA42C076E8A00D9E052 /* TextResources.swift in Sources */,
-				3BFF5D132C10920E005BF0C4 /* YearItem.swift in Sources */,
-				3B9ABA2D2C08A68E00E986BA /* Date+Extension.swift in Sources */,
-				3BB07ABE2C0780DC00D9E052 /* ColorsResources.swift in Sources */,
-				3BB07AA92C0770BD00D9E052 /* Section.swift in Sources */,
-				3BFCEC3E2C0DD3AE0046FAD8 /* UICollectionView+Extension.swift in Sources */,
-				3BB07AA02C075C6900D9E052 /* SizesResources.swift in Sources */,
-				3BFF5D152C109F12005BF0C4 /* YearsListCollectionViewCell.swift in Sources */,
-				3B5B13912C171D07005D5602 /* ValueCellRegistration.swift in Sources */,
-				3BFF5D172C10A1EF005BF0C4 /* MonthItem.swift in Sources */,
-				3B788D072C1B06B400C9B381 /* DayTimeModel.swift in Sources */,
-				3B5B13952C1723DD005D5602 /* MonthCellRegistratable.swift in Sources */,
-				3BB07AC02C07814800D9E052 /* FontsResources.swift in Sources */,
-				3B788CFF2C1AFB2000C9B381 /* ValueListLayout.swift in Sources */,
-				3BFF5D192C10A277005BF0C4 /* DayColors.swift in Sources */,
-				3BB07A9D2C075BDE00D9E052 /* DeltaCalendarView.swift in Sources */,
-				3BEACA192C10B3BD0075E7FD /* ValueCollectionViewCell.swift in Sources */,
-				3BFF5D1B2C10A2C7005BF0C4 /* SelectedModel.swift in Sources */,
-				3B788D042C1AFD6400C9B381 /* DayTimeCellRegistratable.swift in Sources */,
-				3BDFEC202C09D91C00FE84F8 /* MonthLayout.swift in Sources */,
-				3B5B13982C1724A2005D5602 /* MonthHeaderRegistratable.swift in Sources */,
 				3BB07A7D2C07596700D9E052 /* AppDelegate.swift in Sources */,
-				3BFF5D1D2C10A332005BF0C4 /* ImageResources.swift in Sources */,
-				3BB07ABC2C07805700D9E052 /* DaysLayout.swift in Sources */,
-				3B9ABA232C088F8300E986BA /* MonthCollectionViewCell.swift in Sources */,
-				3B4FC8322C0E106400C41968 /* StartModel.swift in Sources */,
 				3BB07A7F2C07596700D9E052 /* SceneDelegate.swift in Sources */,
-				3B5B13932C172380005D5602 /* DayCellRegistratable.swift in Sources */,
-				3B4FC8302C0DE2A100C41968 /* MonthCollectionReusableView.swift in Sources */,
-				3B5B139A2C172594005D5602 /* YearsListCellRegistratable.swift in Sources */,
-				3B5B139E2C174708005D5602 /* UpdateSelectingModel.swift in Sources */,
-				3BB07AB62C077D5E00D9E052 /* DayItem.swift in Sources */,
-				3B788D092C1B4B1A00C9B381 /* DateFormatter+Extension.swift in Sources */,
-				3B1BC5522C0F5FE100AED782 /* DCViewPresentable.swift in Sources */,
-				3BB07AC22C07830700D9E052 /* Resources.swift in Sources */,
-				3B5B139C2C1746E3005D5602 /* ValueModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

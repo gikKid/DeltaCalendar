@@ -1,4 +1,3 @@
-import Foundation
 import UIKit
 
 internal final class MonthCollectionReusableView: UICollectionReusableView {

@@ -118,7 +118,7 @@ private extension DeltaCalendarViewModel {
 										 year: year, month: month, day: $0).date!
 
 			let isSame = calendar.compare(dayDate, to: today, toGranularity: .day) == .orderedSame
-			let description = isSame ? TextResources.today : ""
+			let description = isSame ? TextResources.today.capitalized : ""
 			let weekday = calendar.component(.weekday, from: dayDate)
 
 			let timeData: [DayTime]

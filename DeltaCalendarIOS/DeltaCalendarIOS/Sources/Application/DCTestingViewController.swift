@@ -31,7 +31,7 @@ final class DCTestingViewController: UIViewController {
 		self.contentView.snp.makeConstraints {
 			$0.center.equalTo(self.view)
 			$0.height.equalTo(self.view.frame.height / 1.75)
-			$0.leading.trailing.equalTo(self.view).inset(SpaceResources.mid)
+			$0.leading.trailing.equalTo(self.view).inset(10.0)
 		}
 	}
 }
