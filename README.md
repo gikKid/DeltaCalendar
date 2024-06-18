@@ -12,7 +12,7 @@ Custom configuring calendar.
 4. Dark/light theme.
 
 ## Adding
-Use **SPM** to add calendar package at **IOS** ([link](https://github.com/gikKid/DeltaCalendar))
+Use **SPM** to add calendar package to project. ([link](https://github.com/gikKid/DeltaCalendar))
 
 ## Using
 ```swift
