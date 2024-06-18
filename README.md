@@ -11,6 +11,9 @@ Custom configuring calendar.
 3. Show/hide picking years and time.
 4. Dark/light theme.
 
+## Adding
+Use **SPM** to add calendar package at **IOS** ([link](https://github.com/gikKid/DeltaCalendar))
+
 ## Using
 ```swift
 let view = DeltaCalendarView()
