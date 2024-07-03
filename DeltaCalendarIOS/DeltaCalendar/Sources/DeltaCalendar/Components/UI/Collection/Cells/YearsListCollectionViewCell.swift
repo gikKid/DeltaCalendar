@@ -5,20 +5,21 @@ internal final class YearsListCollectionViewCell: UICollectionViewCell {
 	typealias YearsDataSource = UICollectionViewDiffableDataSource<BaseSection, ItemID>
 
 	private lazy var collectionView: UICollectionView = {
-		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-		collectionView.backgroundColor = .clear
-		collectionView.showsHorizontalScrollIndicator = false
-		collectionView.showsVerticalScrollIndicator = false
-		collectionView.bounces = false
-		collectionView.delegate = self
-		collectionView.decelerationRate = .fast
-		collectionView.collectionViewLayout = self.createCompositionLayout()
-		return collectionView
-	}()
+		$0.backgroundColor = .clear
+		$0.showsHorizontalScrollIndicator = false
+		$0.showsVerticalScrollIndicator = false
+		$0.bounces = false
+		$0.delegate = self
+		$0.decelerationRate = .fast
+		$0.collectionViewLayout = self.createCompositionLayout()
+		return $0
+	}(UICollectionView(frame: .zero, collectionViewLayout: .init()))
+
+    private var data: [YearItem] = []
+    private var colors: Colors = .def()
 	private lazy var dataSource: YearsDataSource = {
 		self.createDataSource()
 	}()
-	private var data: [YearItem] = []
 
 	public var selectHandler: ((UpdateSelectingModel) -> Void)?
 
@@ -31,9 +32,9 @@ internal final class YearsListCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(with data: [YearItem]) {
-		guard self.data.isEmpty else { return }
+    func configure(with data: [YearItem], colors: Colors) {
 		self.data = data
+        self.colors = colors
 
 		self.configureCollection(with: data)
 	}
@@ -49,6 +50,10 @@ extension YearsListCollectionViewCell: UICollectionViewDelegate {
 	}
 
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let year = self.data[indexPath.row]
+
+        guard !year.isMock else { return }
+
 		self.selectYear(at: indexPath.row)
 	}
 
@@ -77,20 +82,31 @@ private extension YearsListCollectionViewCell {
 		guard !data.isEmpty, let selectedRow = self.data.firstIndex(where: { $0.isSelected })
 		else { return }
 
-		var snapshot = self.dataSource.snapshot()
-		snapshot.appendSections([.main])
+        let isUpdating = !self.dataSource.snapshot().sectionIdentifiers.isEmpty
+        let selectedIndexPath = IndexPath(row: selectedRow, section: BaseSection.main.rawValue)
+        var snapshot = self.dataSource.snapshot()
 
-		self.dataSource.apply(snapshot, animatingDifferences: false)
+        defer {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.collectionView.scrollToItem(at: selectedIndexPath, at: .centeredHorizontally, animated: false)
+            }
+        }
 
-		let ids = self.data.map { $0.id }
-		let selectedIndexPath = IndexPath(row: selectedRow, section: BaseSection.main.rawValue)
+        guard !isUpdating else {
+            snapshot.reloadSections([.main])
+            self.dataSource.apply(snapshot, animatingDifferences: false)
+            return
+        }
 
+        snapshot.appendSections([.main])
+        self.dataSource.apply(snapshot, animatingDifferences: false)
+
+        let ids = self.data.map { $0.id }
 		var section = SectionSnapshot()
+
 		section.append(ids)
 
-		self.dataSource.apply(section, to: .main, animatingDifferences: true) { [weak self] in
-			self?.collectionView.scrollToItem(at: selectedIndexPath, at: .centeredHorizontally, animated: false)
-		}
+		self.dataSource.apply(section, to: .main, animatingDifferences: true)
 	}
 
 	func selectYear(at index: Int) {
@@ -118,7 +134,7 @@ private extension YearsListCollectionViewCell {
 
 	func createDataSource() -> YearsDataSource {
 
-		let valueRegistratrion = self.createValueCellRegistration()
+        let valueRegistratrion = self.createValueCellRegistration(colors: self.colors)
 
 		return YearsDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in

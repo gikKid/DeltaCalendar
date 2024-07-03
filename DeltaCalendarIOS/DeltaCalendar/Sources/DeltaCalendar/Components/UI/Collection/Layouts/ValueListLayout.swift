@@ -8,7 +8,7 @@ extension ValueListLayout {
 
 		let itemHeight = HeightResources.text
 		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-											  heightDimension: .estimated(itemHeight))
+											  heightDimension: .absolute(itemHeight))
 
 		let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
@@ -18,8 +18,7 @@ extension ValueListLayout {
 
 		let yOffset = SpaceResources.moreMid
 		let xOffset = SpaceResources.big
-		section.contentInsets = .init(top: yOffset, leading: xOffset, 
-									  bottom: yOffset * 2, trailing: xOffset)
+        section.contentInsets = .init(top: yOffset, leading: xOffset, bottom: yOffset, trailing: xOffset)
 
 		return section
 	}

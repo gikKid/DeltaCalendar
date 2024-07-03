@@ -7,9 +7,9 @@ extension DayCellRegistratable {
 	typealias DayCellRegistration = UICollectionView
 		.CellRegistration<DayCollectionViewCell, DayItem>
 
-	func createDayCellRegistration() -> DayCellRegistration {
+    func createDayCellRegistration(_ colors: Colors) -> DayCellRegistration {
 		DayCellRegistration { (cell, _, item) in
-			cell.configure(with: item)
+            cell.configure(with: item, colors: colors)
 		}
 	}
 }

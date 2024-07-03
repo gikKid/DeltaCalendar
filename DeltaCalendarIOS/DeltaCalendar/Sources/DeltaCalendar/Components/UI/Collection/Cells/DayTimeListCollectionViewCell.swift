@@ -5,21 +5,21 @@ internal final class DayTimeListCollectionViewCell: UICollectionViewCell {
 	typealias DayTimeDataSource = UICollectionViewDiffableDataSource<Section, ItemID>
 
 	private lazy var collectionView: UICollectionView = {
-		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-		collectionView.backgroundColor = .clear
-		collectionView.showsVerticalScrollIndicator = false
-		collectionView.showsHorizontalScrollIndicator = false
-		collectionView.bounces = false
-		collectionView.decelerationRate = .fast
-		collectionView.delegate = self
-		collectionView.collectionViewLayout = self.compositionLayout()
-		return collectionView
-	}()
+		$0.backgroundColor = .clear
+		$0.showsVerticalScrollIndicator = false
+		$0.showsHorizontalScrollIndicator = false
+		$0.bounces = false
+		$0.decelerationRate = .fast
+		$0.delegate = self
+		$0.collectionViewLayout = self.compositionLayout()
+		return $0
+	}(UICollectionView(frame: .zero, collectionViewLayout: .init()))
 
 	private lazy var dataSource: DayTimeDataSource = {
 		self.createDataSource()
 	}()
 
+    private var colors: Colors = .def()
 	private var data = [DayTime]()
 	private let noDataItem: ValueItem = {
 		ValueItem.buildNoData(text: TextResources.chooseDay)
@@ -42,7 +42,8 @@ internal final class DayTimeListCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(with time: [DayTime]) {
+    func configure(with time: [DayTime], colors: Colors) {
+        self.colors = colors
 		self.data = time
 
 		guard !time.isEmpty else {
@@ -157,7 +158,7 @@ private extension DayTimeListCollectionViewCell {
 
 	func createDataSource() -> DayTimeDataSource {
 
-		let cellRegistration = self.createValueCellRegistration()
+        let cellRegistration = self.createValueCellRegistration(colors: self.colors)
 
 		return DayTimeDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in

@@ -5,19 +5,20 @@ import DeltaCalendar
 final class DCTestingViewController: UIViewController {
 
 	private let contentView: DeltaCalendarView = {
-		let pickingYearsData = PickingYearModel(from: 2020, to: 2024)
+		let pickingYearsData = PickingYearModel(from: 2024, to: 2030)
 
 		let dayTimes: [DayTimeStartModel] =
 		[
 		 .init(weekday: 1, startDate: "10:00", endDate: "17:30"),
-		 .init(weekday: 2, startDate: "09:00", endDate: "18:00")
+		 .init(weekday: 2, startDate: "09:00", endDate: "18:00"),
+         .init(weekday: 3, startDate: "09:00", endDate: "18:00")
 		]
 
 		let showTimeData = ShowTimeModel(data: dayTimes, offset: 15)
 
-		let view = DeltaCalendarView(weekendsOff: false, pastDaysOff: false,
-									 theme: .light, pickingYearData: pickingYearsData,
-									 showTimeData: showTimeData)
+        let colors = Colors(text: .black, main: .blue, secondaryText: .lightGray, background: .white)
+
+		let view = DeltaCalendarView(pickingYearData: pickingYearsData, showTimeData: showTimeData, colors: colors)
 		return view
 	}()
 
@@ -31,7 +32,7 @@ final class DCTestingViewController: UIViewController {
 
 		self.contentView.snp.makeConstraints {
 			$0.center.equalTo(self.view)
-			$0.height.equalTo(self.view.frame.height / 1.75)
+            $0.height.equalTo(self.view.frame.height / 1.8)
 			$0.leading.trailing.equalTo(self.view).inset(10.0)
 		}
 	}

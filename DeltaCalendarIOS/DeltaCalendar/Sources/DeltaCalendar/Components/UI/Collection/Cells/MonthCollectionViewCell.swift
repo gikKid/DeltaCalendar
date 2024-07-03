@@ -5,15 +5,16 @@ internal final class MonthCollectionViewCell: UICollectionViewCell {
 	typealias DCMonthDataSource = UICollectionViewDiffableDataSource<BaseSection, ItemID>
 
 	private lazy var collectionView: UICollectionView = {
-		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-		collectionView.backgroundColor = .clear
-		collectionView.bounces = false
-		collectionView.showsVerticalScrollIndicator = false
-		collectionView.showsHorizontalScrollIndicator = false
-		collectionView.delegate = self
-		collectionView.collectionViewLayout = self.createCompositionLayout()
-		return collectionView
-	}()
+		$0.backgroundColor = .clear
+		$0.bounces = false
+		$0.showsVerticalScrollIndicator = false
+		$0.showsHorizontalScrollIndicator = false
+		$0.delegate = self
+		$0.collectionViewLayout = self.createCompositionLayout()
+		return $0
+	}(UICollectionView(frame: .zero, collectionViewLayout: .init()))
+
+    private var colors: Colors = .def()
 	private lazy var dataSource: DCMonthDataSource = {
 		self.createDataSource()
 	}()
@@ -23,6 +24,7 @@ internal final class MonthCollectionViewCell: UICollectionViewCell {
 			self.setupCollection(by: ids)
 		}
 	}
+
 	public var daySelectedHandler: ((Int) -> Void)?
 
 	override init(frame: CGRect) {
@@ -34,8 +36,14 @@ internal final class MonthCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(with data: [DayItem]) {
+    func configure(with data: [DayItem], colors: Colors) {
+        self.colors = colors
 		self.items = data
+
+        guard let selectedIndex = data.firstIndex(where: { $0.isSelected }),
+              !data[selectedIndex].isDisabled else { return }
+
+        self.daySelectedHandler?(selectedIndex)
 	}
 }
 
@@ -75,9 +83,7 @@ private extension MonthCollectionViewCell {
 	func setupView() {
 		self.contentView.addSubview(self.collectionView)
 
-		self.collectionView.snp.makeConstraints {
-			$0.edges.equalTo(self.contentView)
-		}
+		self.collectionView.snp.makeConstraints { $0.edges.equalTo(self.contentView) }
 	}
 
 	func setupCollection(by ids: [ItemID]) {
@@ -118,7 +124,7 @@ private extension MonthCollectionViewCell {
 
 	func createDataSource() -> DCMonthDataSource {
 
-		let dayRegistration = self.createDayCellRegistration()
+        let dayRegistration = self.createDayCellRegistration(self.colors)
 
 		return DCMonthDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in

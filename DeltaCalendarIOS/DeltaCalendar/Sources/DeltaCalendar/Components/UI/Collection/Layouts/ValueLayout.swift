@@ -14,6 +14,7 @@ extension ValueLayout {
 
 		let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.33),
 											   heightDimension: .estimated(itemHeight))
+
 		let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: items)
 		group.interItemSpacing = .fixed(SpaceResources.moreMid)
 

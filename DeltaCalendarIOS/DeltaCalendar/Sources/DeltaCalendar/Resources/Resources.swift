@@ -1,7 +1,7 @@
 import Foundation
+import UIKit
 
 internal enum Resources {
-	static let maxYear: Int = 2030
 	static let weekends: [Int] = [7, 1] /// at gregorian a week starts from sunday
 	static let mondayIndex: Int = 2
 	static let weekdays: [String] = [TextResources.mon.capitalized, TextResources.tue.capitalized,
@@ -13,7 +13,10 @@ internal enum Resources {
 	static let selectingYearGap: Int = 18
 	static let minValScale: CGFloat = 0.7
 	static let maxValScale: CGFloat = 1.1
+    static let debounce: TimeInterval = 0.7
 	static let isoFormat: String = "yyyy/MM/dd"
 	static let dateFormat: String = "\(Self.isoFormat) \(Self.timeFormat)"
 	static let timeFormat: String = "HH:mm"
+    static let locale = "en_RU"
+    static let weekDayColor: UIColor = .lightGray
 }

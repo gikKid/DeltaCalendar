@@ -54,35 +54,26 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	func setupDS(with startData: StartModel) {
 		guard var snapshot = self.dataSource?.snapshot() else { return }
 
-		var sections: [Section] = [.month]
-
-		let isShowYearsSection = startData.pickingYearData != nil
-		let isShowDayTimeSection = startData.showTimeData != nil
-		let dayTimeSectionIndex = isShowYearsSection ? 2 : 1
-
-		isShowYearsSection ? sections.insert(.year, at: 0) : ()
-		isShowDayTimeSection ? sections.insert(.time, at: dayTimeSectionIndex) : ()
+        let sections: [Section] = [.year, .month, .time]
 
 		snapshot.appendSections(sections)
 
 		self.dataSource?.apply(snapshot, animatingDifferences: false)
 
-		isShowYearsSection ? self.configureYearsSection() : ()
-
+        self.configureYearsSection(animated: false)
 		self.reconfigureMonths(animated: false)
-
-		isShowDayTimeSection ? self.configureDayTimeSection() : ()
+		self.configureDayTimeSection()
 	}
 
 	// MARK: - Updating state methods
 
-	func yearSelected(_ data: UpdateSelectingModel) {
-		guard data.index != self.currentYearIndex else { return }
+    func yearSelected(updateData: UpdateSelectingModel, month: Int) {
+		guard updateData.index != self.currentYearIndex else { return }
 
-		self.viewModel?.toggleYearSelecting(data)
+		self.viewModel?.toggleYearSelecting(updateData)
 
-		self.currentYearIndex = data.index
-		self.currentMonthIndex = 0
+		self.currentYearIndex = updateData.index
+		self.currentMonthIndex = month
 		self.selectedData = nil
 
 		self.reconfigureMonths(animated: true)
@@ -96,8 +87,7 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	func updateDaySelecting(at dayIndex: Int) {
 		self.unselectDay()
 
-		let selectModel = SelectedModel(yearIndex: self.currentYearIndex,
-										monthIndex: self.currentMonthIndex,
+		let selectModel = SelectedModel(yearIndex: self.currentYearIndex, monthIndex: self.currentMonthIndex,
 										dayIndex: dayIndex)
 
 		self.viewModel?.toggleSelecting(at: selectModel)
@@ -147,14 +137,11 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	func month(at index: Int) -> MonthItem? {
 		guard let data = self.viewModel?.data else { return nil }
 
-		return data[self.currentYearIndex].months[index]
-	}
+        let months = data[self.currentYearIndex].months
 
-	func section(at index: Int, startData: StartModel) -> Section? {
-		let isShowYear = startData.pickingYearData != nil
-		let isShowTime = startData.showTimeData != nil
+        guard !months.isEmpty else { return nil }
 
-		return Section(section: index, isShowYear: isShowYear, isShowTime: isShowTime)
+		return months[index]
 	}
 
 	func dayTimeData() -> DayTimeItem {
@@ -174,14 +161,13 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 private extension DeltaCalendarViewPresenter {
 
 	func setSelectedDate(by dayIndex: Int) {
-		self.selectedData = .init(yearIndex: self.currentYearIndex,
-								  monthIndex: self.currentMonthIndex,
+		self.selectedData = .init(yearIndex: self.currentYearIndex, monthIndex: self.currentMonthIndex,
 								  dayIndex: dayIndex)
 	}
 
 	// MARK: - Configuring sections
 
-	func configureYearsSection() {
+    func configureYearsSection(animated: Bool) {
 		guard let data = self.viewModel?.data else { return }
 
 		self.yearsItem = .init(data: data)
@@ -191,28 +177,32 @@ private extension DeltaCalendarViewPresenter {
 		var sectionSnapshot = SectionSnapshot()
 		sectionSnapshot.append([id])
 
-		self.dataSource?.apply(sectionSnapshot, to: .year, animatingDifferences: false)
+		self.dataSource?.apply(sectionSnapshot, to: .year, animatingDifferences: animated)
 	}
 
 	func configureNextYear() {
 		guard let data = self.viewModel?.data, self.currentYearIndex < data.count - 1
 		else { return }
 
-		self.currentYearIndex += 1
-		self.currentMonthIndex = 0
-		self.selectedData = nil
+        let nextYear = data[self.currentYearIndex + 1]
 
-		self.reconfigureMonths(animated: true)
+        guard !nextYear.isMock else { return }
+
+        let model = UpdateSelectingModel(prevIndex: self.currentYearIndex, index: self.currentYearIndex + 1)
+        self.yearSelected(updateData: model, month: 0)
+        self.configureYearsSection(animated: true)
 	}
 
 	func configurePrevYear() {
-		guard self.currentYearIndex != 0 else { return }
+        guard let data = self.viewModel?.data, self.currentYearIndex != 0 else { return }
 
-		self.currentYearIndex -= 1
-		self.currentMonthIndex = Resources.monthCount - 1
-		self.selectedData = nil
+        let prevYear = data[self.currentYearIndex - 1]
 
-		self.reconfigureMonths(animated: true)
+        guard !prevYear.isMock else { return }
+
+        let model = UpdateSelectingModel(prevIndex: self.currentYearIndex, index: self.currentYearIndex - 1)
+        self.yearSelected(updateData: model, month: Resources.monthCount - 1)
+        self.configureYearsSection(animated: true)
 	}
 
 	func reconfigureMonths(animated: Bool) {

@@ -9,13 +9,14 @@ extension MonthCellRegistratable where Self: AnyObject  {
 	typealias MonthCellRegistration = UICollectionView
 		.CellRegistration<MonthCollectionViewCell, MonthItem>
 
-	func createMonthCellRegistration() -> MonthCellRegistration {
+    func createMonthCellRegistration(colors: Colors) -> MonthCellRegistration {
 		MonthCellRegistration { [weak self] (cell, _, item) in
-			cell.configure(with: item.days)
 
-			cell.daySelectedHandler = { index in
-				self?.daySelected(at: index)
-			}
+            cell.daySelectedHandler = { index in
+                self?.daySelected(at: index)
+            }
+
+            cell.configure(with: item.days, colors: colors)
 		}
 	}
 }

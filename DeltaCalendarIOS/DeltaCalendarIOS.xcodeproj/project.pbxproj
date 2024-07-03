@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3B139E502C20450B001764F5 /* DeltaCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 3B139E4F2C20450B001764F5 /* DeltaCalendar */; };
+		3BA147DD2C3447B300ECEDE4 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3BA147DC2C3447B300ECEDE4 /* SnapKit */; };
+		3BA147E32C3449D100ECEDE4 /* DeltaCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 3BA147E22C3449D100ECEDE4 /* DeltaCalendar */; };
 		3BB07A7D2C07596700D9E052 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A7C2C07596700D9E052 /* AppDelegate.swift */; };
 		3BB07A7F2C07596700D9E052 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A7E2C07596700D9E052 /* SceneDelegate.swift */; };
 		3BB07A862C07596800D9E052 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07A852C07596800D9E052 /* Assets.xcassets */; };
 		3BB07A912C0759CA00D9E052 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3BB07A902C0759CA00D9E052 /* LaunchScreen.storyboard */; };
 		3BB07A952C075AFD00D9E052 /* DCTestingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BB07A942C075AFD00D9E052 /* DCTestingViewController.swift */; };
-		3BB07A982C075B9200D9E052 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 3BB07A972C075B9200D9E052 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,19 +31,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BB07A982C075B9200D9E052 /* SnapKit in Frameworks */,
-				3B139E502C20450B001764F5 /* DeltaCalendar in Frameworks */,
+				3BA147DD2C3447B300ECEDE4 /* SnapKit in Frameworks */,
+				3BA147E32C3449D100ECEDE4 /* DeltaCalendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3BA147DB2C3447B300ECEDE4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		3BB07A702C07596700D9E052 = {
 			isa = PBXGroup;
 			children = (
 				3BB07A7B2C07596700D9E052 /* DeltaCalendarIOS */,
 				3BB07A7A2C07596700D9E052 /* Products */,
+				3BA147DB2C3447B300ECEDE4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,8 +109,8 @@
 			);
 			name = DeltaCalendarIOS;
 			packageProductDependencies = (
-				3BB07A972C075B9200D9E052 /* SnapKit */,
-				3B139E4F2C20450B001764F5 /* DeltaCalendar */,
+				3BA147DC2C3447B300ECEDE4 /* SnapKit */,
+				3BA147E22C3449D100ECEDE4 /* DeltaCalendar */,
 			);
 			productName = DeltaCalendarIOS;
 			productReference = 3BB07A792C07596700D9E052 /* DeltaCalendarIOS.app */;
@@ -134,7 +142,7 @@
 			mainGroup = 3BB07A702C07596700D9E052;
 			packageReferences = (
 				3BB07A962C075B9200D9E052 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				3B139E4E2C20450B001764F5 /* XCLocalSwiftPackageReference "DeltaCalendar" */,
+				3BA147E12C3449D100ECEDE4 /* XCLocalSwiftPackageReference "DeltaCalendar" */,
 			);
 			productRefGroup = 3BB07A7A2C07596700D9E052 /* Products */;
 			projectDirPath = "";
@@ -382,7 +390,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3B139E4E2C20450B001764F5 /* XCLocalSwiftPackageReference "DeltaCalendar" */ = {
+		3BA147E12C3449D100ECEDE4 /* XCLocalSwiftPackageReference "DeltaCalendar" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = DeltaCalendar;
 		};
@@ -400,14 +408,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3B139E4F2C20450B001764F5 /* DeltaCalendar */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DeltaCalendar;
-		};
-		3BB07A972C075B9200D9E052 /* SnapKit */ = {
+		3BA147DC2C3447B300ECEDE4 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3BB07A962C075B9200D9E052 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		3BA147E22C3449D100ECEDE4 /* DeltaCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DeltaCalendar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

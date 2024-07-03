@@ -16,15 +16,15 @@ public final class DeltaCalendarView: UIView {
 
 	private weak var monthHeader: MonthCollectionReusableView?
 	private lazy var collectionView: UICollectionView = {
-		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-		collectionView.backgroundColor = .clear
-		collectionView.bounces = false
-		collectionView.showsHorizontalScrollIndicator = false
-		collectionView.showsVerticalScrollIndicator = false
-		collectionView.delegate = self
-		collectionView.collectionViewLayout = self.compositionLayout()
-		return collectionView
-	}()
+		$0.backgroundColor = .clear
+		$0.bounces = false
+		$0.showsHorizontalScrollIndicator = false
+		$0.showsVerticalScrollIndicator = false
+		$0.delegate = self
+		$0.collectionViewLayout = self.compositionLayout()
+		return $0
+	}(UICollectionView(frame: .zero, collectionViewLayout: .init()))
+
 	private lazy var dataSource: DeltaCalendarDataSource = {
 		self.createDataSource()
 	}()
@@ -35,12 +35,9 @@ public final class DeltaCalendarView: UIView {
 		DeltaCalendarViewPresenter(self.dataSource, self.viewModel)
 	}()
 
-	public init(weekendsOff: Bool = false, pastDaysOff: Bool = false,
-				theme: Theme = .light, pickingYearData: PickingYearModel? = nil,
-				showTimeData: ShowTimeModel? = nil) {
+    public init(pickingYearData: PickingYearModel, showTimeData: ShowTimeModel, colors: Colors) {
 
-		self.startData = .init(theme: theme, weekendsOff: weekendsOff, pastDaysOff: pastDaysOff,
-							   pickingYearData: pickingYearData, showTimeData: showTimeData)
+        self.startData = .init(pickingYearData: pickingYearData, showTimeData: showTimeData, colors: colors)
 
 		super.init(frame: .zero)
 
@@ -67,7 +64,7 @@ extension DeltaCalendarView: UICollectionViewDelegate {
 
 extension DeltaCalendarView: YearsListCellRegistratable {
 	func yearSelected(_ data: UpdateSelectingModel) {
-		self.presenter.yearSelected(data)
+        self.presenter.yearSelected(updateData: data, month: 0)
 	}
 }
 
@@ -109,11 +106,12 @@ private extension DeltaCalendarView {
 	// MARK: - Setting
 
 	func setupView() {
-		self.setDefaultColors()
+        self.backgroundColor = self.startData.colors.background
 
 		self.addSubview(self.collectionView)
 
-		self.setConstraints()
+        self.collectionView.snp.makeConstraints { $0.edges.equalTo(self) }
+
 		self.setWeekdaysHeader()
 
 		self.presenter.monthIndexPublisher
@@ -140,11 +138,9 @@ private extension DeltaCalendarView {
 		let indexPath = IndexPath(row: index, section: section)
 		self.scrollTo(at: indexPath, deadline: .now(), animated: true)
 
-		let isSwitchingOff = self.startData.pickingYearData != nil
 		let title = self.monthTitle(at: indexPath.row)
 
-		self.monthHeader?.configure(monthTitle: title, theme: self.startData.theme,
-									isSwitchingOff: isSwitchingOff)
+        self.monthHeader?.configure(monthTitle: title, textColor: self.startData.colors.text)
 	}
 
 	func scrollTo(at item: IndexPath, deadline: DispatchTime, animated: Bool) {
@@ -155,52 +151,38 @@ private extension DeltaCalendarView {
 		}
 	}
 
-	func setDefaultColors() {
-		self.backgroundColor = self.startData.theme == .dark ? ColorsResources.darkBackColor
-		: ColorsResources.lightBackColor
-	}
-
-	func setConstraints() {
-		self.collectionView.snp.makeConstraints { $0.edges.equalTo(self) }
-	}
-
 	// MARK: - DataSource
 
 	func createDataSource() -> DeltaCalendarDataSource {
 
-		let monthRegistration = self.createMonthCellRegistration()
-		let yearsRegistration = self.createYearsCellRegistration()
-		let dayTimeRegistration = self.createDayTimeRegistration()
+        let monthRegistr = self.createMonthCellRegistration(colors: self.startData.colors)
+        let yearsRegistr = self.createYearsCellRegistration(colors: self.startData.colors)
+        let dayTimeRegistr = self.createDayTimeRegistration(colors: self.startData.colors)
 
 		return DeltaCalendarDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
 
-			guard let startData = self?.startData,
-				  let section = self?.presenter.section(at: indexPath.section, startData: startData)
-			else { return nil }
+			guard let section = Section(index: indexPath.section) else { return nil }
 
 			switch section {
 			case .year:
 				let item = self?.presenter.yearsItem
-				return collectionView.dequeueConfiguredReusableCell(using: yearsRegistration, for: indexPath, item: item)
+				return collectionView.dequeueConfiguredReusableCell(using: yearsRegistr, for: indexPath, item: item)
 			case .month:
 				let item = self?.presenter.month(at: indexPath.row)
-				return collectionView.dequeueConfiguredReusableCell(using: monthRegistration, for: indexPath, item: item)
+				return collectionView.dequeueConfiguredReusableCell(using: monthRegistr, for: indexPath, item: item)
 			case .time:
 				let item = self?.presenter.dayTimeData()
-				return collectionView.dequeueConfiguredReusableCell(using: dayTimeRegistration, for: indexPath, item: item)
+				return collectionView.dequeueConfiguredReusableCell(using: dayTimeRegistr, for: indexPath, item: item)
 			}
 		}
 	}
 
 	func setWeekdaysHeader() {
-
-		let isSwitchingOff = self.startData.pickingYearData != nil
-		let headerRegistration = self.createMonthHeaderRegistration(isSwitchingOff: isSwitchingOff,
-																	theme: self.startData.theme)
+        let headerRegistr = self.createMonthHeaderRegistration(textColor: self.startData.colors.text)
 
 		self.dataSource.supplementaryViewProvider = { [weak self] (_, _, indexPath) in
-			let header = self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+			let header = self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistr, for: indexPath)
 			self?.monthHeader = header
 			return header
 		}
@@ -213,15 +195,15 @@ private extension DeltaCalendarView {
 		let sectionProvider = { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
 			-> NSCollectionLayoutSection? in
 
-			guard let startData = self?.startData,
-				  let section = self?.presenter.section(at: sectionIndex, startData: startData) 
-			else { return nil }
+			guard let section = Section(index: sectionIndex) else { return nil }
 
 			let frame = self?.frame ?? .zero
 
 			switch section {
-			case .year, .time: return self?.valueListLayout()
-			case .month: 	   return self?.monthLayout(parentFrame: frame)
+			case .year, .time: 
+                return self?.valueListLayout()
+            case .month:
+                return self?.monthLayout(parentFrame: frame)
 			}
 		}
 

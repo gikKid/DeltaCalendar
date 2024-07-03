@@ -6,17 +6,12 @@ internal typealias SectionSnapshot = NSDiffableDataSourceSectionSnapshot<ItemID>
 internal enum Section {
 	case year, month, time
 
-	init?(section: Int, isShowYear: Bool, isShowTime: Bool) {
-
-		let yearSection: Int = isShowYear ? 0 : -1
-		let monthSection: Int = isShowYear ? 1 : 0
-		let timeSection: Int = isShowTime ? (isShowYear ? 2 : 1) : -1
-
-		switch section {
-		case yearSection: 	self = .year
-		case monthSection: 	self = .month
-		case timeSection: 	self = .time
-		default: 			return nil
+	init?(index: Int) {
+		switch index {
+		case 0:  self = .year
+		case 1:  self = .month
+		case 2:  self = .time
+		default: return nil
 		}
 	}
 }

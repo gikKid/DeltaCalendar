@@ -4,11 +4,12 @@ internal protocol MonthLayout {}
 
 extension MonthLayout {
 
-	func monthLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
+    func monthLayout(parentFrame: CGRect) -> NSCollectionLayoutSection {
 
-		let itemHeight: CGFloat = parentFrame.height / 1.75
-		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-											  heightDimension: .estimated(itemHeight))
+        let itemHeight: CGFloat = parentFrame.height / 1.75
+
+		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), 
+                                              heightDimension: .estimated(itemHeight))
 
 		let item = NSCollectionLayoutItem(layoutSize: itemSize)
 

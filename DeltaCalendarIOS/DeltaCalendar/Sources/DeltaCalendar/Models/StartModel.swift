@@ -3,11 +3,9 @@ import Foundation
 // MARK: - StartModel
 
 internal struct StartModel {
-	let theme: Theme
-	var weekendsOff: Bool
-	let pastDaysOff: Bool
-	var pickingYearData: PickingYearModel?
-	let showTimeData: ShowTimeModel?
+	let pickingYearData: PickingYearModel
+	let showTimeData: ShowTimeModel
+    let colors: Colors
 }
 
 // MARK: - PickingYearModel
@@ -68,10 +66,4 @@ public struct DayTimeStartModel {
 		self.endDate = end
 		self.weekday = weekday
 	}
-}
-
-// MARK: - Theme
-
-public enum Theme {
-	case light, dark
 }

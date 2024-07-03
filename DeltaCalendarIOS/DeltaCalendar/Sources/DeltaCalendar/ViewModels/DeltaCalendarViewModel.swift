@@ -14,17 +14,9 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
 	private let timeFormatter = DateFormatter.build(format: Resources.timeFormat)
 	private(set) var data: [YearItem] = []
-	private let defMaxYear: Int = Resources.maxYear
-	private lazy var defStartYear: Int = {
-		Date().year(using: self.timeFormatter.calendar)
-	}()
 
 	init(with data: StartModel) {
-
-		let startYear = data.pickingYearData?.from ?? self.defStartYear
-		let endYear = data.pickingYearData?.to ?? self.defMaxYear
-
-		self.data = self.createContent(from: startYear, to: endYear, startData: data)
+		self.data = self.createContent(data)
 	}
 
 	func toggleSelecting(at date: SelectedModel) {
@@ -55,19 +47,17 @@ private extension DeltaCalendarViewModel {
 
 	// MARK: - Content creating logic
 
-	func createContent(from: Int, to: Int, startData: StartModel) -> [YearItem] {
+	func createContent(_ startData: StartModel) -> [YearItem] {
 
-		guard from <= to else { return [] }
+        guard startData.pickingYearData.from <= startData.pickingYearData.to else { return [] }
 
 		let monthsText = DateFormatter().monthSymbols!
 		let calendar = self.timeFormatter.calendar ?? .current
 		let timeZone = self.timeFormatter.timeZone
 
-		let isPickingYear = startData.pickingYearData != nil
-
-		let yearsRange = (from...to)
-		let selectedDifYear = to - Resources.selectingYearGap
-		let selectedYear = yearsRange.contains(selectedDifYear) ? selectedDifYear : to
+        let yearsRange = (startData.pickingYearData.from...startData.pickingYearData.to)
+        let selectedDifYear = startData.pickingYearData.to - Resources.selectingYearGap
+        let selectedYear = yearsRange.contains(selectedDifYear) ? selectedDifYear : startData.pickingYearData.from
 
 		let years = yearsRange
 			.map { DateComponents(calendar: calendar, timeZone: timeZone ,year: $0).date! }
@@ -86,22 +76,19 @@ private extension DeltaCalendarViewModel {
 				let daysRange = calendar.range(of: .day, in: .month, for: monthDate)!
 				let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData)
 
-				let monthTitle = monthsText[month - 1]
-				let title = startData.pickingYearData != nil ? monthTitle :
-				"\(monthTitle) \(digitYear)"
+				let title = monthsText[month - 1]
 
 				return MonthItem(title: title, days: days)
 			}
 
-			let isSelected = isPickingYear ? digitYear == selectedYear : from == digitYear
+			let isSelected = digitYear == selectedYear
 
 			return YearItem(value: digitYear, months: monthItems, isSelected: isSelected, isMock: false)
 		}
 
-		if isPickingYear {
-			items.insert(.init(value: 0, months: [], isSelected: false, isMock: true), at: 0)
-			items.append(.init(value: 0, months: [], isSelected: false, isMock: true))
-		}
+        /// insert mock items for showing first and last collection cell at center.
+        items.insert(.init(value: 0, months: [], isSelected: false, isMock: true), at: 0)
+        items.append(.init(value: 0, months: [], isSelected: false, isMock: true))
 
 		return items
 	}
@@ -121,28 +108,17 @@ private extension DeltaCalendarViewModel {
 			let description = isSame ? TextResources.today.capitalized : ""
 			let weekday = calendar.component(.weekday, from: dayDate)
 
-			let timeData: [DayTime]
-			if let showTimeData = startData.showTimeData {
-				timeData = self.dayTime(weekDay: weekday, resource: showTimeData)
-			} else {
-				timeData = []
-			}
+			let timeData: [DayTime] = self.dayTime(weekDay: weekday, resource: startData.showTimeData)
 
-			let dayData = Day(title: String($0), description: description,
-							  weekday: weekday, date: dayDate, timeData: timeData)
+			let dayData = Day(title: String($0), description: description, weekday: weekday,
+                              date: dayDate, timeData: timeData)
 
+			let isDisabled = timeData.isEmpty
 
-			let isDisabled = startData.showTimeData != nil ? timeData.isEmpty : 
-			((startData.weekendsOff && self.isWeekday(at: dayDate)) ||
-			(startData.pastDaysOff && self.isPastDay(at: dayDate)))
-
-			let colors = DayColors(theme: startData.theme)
-			let isSelected = startData.pickingYearData == nil && isSame
-
-			return DayItem(data: dayData, colors: colors, isDisabled: isDisabled, isSelected: isSelected)
+            return DayItem(data: dayData, isDisabled: isDisabled, isSelected: isSame)
 		}
 
-		return self.addExtraEmptyDays(items, startData.theme)
+		return self.addExtraEmptyDays(items)
 	}
 
 	func isWeekday(at date: Date) -> Bool {
@@ -180,7 +156,7 @@ private extension DeltaCalendarViewModel {
 	}
 
 	/// Adding empty days for right shifting.
-	func addExtraEmptyDays(_ days: [DayItem],_ theme: Theme) -> [DayItem] {
+	func addExtraEmptyDays(_ days: [DayItem]) -> [DayItem] {
 
 		let firstWeekDayIndex = Resources.mondayIndex
 
@@ -194,8 +170,7 @@ private extension DeltaCalendarViewModel {
 
 		(0..<dif).forEach { _ in
 			let dayData = Day(title: "", description: "", weekday: 0, date: nil, timeData: [])
-			let colors = DayColors(theme: theme)
-			let mockItem = DayItem(data: dayData, colors: colors, isDisabled: true, isSelected: false)
+			let mockItem = DayItem(data: dayData, isDisabled: true, isSelected: false)
 
 			currentDays.insert(mockItem, at: 0)
 		}

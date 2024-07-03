@@ -5,11 +5,10 @@ internal final class ValueCollectionViewCell: UICollectionViewCell {
 	private let valueLabel: UILabel = {
 		let size = TextSizeResources.big
 
-		let label = UILabel()
-		label.textAlignment = .center
-		label.font = UIFont.systemFont(ofSize: size)
-		return label
-	}()
+		$0.textAlignment = .center
+		$0.font = UIFont.systemFont(ofSize: size)
+		return $0
+	}(UILabel())
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -20,10 +19,9 @@ internal final class ValueCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure<T: CustomStringConvertible>(text: T, isSelected: Bool) {
+    func configure<T: CustomStringConvertible>(text: T, isSelected: Bool, colors: Colors) {
 		self.valueLabel.text = text.description
-		self.valueLabel.textColor = isSelected ? ColorsResources.selectedValColor :
-		ColorsResources.disabledColor
+        self.valueLabel.textColor = isSelected ? colors.main : colors.secondaryText
 	}
 
 	private func setupView() {

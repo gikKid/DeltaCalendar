@@ -5,19 +5,18 @@ internal final class DayCollectionViewCell: UICollectionViewCell {
 	private let centerLabel: UILabel = {
 		let size = TextSizeResources.mid
 
-		let label = UILabel()
-		label.textAlignment = .center
-		label.font = UIFont.systemFont(ofSize: size)
-		return label
-	}()
+		$0.textAlignment = .center
+		$0.font = UIFont.systemFont(ofSize: size)
+		return $0
+	}(UILabel())
+
 	private let btmLabel: UILabel = {
 		let size = TextSizeResources.small
 
-		let label = UILabel()
-		label.textAlignment = .center
-		label.font = UIFont.systemFont(ofSize: size)
-		return label
-	}()
+		$0.textAlignment = .center
+		$0.font = UIFont.systemFont(ofSize: size)
+		return $0
+	}(UILabel())
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -28,26 +27,24 @@ internal final class DayCollectionViewCell: UICollectionViewCell {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(with data: DayItem) {
+    func configure(with data: DayItem, colors: Colors) {
 
 		self.centerLabel.text = data.data.title
 
 		self.btmLabel.text = data.data.description
-		self.btmLabel.textColor = data.isSelected ? data.colors.selectedBtmText :
-		data.colors.btmText
+        self.btmLabel.textColor = data.isSelected ? colors.background : colors.main
 
 		self.isUserInteractionEnabled = !data.isDisabled
 
 		guard !data.isDisabled else {
 			self.contentView.backgroundColor = .clear
-			self.centerLabel.textColor = ColorsResources.disabledColor
+            self.centerLabel.textColor = colors.secondaryText
 			return
 		}
 
-		self.centerLabel.textColor = data.isSelected ? data.colors.centerTextSelected :
-		data.colors.centerText
+        self.centerLabel.textColor = data.isSelected ? colors.background : colors.text
 
-		self.contentView.backgroundColor = data.isSelected ? data.colors.selectedBack : .clear
+        self.contentView.backgroundColor = data.isSelected ? colors.main : .clear
 	}
 }
 

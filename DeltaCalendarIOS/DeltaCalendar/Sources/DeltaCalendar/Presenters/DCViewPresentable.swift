@@ -16,8 +16,7 @@ internal protocol DeltaCalendarViewPresentable: AnyObject {
 	func currentMonth() -> IndexPath?
 	func updateDaySelecting(at dayIndex: Int)
 	func month(at index: Int) -> MonthItem?
-	func section(at index: Int, startData: StartModel) -> Section?
-	func yearSelected(_ data: UpdateSelectingModel)
+    func yearSelected(updateData: UpdateSelectingModel, month: Int)
 	func dayTimeData() -> DayTimeItem
 	func timeSelected(_ data: UpdateSelectingModel) -> Date?
 }

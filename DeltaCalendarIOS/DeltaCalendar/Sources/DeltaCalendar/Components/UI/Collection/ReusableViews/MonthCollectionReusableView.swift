@@ -5,32 +5,38 @@ internal final class MonthCollectionReusableView: UICollectionReusableView {
 	private let monthLabel: UILabel = {
 		let size = TextSizeResources.big
 
-		let label = UILabel()
-		label.textAlignment = .center
-		label.font = UIFont.systemFont(ofSize: size, weight: .bold)
-		return label
-	}()
-	private let nextButton: UIButton = {
+		$0.textAlignment = .center
+		$0.font = UIFont.systemFont(ofSize: size, weight: .bold)
+		return $0
+	}(UILabel())
+
+	private lazy var nextButton: UIButton = {
 		let imgConfig = UIImage.SymbolConfiguration(scale: .large)
 		let image = ImageResources.chevronRight?.withConfiguration(imgConfig)
 
-		let button = UIButton()
-		button.setImage(image, for: .normal)
-		return button
-	}()
-	private let prevButton: UIButton = {
+        $0.addTarget(self, action: #selector(self.nextBtnTapped), for: .touchUpInside)
+		$0.setImage(image, for: .normal)
+		return $0
+	}(UIButton())
+
+	private lazy var prevButton: UIButton = {
 		let imgConfig = UIImage.SymbolConfiguration(scale: .large)
 		let image = ImageResources.chevronLeft?.withConfiguration(imgConfig)
 
-		let button = UIButton()
-		button.setImage(image, for: .normal)
-		return button
-	}()
+        $0.addTarget(self, action: #selector(self.prevBtnTapped), for: .touchUpInside)
+		$0.setImage(image, for: .normal)
+		return $0
+	}(UIButton())
+
 	private let stackView: UIStackView = {
-		let stackView = UIStackView()
-		stackView.axis = .horizontal
-		return stackView
-	}()
+		$0.axis = .horizontal
+		return $0
+	}(UIStackView())
+
+    private var tapTimer: Timer?
+    private var timerValid: Bool {
+        self.tapTimer?.isValid ?? false
+    }
 
 	public var eventHandler: ((Event) -> Void)?
 
@@ -47,19 +53,12 @@ internal final class MonthCollectionReusableView: UICollectionReusableView {
 		fatalError("init(coder:) has not been implemented")
 	}
 
-	func configure(monthTitle: String, theme: Theme, isSwitchingOff: Bool) {
+    func configure(monthTitle: String, textColor: UIColor) {
 		self.monthLabel.text = monthTitle
 
-		let color = theme == .dark ? ColorsResources.textLightColor :
-		ColorsResources.textDarkColor
-
-		self.monthLabel.textColor = color
-
-		self.nextButton.imageView?.tintColor = color
-		self.nextButton.isHidden = isSwitchingOff
-
-		self.prevButton.imageView?.tintColor = color
-		self.prevButton.isHidden = isSwitchingOff
+		self.monthLabel.textColor = textColor
+		self.nextButton.imageView?.tintColor = textColor
+		self.prevButton.imageView?.tintColor = textColor
 	}
 }
 
@@ -72,9 +71,6 @@ private extension MonthCollectionReusableView {
 		self.addSubview(self.stackView)
 
 		self.setConstraints()
-
-		self.prevButton.addTarget(self, action: #selector(self.prevBtnTapped), for: .touchUpInside)
-		self.nextButton.addTarget(self, action: #selector(self.nextBtnTapped), for: .touchUpInside)
 
 		let width = self.frame.width / CGFloat(Resources.weekdays.count)
 		self.setWeekdays(weekdayWidth: width)
@@ -126,18 +122,27 @@ private extension MonthCollectionReusableView {
 		let label = UILabel()
 		label.text = text
 		label.textAlignment = .center
-		label.textColor = ColorsResources.secondaryTextColor
+        label.textColor = Resources.weekDayColor
 		label.font = UIFont.systemFont(ofSize: TextSizeResources.small)
 		return label
 	}
 
 	@objc func prevBtnTapped(_ sender: UIButton) {
-		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: Resources.feedbackVal)
-		self.eventHandler?(.prevMonth)
+        self.movingTapComplition(.prevMonth)
 	}
 
 	@objc func nextBtnTapped(_ sender: UIButton) {
-		UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: Resources.feedbackVal)
-		self.eventHandler?(.nextMonth)
+        self.movingTapComplition(.nextMonth)
 	}
+
+    func movingTapComplition(_ event: Event) {
+        guard !self.timerValid else { return }
+
+        UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: Resources.feedbackVal)
+        self.eventHandler?(event)
+
+        self.tapTimer = Timer.scheduledTimer(withTimeInterval: Resources.debounce, repeats: false) { [weak self] _ in
+            self?.tapTimer?.invalidate()
+        }
+    }
 }

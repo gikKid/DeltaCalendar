@@ -2,7 +2,6 @@ import Foundation
 
 internal struct DayItem: Identifiable {
 	let data: Day
-	let colors: DayColors
 	var isDisabled: Bool
 	let id: ItemID = UUID().uuidString
 	var isSelected: Bool
