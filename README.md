@@ -1,7 +1,7 @@
 # DeltaCalendar
 Custom configuring calendar.
 
-<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/Calendar.jpeg" title="" width="550" height="650"/>&nbsp;
+<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/CalendarView.jpeg" title="" width="550" height="650"/>&nbsp;
 
 ## Opportunities
 1. Showing years range.
@@ -16,7 +16,7 @@ Use **SPM** to add calendar package at project. ([link](https://github.com/gikKi
 ```swift
 let view = DeltaCalendarView(...)
 view.delegate = self
-``` 
+```
 
 ```swift
 // Parameter "from" must be equal or less than parameter "to", otherwise it woudnt be build.
