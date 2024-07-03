@@ -1,7 +1,7 @@
 # DeltaCalendar
 Custom configuring calendar.
 
-<img src="" title="" width="550" height="650"/>&nbsp;
+<img src="https://github.com/gikKid/DeltaCalendar/blob/main/ContentResource/Calendar.jpeg" title="" width="550" height="650"/>&nbsp;
 
 ## Opportunities
 1. Showing years range.
