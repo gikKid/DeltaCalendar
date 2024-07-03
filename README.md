@@ -46,3 +46,10 @@ let colors = Colors(text: .black, main: .blue, secondaryText: .lightGray, backgr
 2. Snapkit
 3. Calendar(Apple)
 4. Combine
+
+## Developing
+1. Add shimmer while calendar data will be configuring.
+2. Select year/time in case when scroll between items.
+3. Move to next/prev year by horizontal scrolling.
+4. Show today description at start.
+5. Always return hours format HH.
