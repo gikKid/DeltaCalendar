@@ -3,6 +3,7 @@ import Combine
 import SnapKit
 
 public protocol DeltaCalendarViewDelegate {
+    /// - Returns: Date formatted yyyy-MM-dd HH:mm:ssZ
 	func dateSelected(_ date: Date)
 }
 
@@ -101,6 +102,16 @@ extension DeltaCalendarView: DayTimeCellRegistratable {
 	}
 }
 
+// MARK: - PresenterDelegate
+
+extension DeltaCalendarView: DeltaCalendarViewPresenterDelegate {
+    func calendarDSConfigured() {
+        guard let indexPath = self.presenter.currentMonth() else { return }
+
+        self.scrollTo(at: indexPath, animated: true)
+    }
+}
+
 private extension DeltaCalendarView {
 
 	// MARK: - Setting
@@ -125,10 +136,9 @@ private extension DeltaCalendarView {
 			self?.delegate?.dateSelected(date)
 		}.store(in: &self.subscriptions)
 
-		self.presenter.setupDS(with: self.startData)
+        self.presenter.delegate = self
 
-		guard let indexPath = self.presenter.currentMonth() else { return }
-		self.scrollTo(at: indexPath, deadline: .now() + 0.1, animated: false)
+		self.presenter.showConfiguring()
 	}
 
 	func scrollToMonth(to index: Int) {
@@ -136,15 +146,15 @@ private extension DeltaCalendarView {
 		else { return }
 
 		let indexPath = IndexPath(row: index, section: section)
-		self.scrollTo(at: indexPath, deadline: .now(), animated: true)
+		self.scrollTo(at: indexPath, animated: true)
 
 		let title = self.monthTitle(at: indexPath.row)
 
         self.monthHeader?.configure(monthTitle: title, textColor: self.startData.colors.text)
 	}
 
-	func scrollTo(at item: IndexPath, deadline: DispatchTime, animated: Bool) {
-		DispatchQueue.main.asyncAfter(deadline: deadline) {
+	func scrollTo(at item: IndexPath, animated: Bool) {
+		DispatchQueue.main.async {
 			self.collectionView.isPagingEnabled = false // bug at iOS 14
 			self.collectionView.scrollToItem(at: item, at: .centeredHorizontally, animated: animated)
 			self.collectionView.isPagingEnabled = true
@@ -158,11 +168,14 @@ private extension DeltaCalendarView {
         let monthRegistr = self.createMonthCellRegistration(colors: self.startData.colors)
         let yearsRegistr = self.createYearsCellRegistration(colors: self.startData.colors)
         let dayTimeRegistr = self.createDayTimeRegistration(colors: self.startData.colors)
+        let configRegistr = self.createMockLoadingCellRegistration()
 
 		return DeltaCalendarDataSource(collectionView: self.collectionView) {
 			[weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
 
-			guard let section = Section(index: indexPath.section) else { return nil }
+            let isConfiguring = self?.viewModel.isConfiguring() ?? true
+
+            guard let section = Section(index: indexPath.section, isConfiguring: isConfiguring) else { return nil }
 
 			switch section {
 			case .year:
@@ -174,6 +187,9 @@ private extension DeltaCalendarView {
 			case .time:
 				let item = self?.presenter.dayTimeData()
 				return collectionView.dequeueConfiguredReusableCell(using: dayTimeRegistr, for: indexPath, item: item)
+            case .loading:
+                let item = self?.presenter.mockConfigItem
+                return collectionView.dequeueConfiguredReusableCell(using: configRegistr, for: indexPath, item: item)
 			}
 		}
 	}
@@ -195,15 +211,18 @@ private extension DeltaCalendarView {
 		let sectionProvider = { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
 			-> NSCollectionLayoutSection? in
 
-			guard let section = Section(index: sectionIndex) else { return nil }
+            let isConfiguring = self?.viewModel.isConfiguring() ?? true
+
+            guard let section = Section(index: sectionIndex, isConfiguring: isConfiguring) else { return nil }
 
 			let frame = self?.frame ?? .zero
 
 			switch section {
-			case .year, .time: 
+            case .year, .time, .loading:
                 return self?.valueListLayout()
             case .month:
                 return self?.monthLayout(parentFrame: frame)
+                
 			}
 		}
 
@@ -211,4 +230,4 @@ private extension DeltaCalendarView {
 	}
 }
 
-extension DeltaCalendarView: MonthLayout, ValueListLayout {}
+extension DeltaCalendarView: MonthLayout, ValueListLayout, MockLoadingRegistrable {}

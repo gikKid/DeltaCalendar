@@ -14,6 +14,7 @@ internal enum Resources {
 	static let minValScale: CGFloat = 0.7
 	static let maxValScale: CGFloat = 1.1
     static let debounce: TimeInterval = 0.7
+    static let shimmerOffset = 0.33
 	static let isoFormat: String = "yyyy/MM/dd"
 	static let dateFormat: String = "\(Self.isoFormat) \(Self.timeFormat)"
 	static let timeFormat: String = "HH:mm"

@@ -1,10 +1,16 @@
 import Foundation
 import Combine
 
+internal protocol DeltaCalendarViewModelDelegate: AnyObject {
+    func calendarConfigured()
+}
+
 internal protocol DeltaCalendarViewModelProtocol: AnyObject {
 
+    var delegate: DeltaCalendarViewModelDelegate? { get set }
 	var data: [YearItem] { get }
 
+    func isConfiguring() -> Bool
 	func toggleSelecting(at date: SelectedModel)
 	func toggleYearSelecting(_ data: UpdateSelectingModel)
 	func date(selectedData: SelectedModel, timeIndex: Int) -> Date?
@@ -12,11 +18,18 @@ internal protocol DeltaCalendarViewModelProtocol: AnyObject {
 
 internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
+    public weak var delegate: DeltaCalendarViewModelDelegate?
 	private let timeFormatter = DateFormatter.build(format: Resources.timeFormat)
-	private(set) var data: [YearItem] = []
+    private(set) var data: [YearItem] = YearItem.mockData()
 
 	init(with data: StartModel) {
-		self.data = self.createContent(data)
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.data = self.createContent(data)
+
+            DispatchQueue.main.async {
+                self.delegate?.calendarConfigured()
+            }
+        }
 	}
 
 	func toggleSelecting(at date: SelectedModel) {
@@ -41,6 +54,16 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
 		return DateFormatter.build(format: Resources.dateFormat).date(from: "\(dayText) \(time)")
 	}
+
+    func isConfiguring() -> Bool {
+        guard let year = self.data.first else {
+            fatalError(CalendarError.dataConfiguring.description)
+        }
+
+        guard !year.isMock else { return false }
+
+        return year.months.count < Resources.monthCount
+    }
 }
 
 private extension DeltaCalendarViewModel {
@@ -83,7 +106,7 @@ private extension DeltaCalendarViewModel {
 
 			let isSelected = digitYear == selectedYear
 
-			return YearItem(value: digitYear, months: monthItems, isSelected: isSelected, isMock: false)
+            return YearItem(value: digitYear, months: monthItems, isSelected: isSelected, isMock: false)
 		}
 
         /// insert mock items for showing first and last collection cell at center.
@@ -97,11 +120,10 @@ private extension DeltaCalendarViewModel {
 
 		let today = Date()
 		let calendar = self.timeFormatter.calendar ?? .current
-		let timeZone = self.timeFormatter.timeZone
 
 		let items = data.map {
 
-			let dayDate = DateComponents(calendar: calendar, timeZone: timeZone,
+			let dayDate = DateComponents(calendar: calendar, timeZone: self.timeFormatter.timeZone,
 										 year: year, month: month, day: $0).date!
 
 			let isSame = calendar.compare(dayDate, to: today, toGranularity: .day) == .orderedSame
@@ -138,18 +160,18 @@ private extension DeltaCalendarViewModel {
 		else { return [] }
 
 		var firstTime = dayData.startDate
-		let firstMockTime = DayTime(value: Date(), isSelected: false, isMock: true)
-		let startDate = DayTime(value: firstTime, isSelected: true, isMock: false)
+        let firstMockTime = DayTime(value: Date(), isSelected: false, isMock: true)
+        let startDate = DayTime(value: firstTime, isSelected: true, isMock: false)
 
 		var timeData: [DayTime] = [firstMockTime, startDate]
 
 		while firstTime < dayData.endDate {
 			firstTime = firstTime.addingTimeInterval(Double(resource.offset) * 60.0)
-			let time = DayTime(value: firstTime, isSelected: false, isMock: false)
+            let time = DayTime(value: firstTime, isSelected: false, isMock: false)
 			timeData.append(time)
 		}
 
-		let lastMockItem = DayTime(value: Date(), isSelected: false, isMock: true)
+        let lastMockItem = DayTime(value: Date(), isSelected: false, isMock: true)
 		timeData.append(lastMockItem)
 
 		return timeData
@@ -170,7 +192,7 @@ private extension DeltaCalendarViewModel {
 
 		(0..<dif).forEach { _ in
 			let dayData = Day(title: "", description: "", weekday: 0, date: nil, timeData: [])
-			let mockItem = DayItem(data: dayData, isDisabled: true, isSelected: false)
+            let mockItem = DayItem(data: dayData, isDisabled: true, isSelected: false)
 
 			currentDays.insert(mockItem, at: 0)
 		}

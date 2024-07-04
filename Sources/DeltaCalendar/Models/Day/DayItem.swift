@@ -3,8 +3,8 @@ import Foundation
 internal struct DayItem: Identifiable {
 	let data: Day
 	var isDisabled: Bool
+    var isSelected: Bool
 	let id: ItemID = UUID().uuidString
-	var isSelected: Bool
 }
 
 internal struct Day {

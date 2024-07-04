@@ -14,6 +14,7 @@ extension MonthHeaderRegistratable where Self: AnyObject {
     func createMonthHeaderRegistration(textColor: UIColor) -> MonthHeaderRegistration {
 		MonthHeaderRegistration(elementKind: UICollectionView.elementKindSectionHeader) {
 			[weak self] (view, _, indexPath) in
+
 			let title = self?.monthTitle(at: indexPath.row) ?? "-"
 
 			view.configure(monthTitle: title, textColor: textColor)

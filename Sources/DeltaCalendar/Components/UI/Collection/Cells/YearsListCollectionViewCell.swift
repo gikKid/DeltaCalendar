@@ -141,7 +141,8 @@ private extension YearsListCollectionViewCell {
 			
 			guard let year = self?.data[indexPath.row] else { return nil }
 
-			let item = ValueItem(value: year.value, isMock: year.isMock, isSelected: year.isSelected, id: year.id)
+            let item = ValueItem(value: year.value, isMock: year.isMock, isSelected: year.isSelected, id: year.id)
+
 			return collectionView.dequeueConfiguredReusableCell(using: valueRegistratrion, for: indexPath, item: item)
 		}
 	}

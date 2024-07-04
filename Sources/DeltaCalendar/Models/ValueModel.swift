@@ -7,6 +7,6 @@ internal struct ValueItem: Identifiable {
 	let id: ItemID
 
 	static func buildNoData(text: String) -> Self {
-		.init(value: text, isMock: false, isSelected: false, id: UUID().uuidString)
+        .init(value: text, isMock: false, isSelected: false, id: UUID().uuidString)
 	}
 }

@@ -6,7 +6,7 @@ internal struct DayTime: Identifiable {
 	let isMock: Bool
 	let id: ItemID = UUID().uuidString
 
-	init(value: Date, isSelected: Bool, isMock: Bool) {
+    init(value: Date, isSelected: Bool, isMock: Bool) {
 		self.isSelected = isSelected
 		self.isMock = isMock
 

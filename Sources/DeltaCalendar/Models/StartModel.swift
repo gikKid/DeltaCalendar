@@ -16,7 +16,7 @@ public struct PickingYearModel {
 
 	public init(from: Int, to: Int) {
 
-		guard from <= to else { fatalError("[ERROR]: 'From' year must be equal or less than 'to' year.") }
+        guard from <= to else { fatalError(CalendarError.fromToYears.description) }
 
 		self.from = from
 		self.to = to
@@ -31,7 +31,7 @@ public struct ShowTimeModel {
 
 	public init(data: [DayTimeStartModel], offset: Int) {
 
-		guard offset >= 1 else { fatalError("[ERROR]: Time offset must be equal or more than 1.") }
+        guard offset >= 1 else { fatalError(CalendarError.timeOffset.description) }
 
 		self.data = data
 		self.offset = offset
@@ -48,7 +48,7 @@ public struct DayTimeStartModel {
 	public init(weekday: Int, startDate: String, endDate: String) {
 
 		guard (1...7).contains(weekday) else {
-			fatalError("[ERROR]: Weekday is not correct. It must be value between 1 and 7 (\(weekday)")
+            fatalError(CalendarError.weekday(weekday).description)
 		}
 
 		let format = Resources.timeFormat
@@ -56,10 +56,10 @@ public struct DayTimeStartModel {
 
 		guard let start = timeFormatter.date(from: startDate),
 			  let end = timeFormatter.date(from: endDate)
-		else { fatalError("[ERROR]: Time format is '\(format)'") }
+        else { fatalError(CalendarError.timeFormat(format).description) }
 
 		guard start.hours() <= end.hours(), start.minutes() <= end.minutes() else {
-			fatalError("[ERROR]: 'Start date' parameter must be less than 'end date' parameter at time in day")
+            fatalError(CalendarError.startEndTime.description)
 		}
 
 		self.startDate = start

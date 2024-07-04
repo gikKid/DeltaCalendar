@@ -32,7 +32,7 @@ internal final class DayCollectionViewCell: UICollectionViewCell {
 		self.centerLabel.text = data.data.title
 
 		self.btmLabel.text = data.data.description
-        self.btmLabel.textColor = data.isSelected ? colors.background : colors.main
+        self.btmLabel.textColor = data.isDisabled ? colors.main : (data.isSelected ? colors.background : colors.main)
 
 		self.isUserInteractionEnabled = !data.isDisabled
 

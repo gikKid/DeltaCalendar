@@ -15,6 +15,7 @@ Use **SPM** to add calendar package at project. ([link](https://github.com/gikKi
 ## Using
 ```swift
 let view = DeltaCalendarView(...)
+// Return date format is yyyy-MM-dd HH:mm:ssZ
 view.delegate = self
 ```
 
@@ -48,8 +49,5 @@ let colors = Colors(text: .black, main: .blue, secondaryText: .lightGray, backgr
 4. Combine
 
 ## Developing
-1. Add shimmer while calendar data will be configuring.
-2. Select year/time in case when scroll between items.
-3. Move to next/prev year by horizontal scrolling.
-4. Show today description at start.
-5. Always return hours format HH.
+1. Select year/time in case when scroll is placing between items.
+2. Move to next/prev year by horizontal scrolling.

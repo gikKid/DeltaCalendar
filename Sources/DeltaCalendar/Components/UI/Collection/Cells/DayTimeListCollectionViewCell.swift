@@ -169,7 +169,8 @@ private extension DayTimeListCollectionViewCell {
 			}
 
 			let time = data[indexPath.row]
-			let item = ValueItem(value: time.title, isMock: false, isSelected: time.isSelected, id: time.id)
+            let item = ValueItem(value: time.title, isMock: false, isSelected: time.isSelected, id: time.id)
+
 			return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
 		}
 	}
