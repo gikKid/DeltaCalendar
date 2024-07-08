@@ -6,4 +6,4 @@
 "fri" = "fri";
 "sat" = "sat";
 "sun" = "sun";
-"chooseDay" = "Choose a day";
+"noAvailableTime" = "No available time";

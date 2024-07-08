@@ -9,5 +9,5 @@ internal enum TextResources {
 	static let fri = NSLocalizedString("fri", bundle: Bundle.module, comment: "fri")
 	static let sat = NSLocalizedString("sat", bundle: Bundle.module, comment: "sat")
 	static let sun = NSLocalizedString("sun", bundle: Bundle.module, comment: "sun")
-	static let chooseDay = NSLocalizedString("chooseDay", bundle: Bundle.module, comment: "chooseDay")
+    static let noAvailableTime = NSLocalizedString("noAvailableTime", bundle: Bundle.module, comment: "noAvailableTime")
 }

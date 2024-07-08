@@ -8,6 +8,7 @@ Custom configuring calendar.
 2. Configuring time range at day and minutes offset.
 3. Disabling off-time days.
 4. Setting custom colors.
+5. Disabling previous days and intraday time.
 
 ## Adding
 Use **SPM** to add calendar package at project. ([link](https://github.com/gikKid/DeltaCalendar))

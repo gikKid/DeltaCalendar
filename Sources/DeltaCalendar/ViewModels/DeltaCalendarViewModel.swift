@@ -8,21 +8,25 @@ internal protocol DeltaCalendarViewModelDelegate: AnyObject {
 internal protocol DeltaCalendarViewModelProtocol: AnyObject {
 
     var delegate: DeltaCalendarViewModelDelegate? { get set }
-	var data: [YearItem] { get }
+    var data: [YearItem] { get }
 
     func isConfiguring() -> Bool
-	func toggleSelecting(at date: SelectedModel)
-	func toggleYearSelecting(_ data: UpdateSelectingModel)
-	func date(selectedData: SelectedModel, timeIndex: Int) -> Date?
+    func toggleSelecting(at date: SelectedModel)
+    func toggleYearSelecting(_ data: UpdateSelectingModel)
+    func date(selectedData: SelectedModel, timeIndex: Int) -> Date?
 }
 
 internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
     public weak var delegate: DeltaCalendarViewModelDelegate?
-	private let timeFormatter = DateFormatter.build(format: Resources.timeFormat)
+    private let timeFormatter = DateFormatter.build(format: Resources.timeFormat)
     private(set) var data: [YearItem] = YearItem.mockData()
 
-	init(with data: StartModel) {
+    private var calendar: Calendar {
+        self.timeFormatter.calendar ?? .current
+    }
+
+    init(with data: StartModel) {
         DispatchQueue.global(qos: .userInteractive).async {
             self.data = self.createContent(data)
 
@@ -30,30 +34,30 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
                 self.delegate?.calendarConfigured()
             }
         }
-	}
+    }
 
-	func toggleSelecting(at date: SelectedModel) {
-		self.data[date.yearIndex].months[date.monthIndex].days[date.dayIndex]
-			.isSelected.toggle()
-	}
+    func toggleSelecting(at date: SelectedModel) {
+        self.data[date.yearIndex].months[date.monthIndex].days[date.dayIndex]
+            .isSelected.toggle()
+    }
 
-	func toggleYearSelecting(_ data: UpdateSelectingModel) {
-		self.data[data.prevIndex].isSelected.toggle()
-		self.data[data.index].isSelected.toggle()
-	}
+    func toggleYearSelecting(_ data: UpdateSelectingModel) {
+        self.data[data.prevIndex].isSelected.toggle()
+        self.data[data.index].isSelected.toggle()
+    }
 
-	func date(selectedData: SelectedModel, timeIndex: Int) -> Date? {
+    func date(selectedData: SelectedModel, timeIndex: Int) -> Date? {
 
-		let day = self.data[selectedData.yearIndex].months[selectedData.monthIndex]
-			.days[selectedData.dayIndex].data
-		let time = day.timeData[timeIndex].title
+        let day = self.data[selectedData.yearIndex].months[selectedData.monthIndex]
+            .days[selectedData.dayIndex].data
+        let time = day.timeData[timeIndex].title
 
-		guard let date = day.date else { return nil }
+        guard let date = day.date else { return nil }
 
-		let dayText = DateFormatter.build(format: Resources.isoFormat).string(from: date)
+        let dayText = DateFormatter.build(format: Resources.isoFormat).string(from: date)
 
-		return DateFormatter.build(format: Resources.dateFormat).date(from: "\(dayText) \(time)")
-	}
+        return DateFormatter.build(format: Resources.dateFormat).date(from: "\(dayText) \(time)")
+    }
 
     func isConfiguring() -> Bool {
         guard let year = self.data.first else {
@@ -68,135 +72,165 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
 private extension DeltaCalendarViewModel {
 
-	// MARK: - Content creating logic
+    // MARK: - Content creating logic
 
-	func createContent(_ startData: StartModel) -> [YearItem] {
+    func createContent(_ startData: StartModel) -> [YearItem] {
 
         guard startData.pickingYearData.from <= startData.pickingYearData.to else { return [] }
 
-		let monthsText = DateFormatter().monthSymbols!
-		let calendar = self.timeFormatter.calendar ?? .current
-		let timeZone = self.timeFormatter.timeZone
+        let monthsText = DateFormatter().monthSymbols!
+        let timeZone = self.timeFormatter.timeZone
 
         let yearsRange = (startData.pickingYearData.from...startData.pickingYearData.to)
         let selectedDifYear = startData.pickingYearData.to - Resources.selectingYearGap
         let selectedYear = yearsRange.contains(selectedDifYear) ? selectedDifYear : startData.pickingYearData.from
 
-		let years = yearsRange
-			.map { DateComponents(calendar: calendar, timeZone: timeZone ,year: $0).date! }
+        let years = yearsRange
+            .map { DateComponents(calendar: self.calendar, timeZone: timeZone ,year: $0).date! }
 
-		var items = years.map { year in
+        var items = years.map { year in
 
-			let digitYear = year.year()
+            let digitYear = year.year()
 
-			let months = calendar.range(of: .month, in: .year, for: year)!
+            let months = self.calendar.range(of: .month, in: .year, for: year)!
 
-			let monthItems: [MonthItem] = months.map { month in
+            let monthItems: [MonthItem] = months.map { month in
 
-				let monthDate = DateComponents(calendar: calendar, timeZone: timeZone,
-											   year: digitYear, month: month).date!
+                let monthDate = DateComponents(calendar: self.calendar, timeZone: timeZone,
+                                               year: digitYear, month: month).date!
 
-				let daysRange = calendar.range(of: .day, in: .month, for: monthDate)!
-				let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData)
+                let daysRange = self.calendar.range(of: .day, in: .month, for: monthDate)!
+                let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData)
 
-				let title = monthsText[month - 1]
+                let title = monthsText[month - 1]
 
-				return MonthItem(title: title, days: days)
-			}
+                return MonthItem(title: title, days: days)
+            }
 
-			let isSelected = digitYear == selectedYear
+            let isSelected = digitYear == selectedYear
 
             return YearItem(value: digitYear, months: monthItems, isSelected: isSelected, isMock: false)
-		}
+        }
 
         /// insert mock items for showing first and last collection cell at center.
         items.insert(.init(value: 0, months: [], isSelected: false, isMock: true), at: 0)
         items.append(.init(value: 0, months: [], isSelected: false, isMock: true))
 
-		return items
-	}
+        return items
+    }
 
-	func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel) -> [DayItem] {
+    func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel) -> [DayItem] {
 
-		let today = Date()
-		let calendar = self.timeFormatter.calendar ?? .current
+        let items = data.map {
 
-		let items = data.map {
+            let dayDate = DateComponents(calendar: self.calendar, timeZone: self.timeFormatter.timeZone,
+                                         year: year, month: month, day: $0).date!
 
-			let dayDate = DateComponents(calendar: calendar, timeZone: self.timeFormatter.timeZone,
-										 year: year, month: month, day: $0).date!
+            let isSame = self.calendar.compare(dayDate, to: Resources.today, toGranularity: .day) == .orderedSame
+            let description = isSame ? TextResources.today.capitalized : ""
+            let weekday = self.calendar.component(.weekday, from: dayDate)
 
-			let isSame = calendar.compare(dayDate, to: today, toGranularity: .day) == .orderedSame
-			let description = isSame ? TextResources.today.capitalized : ""
-			let weekday = calendar.component(.weekday, from: dayDate)
+            let timeData: [DayTime] = self.dayTime(weekDay: weekday, day: $0, resource: startData.showTimeData)
 
-			let timeData: [DayTime] = self.dayTime(weekDay: weekday, resource: startData.showTimeData)
-
-			let dayData = Day(title: String($0), description: description, weekday: weekday,
+            let dayData = Day(title: String($0), description: description, weekday: weekday,
                               date: dayDate, timeData: timeData)
 
-			let isDisabled = timeData.isEmpty
+            let isDisabled = (startData.disablePreviousDays && self.isPastDay(at: dayDate)) ? true : timeData.isEmpty
 
             return DayItem(data: dayData, isDisabled: isDisabled, isSelected: isSame)
-		}
+        }
 
-		return self.addExtraEmptyDays(items)
-	}
+        return self.addExtraEmptyDays(items)
+    }
 
-	func isWeekday(at date: Date) -> Bool {
-		let calendar = self.timeFormatter.calendar ?? .current
-		let weekday = calendar.component(.weekday, from: date)
+    func isPastDay(at date: Date) -> Bool {
+        let calendar = self.timeFormatter.calendar ?? .current
+        return calendar.compare(Resources.today, to: date, toGranularity: .day) == .orderedDescending
+    }
 
-		return Resources.weekends.contains(weekday)
-	}
+    func isPastTime(at date: Date) -> Bool {
+        let today = Resources.today
 
-	func isPastDay(at date: Date) -> Bool {
-		let calendar = self.timeFormatter.calendar ?? .current
-		return calendar.compare(Date(), to: date, toGranularity: .day) == .orderedDescending
-	}
+        guard self.calendar.compare(today, to: date, toGranularity: .day) == .orderedSame
+        else { return false }
 
-	func dayTime(weekDay: Int, resource: ShowTimeModel) -> [DayTime] {
-		guard let dayData = resource.data.first(where: { $0.weekday == weekDay })
-		else { return [] }
+        let hoursResult = self.calendar.compare(today, to: date, toGranularity: .hour)
 
-		var firstTime = dayData.startDate
-        let firstMockTime = DayTime(value: Date(), isSelected: false, isMock: true)
-        let startDate = DayTime(value: firstTime, isSelected: true, isMock: false)
+        guard hoursResult == .orderedSame else {
+            return hoursResult == .orderedDescending ? true : false
+        }
 
-		var timeData: [DayTime] = [firstMockTime, startDate]
+        let minResult = self.calendar.compare(today, to: date, toGranularity: .minute)
 
-		while firstTime < dayData.endDate {
-			firstTime = firstTime.addingTimeInterval(Double(resource.offset) * 60.0)
-            let time = DayTime(value: firstTime, isSelected: false, isMock: false)
-			timeData.append(time)
-		}
+        switch minResult {
+        case .orderedDescending, .orderedSame: return true
+        case .orderedAscending:                return false
+        }
+    }
+
+    func dayTime(weekDay: Int, day: Int, resource: ShowTimeModel) -> [DayTime] {
+        guard let dayData = resource.data.first(where: { $0.weekday == weekDay })
+        else { return [] }
+
+        let startDate = DateComponents(calendar: self.calendar, year: dayData.startDate.year(),
+                                       month: dayData.startDate.month(), day: day, hour: dayData.startDate.hours(),
+                                       minute: dayData.startDate.minutes())
+
+        let endDate = DateComponents(calendar: self.calendar, year: dayData.endDate.year(),
+                                     month: dayData.endDate.month(), day: day, hour: dayData.endDate.hours(),
+                                     minute: dayData.endDate.minutes())
+
+        guard let startDate = startDate.date, let endDate = endDate.date else { return [] }
+
+        var firstTime = startDate
+
+        let firstMockItem = DayTime(value: Date(), isSelected: false, isMock: true)
+        var timeData: [DayTime] = [firstMockItem]
+
+        while firstTime < endDate {
+            firstTime = firstTime.addingTimeInterval(Double(resource.offset) * 60.0)
+
+            if !self.isPastTime(at: firstTime) {
+                let time = DayTime(value: firstTime, isSelected: false, isMock: false)
+                timeData.append(time)
+            }
+        }
 
         let lastMockItem = DayTime(value: Date(), isSelected: false, isMock: true)
-		timeData.append(lastMockItem)
+        timeData.append(lastMockItem)
 
-		return timeData
-	}
+        return self.setStartSelectedDayTime(at: timeData)
+    }
 
-	/// Adding empty days for right shifting.
-	func addExtraEmptyDays(_ days: [DayItem]) -> [DayItem] {
+    func setStartSelectedDayTime(at times: [DayTime]) -> [DayTime] {
+        guard let firstAvailableIndex = times.firstIndex(where: { !$0.isMock }) else { return times }
 
-		let firstWeekDayIndex = Resources.mondayIndex
+        var modifTimes = times
+        modifTimes[firstAvailableIndex].isSelected = true
 
-		guard let first = days.first, first.data.weekday != firstWeekDayIndex
-		else { return days }
+        return modifTimes
+    }
 
-		var currentDays = days
+    /// Adding empty days for right shifting.
+    func addExtraEmptyDays(_ days: [DayItem]) -> [DayItem] {
 
-		let dif: Int = first.data.weekday >= firstWeekDayIndex ? (first.data.weekday - firstWeekDayIndex) :
-		(Resources.weekdays.count - 1) /// case when sunday is first day of month, at gregorian calendar index is 1.
+        let firstWeekDayIndex = Resources.mondayIndex
 
-		(0..<dif).forEach { _ in
-			let dayData = Day(title: "", description: "", weekday: 0, date: nil, timeData: [])
+        guard let first = days.first, first.data.weekday != firstWeekDayIndex
+        else { return days }
+
+        var currentDays = days
+
+        let dif: Int = first.data.weekday >= firstWeekDayIndex ? (first.data.weekday - firstWeekDayIndex) :
+        (Resources.weekdays.count - 1) /// case when sunday is first day of month, at gregorian calendar index is 1.
+
+        (0..<dif).forEach { _ in
+            let dayData = Day(title: "", description: "", weekday: 0, date: nil, timeData: [])
             let mockItem = DayItem(data: dayData, isDisabled: true, isSelected: false)
 
-			currentDays.insert(mockItem, at: 0)
-		}
+            currentDays.insert(mockItem, at: 0)
+        }
 
-		return currentDays
-	}
+        return currentDays
+    }
 }

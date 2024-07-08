@@ -140,7 +140,7 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 	// MARK: - Getting methods
 
 	func currentMonth() -> IndexPath? {
-		let now = Date()
+        let now = Resources.today
 		let month = now.month()
 
 		guard let monthSection = self.dataSource?.snapshot().indexOfSection(.month)

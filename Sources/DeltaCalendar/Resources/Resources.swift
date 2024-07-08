@@ -20,4 +20,11 @@ internal enum Resources {
 	static let timeFormat: String = "HH:mm"
     static let locale = "en_RU"
     static let weekDayColor: UIColor = .lightGray
+
+    static var today: Date {
+        let timezone = TimeZone.current
+        let seconds = TimeInterval(timezone.secondsFromGMT(for: Date()))
+
+        return Date(timeInterval: seconds, since: Date())
+    }
 }
