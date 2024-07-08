@@ -9,6 +9,7 @@ Custom configuring calendar.
 3. Disabling off-time days.
 4. Setting custom colors.
 5. Disabling previous days and intraday time.
+6. Disable custom time interval by minutes from today date.
 
 ## Adding
 Use **SPM** to add calendar package at project. ([link](https://github.com/gikKid/DeltaCalendar))
@@ -41,6 +42,11 @@ let showTimeData = ShowTimeModel(data: dayTimes, offset: 15)
 
 ```swift
 let colors = Colors(text: .black, main: .blue, secondaryText: .lightGray, background: .white)
+```
+
+```swift
+// disable first two days from today.
+let orderGap = OrderingGap(minutes: 2 * 24 * 60)
 ```
 
 ## Technologies

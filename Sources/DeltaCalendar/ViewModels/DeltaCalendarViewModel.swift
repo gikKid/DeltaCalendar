@@ -84,6 +84,7 @@ private extension DeltaCalendarViewModel {
         let yearsRange = (startData.pickingYearData.from...startData.pickingYearData.to)
         let selectedDifYear = startData.pickingYearData.to - Resources.selectingYearGap
         let selectedYear = yearsRange.contains(selectedDifYear) ? selectedDifYear : startData.pickingYearData.from
+        let endOrderDate = self.endOrderingDate(startData.orderGap)
 
         let years = yearsRange
             .map { DateComponents(calendar: self.calendar, timeZone: timeZone ,year: $0).date! }
@@ -100,7 +101,9 @@ private extension DeltaCalendarViewModel {
                                                year: digitYear, month: month).date!
 
                 let daysRange = self.calendar.range(of: .day, in: .month, for: monthDate)!
-                let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData)
+
+                let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData,
+                                     endGapDate: endOrderDate)
 
                 let title = monthsText[month - 1]
 
@@ -119,23 +122,28 @@ private extension DeltaCalendarViewModel {
         return items
     }
 
-    func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel) -> [DayItem] {
+    func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel, endGapDate: Date?) -> [DayItem] {
+        let today = Resources.today
 
         let items = data.map {
 
             let dayDate = DateComponents(calendar: self.calendar, timeZone: self.timeFormatter.timeZone,
                                          year: year, month: month, day: $0).date!
 
-            let isSame = self.calendar.compare(dayDate, to: Resources.today, toGranularity: .day) == .orderedSame
+            let isSame = self.calendar.compare(dayDate, to: today, toGranularity: .day) == .orderedSame
             let description = isSame ? TextResources.today.capitalized : ""
             let weekday = self.calendar.component(.weekday, from: dayDate)
 
-            let timeData: [DayTime] = self.dayTime(weekDay: weekday, day: $0, resource: startData.showTimeData)
+            let timeData: [DayTime] = self.dayTime(weekDay: weekday, day: $0, resource: startData.showTimeData,
+                                                   endGapDate: endGapDate)
 
             let dayData = Day(title: String($0), description: description, weekday: weekday,
                               date: dayDate, timeData: timeData)
 
-            let isDisabled = (startData.disablePreviousDays && self.isPastDay(at: dayDate)) ? true : timeData.isEmpty
+            let isDisablePrev = startData.disablePreviousDays &&
+            self.calendar.compare(today, to: dayDate, toGranularity: .day) == .orderedDescending
+
+            let isDisabled = isDisablePrev ? true : timeData.isEmpty
 
             return DayItem(data: dayData, isDisabled: isDisabled, isSelected: isSame)
         }
@@ -143,9 +151,10 @@ private extension DeltaCalendarViewModel {
         return self.addExtraEmptyDays(items)
     }
 
-    func isPastDay(at date: Date) -> Bool {
-        let calendar = self.timeFormatter.calendar ?? .current
-        return calendar.compare(Resources.today, to: date, toGranularity: .day) == .orderedDescending
+    func endOrderingDate(_ gap: OrderingGap?) -> Date? {
+        guard let minutes = gap?.minutes else { return nil }
+
+        return self.calendar.date(byAdding: .minute, value: minutes, to: Resources.today)
     }
 
     func isPastTime(at date: Date) -> Bool {
@@ -168,7 +177,7 @@ private extension DeltaCalendarViewModel {
         }
     }
 
-    func dayTime(weekDay: Int, day: Int, resource: ShowTimeModel) -> [DayTime] {
+    func dayTime(weekDay: Int, day: Int, resource: ShowTimeModel, endGapDate: Date?) -> [DayTime] {
         guard let dayData = resource.data.first(where: { $0.weekday == weekDay })
         else { return [] }
 
@@ -183,18 +192,27 @@ private extension DeltaCalendarViewModel {
         guard let startDate = startDate.date, let endDate = endDate.date else { return [] }
 
         var firstTime = startDate
-
         let firstMockItem = DayTime(value: Date(), isSelected: false, isMock: true)
         var timeData: [DayTime] = [firstMockItem]
 
+        if !self.isPastTime(at: startDate), startDate.timeIntervalSince1970 > endGapDate?.timeIntervalSince1970 ?? 0 {
+            timeData.append(.init(value: startDate, isSelected: true, isMock: false))
+        }
+
         while firstTime < endDate {
             firstTime = firstTime.addingTimeInterval(Double(resource.offset) * 60.0)
+
+            if let endGapDate, endGapDate.timeIntervalSince1970 > firstTime.timeIntervalSince1970 {
+                continue
+            }
 
             if !self.isPastTime(at: firstTime) {
                 let time = DayTime(value: firstTime, isSelected: false, isMock: false)
                 timeData.append(time)
             }
         }
+
+        guard timeData.count != 1 else { return [] }
 
         let lastMockItem = DayTime(value: Date(), isSelected: false, isMock: true)
         timeData.append(lastMockItem)

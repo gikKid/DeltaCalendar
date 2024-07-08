@@ -37,10 +37,10 @@ public final class DeltaCalendarView: UIView {
     }()
 
     public init(pickingYearData: PickingYearModel, showTimeData: ShowTimeModel,
-                colors: Colors, disablePreviousDays: Bool) {
+                colors: Colors, disablePreviousDays: Bool, orderGap: OrderingGap? = nil) {
 
         self.startData = .init(pickingYearData: pickingYearData, showTimeData: showTimeData,
-                               colors: colors, disablePreviousDays: disablePreviousDays)
+                               colors: colors, disablePreviousDays: disablePreviousDays, orderGap: orderGap)
 
         super.init(frame: .zero)
 
