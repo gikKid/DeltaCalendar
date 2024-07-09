@@ -3,57 +3,57 @@ import Combine
 
 internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 
-	typealias DataSource = DeltaCalendarView.DeltaCalendarDataSource
+    typealias DataSource = DeltaCalendarView.DeltaCalendarDataSource
 
-	@Published private var currentMonthIndex: Int = 0
-	private(set) var yearsItem: YearsItem?
+    @Published private var currentMonthIndex: Int = 0
+    private(set) var yearsItem: YearsItem?
     private(set) var mockConfigItem: MockConfigItem?
-	weak var viewModel: DeltaCalendarViewModelProtocol?
-	weak var dataSource: DataSource?
+    weak var viewModel: DeltaCalendarViewModelProtocol?
+    weak var dataSource: DataSource?
     public weak var delegate: DeltaCalendarViewPresenterDelegate?
 
-	private var currentYearIndex: Int = 0 {
-		didSet {
-			self.unselectDay()
-		}
-	}
+    private var currentYearIndex: Int = 0 {
+        didSet {
+            self.unselectDay()
+        }
+    }
 
-	@Published private(set) var selectedData: SelectedModel? {
-		didSet {
+    @Published private(set) var selectedData: SelectedModel? {
+        didSet {
             self.reloadItems(with: [self.dayTimeItem.id], animated: true)
-		}
-	}
+        }
+    }
 
-	private var dayTimeItem: DayTimeItem = {
-		DayTimeItem(data: [], id: UUID().uuidString)
-	}()
+    private var dayTimeItem: DayTimeItem = {
+        DayTimeItem(data: [], id: UUID().uuidString)
+    }()
 
-	public var monthIndexPublisher: AnyPublisher<Int, Never> {
-		self.$currentMonthIndex.eraseToAnyPublisher()
-	}
-	public var selectedDatePublisher: AnyPublisher<Date?, Never> {
-		self.$selectedData.map {
-			guard let selectedData = $0, let data = self.viewModel?.data
-			else { return nil }
+    public var monthIndexPublisher: AnyPublisher<Int, Never> {
+        self.$currentMonthIndex.eraseToAnyPublisher()
+    }
+    public var selectedDatePublisher: AnyPublisher<Date?, Never> {
+        self.$selectedData.map {
+            guard let selectedData = $0, let data = self.viewModel?.data
+            else { return nil }
 
-			return data[selectedData.yearIndex].months[selectedData.monthIndex]
-				.days[selectedData.dayIndex].data.date
-		}.eraseToAnyPublisher()
-	}
+            return data[selectedData.yearIndex].months[selectedData.monthIndex]
+                .days[selectedData.dayIndex].data.date
+        }.eraseToAnyPublisher()
+    }
 
-	// MARK: - Setting methods
+    // MARK: - Setting methods
 
     init(_ dataSource: DataSource, _ viewModel: DeltaCalendarViewModelProtocol) {
         self.dataSource = dataSource
         self.viewModel = viewModel
         self.viewModel?.delegate = self
-	}
+    }
 
-	func setupDS() {
+    func setupDS() {
         guard let selectedYearIndex = self.viewModel?.data.firstIndex(where: { $0.isSelected })
         else { fatalError(CalendarError.selectingYear.description) }
 
-		guard var snapshot = self.dataSource?.snapshot() else { return }
+        guard var snapshot = self.dataSource?.snapshot() else { return }
 
         self.currentYearIndex = selectedYearIndex
 
@@ -65,10 +65,10 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
 
         self.configureYearsSection()
         self.reconfigureMonths()
-		self.configureDayTimeSection()
+        self.configureDayTimeSection()
 
         self.delegate?.calendarDSConfigured()
-	}
+    }
 
     func showConfiguring() {
         guard var snapshot = self.dataSource?.snapshot() else { return }
@@ -80,97 +80,98 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
         self.configureLoadingSection()
     }
 
-	// MARK: - Updating state methods
+    // MARK: - Updating state methods
 
     func yearSelected(updateData: UpdateSelectingModel, month: Int) {
-		guard updateData.index != self.currentYearIndex else { return }
+        guard updateData.index != self.currentYearIndex else { return }
 
-		self.viewModel?.toggleYearSelecting(updateData)
+        self.viewModel?.toggleYearSelecting(updateData)
 
-		self.currentYearIndex = updateData.index
-		self.currentMonthIndex = month
-		self.selectedData = nil
+        self.currentYearIndex = updateData.index
+        self.currentMonthIndex = month
+        self.selectedData = nil
 
-		self.reconfigureMonths()
-	}
+        self.reconfigureMonths()
+    }
 
-	func timeSelected(_ data: UpdateSelectingModel) -> Date? {
-		guard let selectedData else { return nil }
-		return self.viewModel?.date(selectedData: selectedData, timeIndex: data.index)
-	}
+    func timeSelected(_ data: UpdateSelectingModel) -> Date? {
+        guard let selectedData else { return nil }
+        return self.viewModel?.date(selectedData: selectedData, timeIndex: data.index)
+    }
 
-	func updateDaySelecting(at dayIndex: Int) {
-		self.unselectDay()
+    func updateDaySelecting(at dayIndex: Int) {
+        self.unselectDay()
 
-		let selectModel = SelectedModel(yearIndex: self.currentYearIndex, monthIndex: self.currentMonthIndex,
-										dayIndex: dayIndex)
+        let selectModel = SelectedModel(yearIndex: self.currentYearIndex, monthIndex: self.currentMonthIndex,
+                                        dayIndex: dayIndex)
 
-		self.viewModel?.toggleSelecting(at: selectModel)
+        self.viewModel?.updateSelecting(at: selectModel, value: true)
 
-		self.setSelectedDate(by: dayIndex)
-	}
+        self.setSelectedDate(by: dayIndex)
+    }
 
-	func makeNextMonth() {
-		let nextMonth = self.currentMonthIndex + 1
+    func makeNextMonth() {
+        let nextMonth = self.currentMonthIndex + 1
 
-		guard nextMonth <= Resources.monthCount - 1 else {
-			self.configureNextYear(); return
-		}
+        guard nextMonth <= Resources.monthCount - 1 else {
+            self.configureNextYear(); return
+        }
 
-		self.currentMonthIndex = nextMonth
-	}
+        self.currentMonthIndex = nextMonth
+    }
 
-	func makePrevMonth() {
-		let prevMonth = self.currentMonthIndex - 1
+    func makePrevMonth() {
+        let prevMonth = self.currentMonthIndex - 1
 
-		guard prevMonth >= 0 else {
-			self.configurePrevYear(); return
-		}
+        guard prevMonth >= 0 else {
+            self.configurePrevYear(); return
+        }
 
-		self.currentMonthIndex = prevMonth
-	}
+        self.currentMonthIndex = prevMonth
+    }
 
-	func itemScrolled(currentItem: IndexPath) {
-		guard let section = self.section(index: currentItem)
-		else { return }
+    func itemScrolled(currentItem: IndexPath) {
+        guard let section = self.section(index: currentItem)
+        else { return }
 
-		self.onItemScrolled(currentIndex: currentItem, section: section)
-	}
+        self.onItemScrolled(currentIndex: currentItem, section: section)
+    }
 
-	// MARK: - Getting methods
+    // MARK: - Getting methods
 
-	func currentMonth() -> IndexPath? {
+    func currentMonth() -> IndexPath? {
         let now = Resources.today
-		let month = now.month()
+        let calendar = self.viewModel?.calendar ?? .current
+        let month = now.month(using: calendar)
 
-		guard let monthSection = self.dataSource?.snapshot().indexOfSection(.month)
-		else { return nil }
+        guard let monthSection = self.dataSource?.snapshot().indexOfSection(.month)
+        else { return nil }
 
-		return IndexPath(item: month - 1, section: monthSection)
-	}
+        return IndexPath(item: month - 1, section: monthSection)
+    }
 
-	func month(at index: Int) -> MonthItem? {
-		guard let data = self.viewModel?.data else { return nil }
+    func month(at index: Int) -> MonthItem? {
+        guard let data = self.viewModel?.data else { return nil }
 
         let months = data[self.currentYearIndex].months
 
         guard !months.isEmpty else { return nil }
 
-		return months[index]
-	}
+        return months[index]
+    }
 
-	func dayTimeData() -> DayTimeItem {
-		if let selectedData {
-			let timeData = self.viewModel?.data[selectedData.yearIndex]
-				.months[selectedData.monthIndex].days[selectedData.dayIndex].data.timeData ?? []
+    func dayTimeData() -> DayTimeItem {
+        if let selectedData {
+            let timeData = self.viewModel?.data[selectedData.yearIndex]
+                .months[selectedData.monthIndex].days[selectedData.dayIndex].data.timeData ?? []
 
-			self.dayTimeItem.data = timeData
-		} else {
-			self.dayTimeItem.data = []
-		}
+            self.dayTimeItem.data = timeData
+        } else {
+            self.dayTimeItem.data = []
+        }
 
-		return self.dayTimeItem
-	}
+        return self.dayTimeItem
+    }
 }
 
 // MARK: - ViewModelDelegate
@@ -190,12 +191,12 @@ extension DeltaCalendarViewPresenter: DeltaCalendarViewModelDelegate {
 
 private extension DeltaCalendarViewPresenter {
 
-	func setSelectedDate(by dayIndex: Int) {
-		self.selectedData = .init(yearIndex: self.currentYearIndex, monthIndex: self.currentMonthIndex,
-								  dayIndex: dayIndex)
-	}
+    func setSelectedDate(by dayIndex: Int) {
+        self.selectedData = .init(yearIndex: self.currentYearIndex, monthIndex: self.currentMonthIndex,
+                                  dayIndex: dayIndex)
+    }
 
-	// MARK: - Configuring sections
+    // MARK: - Configuring sections
 
     func configureLoadingSection() {
         guard let month = self.viewModel?.data.first?.months.first else { return }
@@ -211,21 +212,21 @@ private extension DeltaCalendarViewPresenter {
     }
 
     func configureYearsSection() {
-		guard let data = self.viewModel?.data else { return }
+        guard let data = self.viewModel?.data else { return }
 
-		self.yearsItem = .init(data: data)
+        self.yearsItem = .init(data: data)
 
-		guard let id = self.yearsItem?.id else { return }
+        guard let id = self.yearsItem?.id else { return }
 
-		var sectionSnapshot = SectionSnapshot()
-		sectionSnapshot.append([id])
+        var sectionSnapshot = SectionSnapshot()
+        sectionSnapshot.append([id])
 
-		self.dataSource?.apply(sectionSnapshot, to: .year, animatingDifferences: true)
-	}
+        self.dataSource?.apply(sectionSnapshot, to: .year, animatingDifferences: true)
+    }
 
-	func configureNextYear() {
-		guard let data = self.viewModel?.data, self.currentYearIndex < data.count - 1
-		else { return }
+    func configureNextYear() {
+        guard let data = self.viewModel?.data, self.currentYearIndex < data.count - 1
+        else { return }
 
         let nextYear = data[self.currentYearIndex + 1]
 
@@ -234,9 +235,9 @@ private extension DeltaCalendarViewPresenter {
         let model = UpdateSelectingModel(prevIndex: self.currentYearIndex, index: self.currentYearIndex + 1)
         self.yearSelected(updateData: model, month: 0)
         self.configureYearsSection()
-	}
+    }
 
-	func configurePrevYear() {
+    func configurePrevYear() {
         guard let data = self.viewModel?.data, self.currentYearIndex != 0 else { return }
 
         let prevYear = data[self.currentYearIndex - 1]
@@ -246,85 +247,84 @@ private extension DeltaCalendarViewPresenter {
         let model = UpdateSelectingModel(prevIndex: self.currentYearIndex, index: self.currentYearIndex - 1)
         self.yearSelected(updateData: model, month: Resources.monthCount - 1)
         self.configureYearsSection()
-	}
+    }
 
-	func reconfigureMonths() {
-		guard let data = self.viewModel?.data else { return }
+    func reconfigureMonths() {
+        guard let data = self.viewModel?.data else { return }
 
-		let ids = data[self.currentYearIndex].months.map { $0.id }
-		var sectionSnapshot = SectionSnapshot()
-		sectionSnapshot.append(ids)
+        let ids = data[self.currentYearIndex].months.map { $0.id }
+        var sectionSnapshot = SectionSnapshot()
+        sectionSnapshot.append(ids)
 
-		self.dataSource?.apply(sectionSnapshot, to: .month, animatingDifferences: true)
-	}
+        self.dataSource?.apply(sectionSnapshot, to: .month, animatingDifferences: true)
+    }
 
     func configureDayTimeSection() {
-		var sectionSnapshot = SectionSnapshot()
-		sectionSnapshot.append([self.dayTimeItem.id])
+        var sectionSnapshot = SectionSnapshot()
+        sectionSnapshot.append([self.dayTimeItem.id])
 
-		self.dataSource?.apply(sectionSnapshot, to: .time, animatingDifferences: true)
-	}
+        self.dataSource?.apply(sectionSnapshot, to: .time, animatingDifferences: true)
+    }
 
-	// MARK: Update sections logic
+    // MARK: Update sections logic
 
-	func unselectDay() {
-		guard let selectedData = self.selectedData else { return }
+    func unselectDay() {
+        guard let selectedData = self.selectedData else { return }
 
-		let unselectModel = SelectedModel(yearIndex: selectedData.yearIndex,
-										  monthIndex: selectedData.monthIndex,
-										  dayIndex: selectedData.dayIndex)
+        let unselectModel = SelectedModel(yearIndex: selectedData.yearIndex, monthIndex: selectedData.monthIndex,
+                                          dayIndex: selectedData.dayIndex)
 
-		self.viewModel?.toggleSelecting(at: unselectModel)
+        self.viewModel?.updateSelecting(at: unselectModel, value: false)
 
-		guard let data = self.viewModel?.data, selectedData.monthIndex != self.currentMonthIndex
-		else { return }
+        guard let data = self.viewModel?.data, selectedData.monthIndex != self.currentMonthIndex
+        else { return }
 
-		let prevMonthID = data[selectedData.yearIndex].months[selectedData.monthIndex].id
-		self.reloadItems(with: [prevMonthID], animated: false)
-	}
+        let prevMonthID = data[selectedData.yearIndex].months[selectedData.monthIndex].id
+        self.reloadItems(with: [prevMonthID], animated: false)
+    }
 
-	func reloadItems(with ids: [ItemID], animated: Bool) {
-		guard var snapshot = self.dataSource?.snapshot() else { return }
+    func reloadItems(with ids: [ItemID], animated: Bool) {
+        guard var snapshot = self.dataSource?.snapshot() else { return }
 
-		if #available(iOS 15.0, *) {
-			snapshot.reconfigureItems(ids)
-		} else {
-			snapshot.reloadItems(ids)
-		}
+        if #available(iOS 15.0, *) {
+            snapshot.reconfigureItems(ids)
+        } else {
+            snapshot.reloadItems(ids)
+        }
 
-		self.dataSource?.apply(snapshot, animatingDifferences: animated)
-	}
+        self.dataSource?.apply(snapshot, animatingDifferences: animated)
+    }
 
-	// MARK: - Scrolling logic
+    // MARK: - Scrolling logic
 
-	func onItemScrolled(currentIndex: IndexPath, section: Section) {
+    func onItemScrolled(currentIndex: IndexPath, section: Section) {
 
-		let index = currentIndex.row
+        let index = currentIndex.row
 
-		switch section {
-		case .month: self.monthScrolled(to: index)
+        switch section {
+        case .month: self.monthScrolled(to: index)
         case .year, .time, .loading: break
-		}
-	}
+        }
+    }
 
-	func monthScrolled(to index: Int) {
-		guard self.currentMonthIndex != index else { return }
+    func monthScrolled(to index: Int) {
+        guard self.currentMonthIndex != index else { return }
 
-		self.currentMonthIndex = index
-	}
+        self.currentMonthIndex = index
+    }
 
-	func section(index: IndexPath) -> Section? {
-		if #available(iOS 15, *) {
-			guard let section = self.dataSource?.sectionIdentifier(for: index.section)
-			else { return nil }
+    func section(index: IndexPath) -> Section? {
+        if #available(iOS 15, *) {
+            guard let section = self.dataSource?.sectionIdentifier(for: index.section)
+            else { return nil }
 
-			return section
-		} else {
-			guard let itemID = self.dataSource?.itemIdentifier(for: index),
-				  let section = self.dataSource?.snapshot().sectionIdentifier(containingItem: itemID)
-			else { return nil }
+            return section
+        } else {
+            guard let itemID = self.dataSource?.itemIdentifier(for: index),
+                  let section = self.dataSource?.snapshot().sectionIdentifier(containingItem: itemID)
+            else { return nil }
 
-			return section
-		}
-	}
+            return section
+        }
+    }
 }

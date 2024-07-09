@@ -66,33 +66,34 @@ public struct DayTimeStartModel {
         let format = Resources.timeFormat
         let timeFormatter = DateFormatter.build(format: format)
 
+        var calendar = timeFormatter.calendar ?? .current
+        calendar.timeZone = timeFormatter.timeZone
+
         guard let start = timeFormatter.date(from: startDate),
               let end = timeFormatter.date(from: endDate)
         else { fatalError(CalendarError.timeFormat(format).description) }
 
-        guard start.hours() <= end.hours() else {
+        let startHour = calendar.component(.hour, from: start)
+        let startMin = calendar.component(.minute, from: start)
+
+        let endHour = calendar.component(.hour, from: end)
+        let endMin = calendar.component(.minute, from: end)
+
+        guard startHour <= endHour else {
             fatalError(CalendarError.startEndTime.description)
         }
 
-        if start.hours() == end.hours(), start.minutes() >= end.minutes() {
+        if startHour == endHour, startMin >= endMin {
             fatalError(CalendarError.startEndTime.description)
         }
 
-        let calendar = timeFormatter.calendar ?? .current
         let today = Resources.today
 
         let year = calendar.component(.year, from: today)
         let month = calendar.component(.month, from: today)
         let day = calendar.component(.day, from: today)
 
-        let startHour = calendar.component(.hour, from: start)
-        let startMin = calendar.component(.minute, from: start)
-
         let startComponents = DateComponents(year: year, month: month, day: day, hour: startHour, minute: startMin)
-
-        let endHour = calendar.component(.hour, from: end)
-        let endMin = calendar.component(.minute, from: end)
-
         let endComponents = DateComponents(year: year, month: month, day: day, hour: endHour, minute: endMin)
 
         self.startDate = calendar.date(from: startComponents)!

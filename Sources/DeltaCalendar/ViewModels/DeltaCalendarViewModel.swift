@@ -9,9 +9,10 @@ internal protocol DeltaCalendarViewModelProtocol: AnyObject {
 
     var delegate: DeltaCalendarViewModelDelegate? { get set }
     var data: [YearItem] { get }
+    var calendar: Calendar { get }
 
     func isConfiguring() -> Bool
-    func toggleSelecting(at date: SelectedModel)
+    func updateSelecting(at date: SelectedModel, value: Bool)
     func toggleYearSelecting(_ data: UpdateSelectingModel)
     func date(selectedData: SelectedModel, timeIndex: Int) -> Date?
 }
@@ -22,8 +23,10 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
     private let timeFormatter = DateFormatter.build(format: Resources.timeFormat)
     private(set) var data: [YearItem] = YearItem.mockData()
 
-    private var calendar: Calendar {
-        self.timeFormatter.calendar ?? .current
+    public var calendar: Calendar {
+        var calendar = self.timeFormatter.calendar ?? .current
+        calendar.timeZone = self.timeFormatter.timeZone
+        return calendar
     }
 
     init(with data: StartModel) {
@@ -36,9 +39,9 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
         }
     }
 
-    func toggleSelecting(at date: SelectedModel) {
+    func updateSelecting(at date: SelectedModel, value: Bool) {
         self.data[date.yearIndex].months[date.monthIndex].days[date.dayIndex]
-            .isSelected.toggle()
+            .isSelected = value
     }
 
     func toggleYearSelecting(_ data: UpdateSelectingModel) {
@@ -91,7 +94,7 @@ private extension DeltaCalendarViewModel {
 
         var items = years.map { year in
 
-            let digitYear = year.year()
+            let digitYear = year.year(using: self.calendar)
 
             let months = self.calendar.range(of: .month, in: .year, for: year)!
 
@@ -145,7 +148,7 @@ private extension DeltaCalendarViewModel {
 
             let isDisabled = isDisablePrev ? true : timeData.isEmpty
 
-            return DayItem(data: dayData, isDisabled: isDisabled, isSelected: isSame)
+            return DayItem(data: dayData, isDisabled: isDisabled, isSelected: false)
         }
 
         return self.addExtraEmptyDays(items)
@@ -181,13 +184,17 @@ private extension DeltaCalendarViewModel {
         guard let dayData = resource.data.first(where: { $0.weekday == weekDay })
         else { return [] }
 
-        let startDate = DateComponents(calendar: self.calendar, year: dayData.startDate.year(),
-                                       month: dayData.startDate.month(), day: day, hour: dayData.startDate.hours(),
-                                       minute: dayData.startDate.minutes())
+        let startDate = DateComponents(calendar: self.calendar, timeZone: self.timeFormatter.timeZone,
+                                       year: dayData.startDate.year(using: self.calendar),
+                                       month: dayData.startDate.month(using: self.calendar), day: day,
+                                       hour: dayData.startDate.hours(using: self.calendar),
+                                       minute: dayData.startDate.minutes(using: self.calendar))
 
-        let endDate = DateComponents(calendar: self.calendar, year: dayData.endDate.year(),
-                                     month: dayData.endDate.month(), day: day, hour: dayData.endDate.hours(),
-                                     minute: dayData.endDate.minutes())
+        let endDate = DateComponents(calendar: self.calendar, timeZone: self.timeFormatter.timeZone,
+                                     year: dayData.endDate.year(using: self.calendar),
+                                     month: dayData.endDate.month(using: self.calendar), day: day,
+                                     hour: dayData.endDate.hours(using: self.calendar),
+                                     minute: dayData.endDate.minutes(using: self.calendar))
 
         guard let startDate = startDate.date, let endDate = endDate.date else { return [] }
 
@@ -201,6 +208,9 @@ private extension DeltaCalendarViewModel {
 
         while firstTime < endDate {
             firstTime = firstTime.addingTimeInterval(Double(resource.offset) * 60.0)
+
+            guard self.calendar.compare(firstTime, to: startDate, toGranularity: .day) == .orderedSame
+            else { break }
 
             if let endGapDate, endGapDate.timeIntervalSince1970 > firstTime.timeIntervalSince1970 {
                 continue

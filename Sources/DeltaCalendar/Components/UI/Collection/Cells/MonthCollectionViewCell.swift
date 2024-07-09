@@ -39,11 +39,6 @@ internal final class MonthCollectionViewCell: UICollectionViewCell {
     func configure(with data: [DayItem], colors: Colors) {
         self.colors = colors
         self.items = data
-
-        guard let selectedIndex = data.firstIndex(where: { $0.isSelected }),
-              !data[selectedIndex].isDisabled else { return }
-
-        self.daySelectedHandler?(selectedIndex)
     }
 }
 
