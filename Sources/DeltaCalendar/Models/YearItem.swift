@@ -17,7 +17,7 @@ internal struct YearItem: Identifiable {
             .init(data: day, isDisabled: true, isSelected: false),
         ]
 
-        let month = MonthItem(title: "", days: days)
+        let month = MonthItem(title: "", date: Date(), days: days)
 
         return [ .init(value: 2024, months: [month], isSelected: false, isMock: false) ]
     }

@@ -151,13 +151,7 @@ internal final class DeltaCalendarViewPresenter: DeltaCalendarViewPresentable {
     }
 
     func month(at index: Int) -> MonthItem? {
-        guard let data = self.viewModel?.data else { return nil }
-
-        let months = data[self.currentYearIndex].months
-
-        guard !months.isEmpty else { return nil }
-
-        return months[index]
+        self.viewModel?.month(yearIndex: self.currentYearIndex, monthIndex: index)
     }
 
     func dayTimeData() -> DayTimeItem {
@@ -186,6 +180,10 @@ extension DeltaCalendarViewPresenter: DeltaCalendarViewModelDelegate {
             self?.mockConfigItem = nil
             self?.setupDS()
         }
+    }
+
+    func monthFilled(id: MonthItem.ID) {
+        self.reloadItems(with: [id], animated: true)
     }
 }
 

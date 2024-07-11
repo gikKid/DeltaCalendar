@@ -3,6 +3,7 @@ import Combine
 
 internal protocol DeltaCalendarViewModelDelegate: AnyObject {
     func calendarConfigured()
+    func monthFilled(id: MonthItem.ID)
 }
 
 internal protocol DeltaCalendarViewModelProtocol: AnyObject {
@@ -15,6 +16,7 @@ internal protocol DeltaCalendarViewModelProtocol: AnyObject {
     func updateSelecting(at date: SelectedModel, value: Bool)
     func toggleYearSelecting(_ data: UpdateSelectingModel)
     func date(selectedData: SelectedModel, timeIndex: Int) -> Date?
+    func month(yearIndex: Int, monthIndex: Int) -> MonthItem
 }
 
 internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
@@ -22,6 +24,8 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
     public weak var delegate: DeltaCalendarViewModelDelegate?
     private let timeFormatter = DateFormatter.build(format: Resources.timeFormat)
     private(set) var data: [YearItem] = YearItem.mockData()
+    private lazy var cachedMonths: [String: MonthItem] = [:]
+    private let startData: StartModel
 
     public var calendar: Calendar {
         var calendar = self.timeFormatter.calendar ?? .current
@@ -30,6 +34,8 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
     }
 
     init(with data: StartModel) {
+        self.startData = data
+
         DispatchQueue.global(qos: .userInteractive).async {
             self.data = self.createContent(data)
 
@@ -42,6 +48,10 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
     func updateSelecting(at date: SelectedModel, value: Bool) {
         self.data[date.yearIndex].months[date.monthIndex].days[date.dayIndex]
             .isSelected = value
+
+        let monthId = self.data[date.yearIndex].months[date.monthIndex].id
+
+        self.cachedMonths[monthId]?.days[date.dayIndex].isSelected = value
     }
 
     func toggleYearSelecting(_ data: UpdateSelectingModel) {
@@ -62,6 +72,25 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
         return DateFormatter.build(format: Resources.dateFormat).date(from: "\(dayText) \(time)")
     }
 
+    func month(yearIndex: Int, monthIndex: Int) -> MonthItem {
+        let month = self.data[yearIndex].months[monthIndex]
+
+        guard let cachedMonth = self.cachedMonths[month.id] else {
+
+            DispatchQueue.global(qos: .userInteractive).async {
+                let id = self.filledTimeMonth(yearIndex: yearIndex, monthIndex: monthIndex, with: self.startData).id
+
+                DispatchQueue.main.async {
+                    self.delegate?.monthFilled(id: id)
+                }
+            }
+
+            return month
+        }
+
+        return cachedMonth
+    }
+
     func isConfiguring() -> Bool {
         guard let year = self.data.first else {
             fatalError(CalendarError.dataConfiguring.description)
@@ -75,14 +104,35 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
 private extension DeltaCalendarViewModel {
 
+    func filledTimeMonth(yearIndex: Int, monthIndex: Int, with startData: StartModel) -> MonthItem {
+        var month = self.data[yearIndex].months[monthIndex]
+        let endGapDate = self.endOrderingDate(startData.orderGap)
+        let daysRange = self.calendar.range(of: .day, in: .month, for: month.date)!
+        let year = month.date.year(using: self.calendar)
+        let monthVal = month.date.month(using: self.calendar)
+
+        let days = self.days(with: daysRange, year: year, month: monthVal, startData: startData, 
+                             isFillTime: true, endGapDate: endGapDate)
+
+        month.days = days
+
+        self.cachedMonths[month.id] = month
+        self.data[yearIndex].months[monthIndex].days = days
+
+        return month
+    }
+
     // MARK: - Content creating logic
 
     func createContent(_ startData: StartModel) -> [YearItem] {
 
         guard startData.pickingYearData.from <= startData.pickingYearData.to else { return [] }
 
-        let monthsText = DateFormatter().monthSymbols!
+        let monthsText = DateFormatter().standaloneMonthSymbols!.map { $0.capitalized }
         let timeZone = self.timeFormatter.timeZone
+        let today = Resources.today
+        let todayMonth = today.month(using: self.calendar)
+        let todayYear = today.year(using: self.calendar)
 
         let yearsRange = (startData.pickingYearData.from...startData.pickingYearData.to)
         let selectedDifYear = startData.pickingYearData.to - Resources.selectingYearGap
@@ -105,12 +155,19 @@ private extension DeltaCalendarViewModel {
 
                 let daysRange = self.calendar.range(of: .day, in: .month, for: monthDate)!
 
+                let isFillingTime = digitYear == todayYear && abs(todayMonth - month) <= 2
+
                 let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData,
-                                     endGapDate: endOrderDate)
+                                     isFillTime: isFillingTime, endGapDate: endOrderDate)
 
                 let title = monthsText[month - 1]
+                let monthItem = MonthItem(title: title, date: monthDate, days: days)
 
-                return MonthItem(title: title, days: days)
+                if isFillingTime {
+                    self.cachedMonths[monthItem.id] = monthItem
+                }
+
+                return monthItem
             }
 
             let isSelected = digitYear == selectedYear
@@ -125,7 +182,9 @@ private extension DeltaCalendarViewModel {
         return items
     }
 
-    func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel, endGapDate: Date?) -> [DayItem] {
+    func days(with data: Range<Int>, year: Int, month: Int, startData: StartModel, 
+              isFillTime: Bool, endGapDate: Date?) -> [DayItem] {
+
         let today = Resources.today
 
         let items = data.map {
@@ -137,16 +196,18 @@ private extension DeltaCalendarViewModel {
             let description = isSame ? TextResources.today.capitalized : ""
             let weekday = self.calendar.component(.weekday, from: dayDate)
 
-            let timeData: [DayTime] = self.dayTime(weekDay: weekday, day: $0, resource: startData.showTimeData,
-                                                   endGapDate: endGapDate)
+            lazy var dayTimeData: [DayTime] = self.dayTime(weekDay: weekday, day: $0, resource: startData.showTimeData,
+                                                           endGapDate: endGapDate)
+
+            let timesContent = isFillTime ? dayTimeData : []
 
             let dayData = Day(title: String($0), description: description, weekday: weekday,
-                              date: dayDate, timeData: timeData)
+                              date: dayDate, timeData: timesContent)
 
             let isDisablePrev = startData.disablePreviousDays &&
             self.calendar.compare(today, to: dayDate, toGranularity: .day) == .orderedDescending
 
-            let isDisabled = isDisablePrev ? true : timeData.isEmpty
+            let isDisabled = isDisablePrev ? true : timesContent.isEmpty
 
             return DayItem(data: dayData, isDisabled: isDisabled, isSelected: false)
         }
