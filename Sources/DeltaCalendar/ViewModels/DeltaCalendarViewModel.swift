@@ -106,13 +106,12 @@ private extension DeltaCalendarViewModel {
 
     func filledTimeMonth(yearIndex: Int, monthIndex: Int, with startData: StartModel) -> MonthItem {
         var month = self.data[yearIndex].months[monthIndex]
-        let endGapDate = self.endOrderingDate(startData.orderGap)
         let daysRange = self.calendar.range(of: .day, in: .month, for: month.date)!
         let year = month.date.year(using: self.calendar)
         let monthVal = month.date.month(using: self.calendar)
 
         let days = self.days(with: daysRange, year: year, month: monthVal, startData: startData, 
-                             isFillTime: true, endGapDate: endGapDate)
+                             isFillTime: true, endGapDate: nil)
 
         month.days = days
 
@@ -155,7 +154,7 @@ private extension DeltaCalendarViewModel {
 
                 let daysRange = self.calendar.range(of: .day, in: .month, for: monthDate)!
 
-                let isFillingTime = digitYear == todayYear && abs(todayMonth - month) <= 2
+                let isFillingTime = digitYear == todayYear && todayMonth == month
 
                 let days = self.days(with: daysRange, year: digitYear, month: month, startData: startData,
                                      isFillTime: isFillingTime, endGapDate: endOrderDate)
@@ -276,6 +275,8 @@ private extension DeltaCalendarViewModel {
             if let endGapDate, endGapDate.timeIntervalSince1970 > firstTime.timeIntervalSince1970 {
                 continue
             }
+
+            guard endDate.timeIntervalSince1970 > firstTime.timeIntervalSince1970 else { continue }
 
             if !self.isPastTime(at: firstTime) {
                 let time = DayTime(value: firstTime, isSelected: false, isMock: false)

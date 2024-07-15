@@ -217,14 +217,9 @@ private extension DeltaCalendarView {
 
             guard let section = Section(index: sectionIndex, isConfiguring: isConfiguring) else { return nil }
 
-            let frame = self?.frame ?? .zero
-
             switch section {
-            case .year, .time, .loading:
-                return self?.valueListLayout()
-            case .month:
-                return self?.monthLayout(parentFrame: frame)
-
+            case .year, .time, .loading: return self?.valueListLayout()
+            case .month:                 return self?.monthLayout()
             }
         }
 
