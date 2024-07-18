@@ -110,7 +110,7 @@ extension DeltaCalendarView: DeltaCalendarViewPresenterDelegate {
     func calendarDSConfigured() {
         guard let indexPath = self.presenter.currentMonth() else { return }
 
-        self.scrollTo(at: indexPath, animated: true)
+        self.scrollTo(at: indexPath, animated: false) /// With animation scrolling to wrong month with correct index. (IOS 17+)
     }
 }
 
