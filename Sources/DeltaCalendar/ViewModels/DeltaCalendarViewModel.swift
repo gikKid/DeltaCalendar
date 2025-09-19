@@ -33,9 +33,10 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
     init(startData: StartModel) {
         DispatchQueue.global(qos: .userInteractive).async {
-            self.yearItems = self.createContent(startData)
+            let years = self.createYearsData(startData)
 
             DispatchQueue.main.async {
+                self.yearItems = years
                 self.delegate?.calendarConfigured()
             }
         }
@@ -119,7 +120,7 @@ private extension DeltaCalendarViewModel {
 
     // MARK: - Content creating logic
 
-    func createContent(_ startData: StartModel) -> [YearItem] {
+    func createYearsData(_ startData: StartModel) -> [YearItem] {
         guard startData.pickingYearData.from <= startData.pickingYearData.to else { return [] }
 
         let monthsText = DateFormatter().standaloneMonthSymbols!.map { $0.capitalized }
