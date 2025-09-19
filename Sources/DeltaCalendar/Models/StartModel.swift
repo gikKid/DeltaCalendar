@@ -3,12 +3,12 @@ import Foundation
 // MARK: - StartModel
 
 public struct StartModel {
-    let pickingYearData: PickingYearModel
-    let showTimeData: ShowTimeModel?
-    let colors: Colors
-    let orderGap: OrderingGap?
-    let isDisablePreviousDays: Bool
-    let isShowPickingTime: Bool
+    public let pickingYearData: PickingYearModel
+    public let showTimeData: ShowTimeModel?
+    public let colors: Colors
+    public let orderGap: OrderingGap?
+    public let isDisablePreviousDays: Bool
+    public let isShowPickingTime: Bool
 
     public init(
         pickingYearData: PickingYearModel,
