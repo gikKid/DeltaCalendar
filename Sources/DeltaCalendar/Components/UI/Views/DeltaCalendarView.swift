@@ -13,7 +13,7 @@ public final class DeltaCalendarView: UIView {
 
     public var delegate: DeltaCalendarViewDelegate?
     private var subscriptions = Set<AnyCancellable>()
-    private let colors: Colors
+    private var colors: Colors = .build()
 
     private weak var monthHeader: MonthCollectionReusableView?
 
@@ -31,19 +31,23 @@ public final class DeltaCalendarView: UIView {
         self.createDataSource()
     }()
 
-    private let presenter: DeltaCalendarViewPresentable
+    private lazy var presenter: DeltaCalendarViewPresentable! = nil
 
-    public init(_ startData: StartModel) {
+    public init() {
+        super.init(frame: .zero)
+    }
+
+    public func configure(_ startData: StartModel) {
+        self.colors = startData.colors
+
         let viewModel = DeltaCalendarViewModel(startData: startData)
 
         self.presenter = DeltaCalendarViewPresenter(viewModel, startData)
-        self.colors = startData.colors
-
-        super.init(frame: .zero)
-
         self.presenter.delegate = self
 
         self.setupView()
+
+        self.presenter.makeInitialState(self.dataSource)
     }
 
     required init?(coder: NSCoder) {
@@ -142,8 +146,6 @@ private extension DeltaCalendarView {
             guard let date else { return }
             self?.delegate?.dateSelected(date)
         }.store(in: &self.subscriptions)
-
-        self.presenter.makeInitialState(self.dataSource)
     }
 
     func scrollToMonth(to index: Int) {
