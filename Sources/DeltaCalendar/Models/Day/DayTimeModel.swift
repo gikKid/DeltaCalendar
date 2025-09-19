@@ -17,5 +17,5 @@ internal struct DayTime: Identifiable {
 
 internal struct DayTimeItem: Identifiable {
     var data: [DayTime]
-    let id: ItemID
+    let id: ItemID = UUID().uuidString
 }

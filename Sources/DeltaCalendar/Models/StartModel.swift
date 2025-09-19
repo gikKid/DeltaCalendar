@@ -2,12 +2,29 @@ import Foundation
 
 // MARK: - StartModel
 
-internal struct StartModel {
+public struct StartModel {
     let pickingYearData: PickingYearModel
     let showTimeData: ShowTimeModel
     let colors: Colors
-    let disablePreviousDays: Bool
     let orderGap: OrderingGap?
+    let isDisablePreviousDays: Bool
+    let isShowPickingTime: Bool
+
+    public init(
+        pickingYearData: PickingYearModel,
+        showTimeData: ShowTimeModel,
+        colors: Colors,
+        orderGap: OrderingGap?,
+        isDisablePreviousDays: Bool,
+        isShowPickingTime: Bool
+    ) {
+        self.pickingYearData = pickingYearData
+        self.showTimeData = showTimeData
+        self.colors = colors
+        self.orderGap = orderGap
+        self.isDisablePreviousDays = isDisablePreviousDays
+        self.isShowPickingTime = isShowPickingTime
+    }
 }
 
 // MARK: - OrderingGap
@@ -27,7 +44,6 @@ public struct PickingYearModel {
     let to: Int
 
     public init(from: Int, to: Int) {
-
         guard from <= to else { fatalError(CalendarError.fromToYears.description) }
 
         self.from = from
@@ -42,7 +58,6 @@ public struct ShowTimeModel {
     let offset: Int
 
     public init(data: [DayTimeStartModel], offset: Int) {
-
         guard offset >= 1 else { fatalError(CalendarError.timeOffset.description) }
 
         self.data = data
@@ -58,7 +73,6 @@ public struct DayTimeStartModel {
     let endDate: Date
 
     public init(weekday: Int, startDate: String, endDate: String) {
-
         guard (1...7).contains(weekday) else {
             fatalError(CalendarError.weekday(weekday).description)
         }

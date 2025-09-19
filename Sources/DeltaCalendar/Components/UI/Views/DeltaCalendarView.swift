@@ -13,7 +13,7 @@ public final class DeltaCalendarView: UIView {
 
     public var delegate: DeltaCalendarViewDelegate?
     private var subscriptions = Set<AnyCancellable>()
-    private let startData: StartModel
+    private let colors: Colors
 
     private weak var monthHeader: MonthCollectionReusableView?
 
@@ -31,30 +31,17 @@ public final class DeltaCalendarView: UIView {
         self.createDataSource()
     }()
 
-    private lazy var viewModel: DeltaCalendarViewModel = {
-        .init(with: self.startData)
-    }()
+    private let presenter: DeltaCalendarViewPresentable
 
-    private lazy var presenter: DeltaCalendarViewPresentable = {
-        DeltaCalendarViewPresenter(self.dataSource, self.viewModel)
-    }()
+    public init(_ startData: StartModel) {
+        let viewModel = DeltaCalendarViewModel(startData: startData)
 
-    public init(
-        pickingYearData: PickingYearModel,
-        showTimeData: ShowTimeModel,
-        colors: Colors,
-        disablePreviousDays: Bool,
-        orderGap: OrderingGap? = nil
-    ) {
-        self.startData = .init(
-            pickingYearData: pickingYearData,
-            showTimeData: showTimeData,
-            colors: colors,
-            disablePreviousDays: disablePreviousDays,
-            orderGap: orderGap
-        )
+        self.presenter = DeltaCalendarViewPresenter(viewModel, startData)
+        self.colors = startData.colors
 
         super.init(frame: .zero)
+
+        self.presenter.delegate = self
 
         self.setupView()
     }
@@ -115,6 +102,7 @@ extension DeltaCalendarView: MonthCellRegistratable {
 extension DeltaCalendarView: DayTimeCellRegistratable {
     func timeSelected(_ data: UpdateSelectingModel) {
         guard let date = self.presenter.timeSelected(data) else { return }
+
         self.delegate?.dateSelected(date)
     }
 }
@@ -125,7 +113,8 @@ extension DeltaCalendarView: DeltaCalendarViewPresenterDelegate {
     func calendarDSConfigured() {
         guard let indexPath = self.presenter.currentMonth() else { return }
 
-        self.scrollTo(at: indexPath, animated: false) /// With animation scrolling to wrong month with correct index. (IOS 17+)
+        /// With animation scrolling to wrong month with correct index. (IOS 17+)
+        self.scrollTo(at: indexPath, animated: false)
     }
 }
 
@@ -134,7 +123,7 @@ private extension DeltaCalendarView {
     // MARK: - Setting
 
     func setupView() {
-        self.backgroundColor = self.startData.colors.background
+        self.backgroundColor = self.colors.background
         self.addSubview(self.collectionView)
 
         self.collectionView.snp.makeConstraints {
@@ -154,9 +143,7 @@ private extension DeltaCalendarView {
             self?.delegate?.dateSelected(date)
         }.store(in: &self.subscriptions)
 
-        self.presenter.delegate = self
-
-        self.presenter.showConfiguring()
+        self.presenter.makeInitialState(self.dataSource)
     }
 
     func scrollToMonth(to index: Int) {
@@ -167,7 +154,7 @@ private extension DeltaCalendarView {
 
         let title = self.monthTitle(at: indexPath.row)
 
-        self.monthHeader?.configure(monthTitle: title, textColor: self.startData.colors.text)
+        self.monthHeader?.configure(monthTitle: title, textColor: self.colors.text)
     }
 
     func scrollTo(at item: IndexPath, animated: Bool) {
@@ -181,41 +168,39 @@ private extension DeltaCalendarView {
     // MARK: - DataSource
 
     func createDataSource() -> DeltaCalendarDataSource {
-        let monthRegistr = self.createMonthCellRegistration(colors: self.startData.colors)
-        let yearsRegistr = self.createYearsCellRegistration(colors: self.startData.colors)
-        let dayTimeRegistr = self.createDayTimeRegistration(colors: self.startData.colors)
-        let configRegistr = self.createMockLoadingCellRegistration()
+        let monthCell = self.createMonthCellRegistration(colors: self.colors)
+        let yearsCell = self.createYearsCellRegistration(colors: self.colors)
+        let dayTimeCell = self.createDayTimeRegistration(colors: self.colors)
+        let configCell = self.createMockLoadingCellRegistration()
 
-        return DeltaCalendarDataSource(collectionView: self.collectionView) {
-            [weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
-
-            let isConfiguring = self?.viewModel.isConfiguring() ?? true
+        return DeltaCalendarDataSource(collectionView: self.collectionView) { [weak self] (collectionView, indexPath, _)
+            -> UICollectionViewCell? in
+            let isConfiguring = self?.presenter.isConfiguring() ?? true
 
             guard let section = Section(index: indexPath.section, isConfiguring: isConfiguring) else { return nil }
 
             switch section {
             case .year:
                 let item = self?.presenter.yearsItem
-                return collectionView.dequeueConfiguredReusableCell(using: yearsRegistr, for: indexPath, item: item)
+                return collectionView.dequeueConfiguredReusableCell(using: yearsCell, for: indexPath, item: item)
             case .month:
                 let item = self?.presenter.month(at: indexPath.row)
-                return collectionView.dequeueConfiguredReusableCell(using: monthRegistr, for: indexPath, item: item)
+                return collectionView.dequeueConfiguredReusableCell(using: monthCell, for: indexPath, item: item)
             case .time:
-                let item = self?.presenter.dayTimeData()
-                return collectionView.dequeueConfiguredReusableCell(using: dayTimeRegistr, for: indexPath, item: item)
+                let item = self?.presenter.getDayTimeItem()
+                return collectionView.dequeueConfiguredReusableCell(using: dayTimeCell, for: indexPath, item: item)
             case .loading:
                 let item = self?.presenter.mockConfigItem
-                return collectionView.dequeueConfiguredReusableCell(using: configRegistr, for: indexPath, item: item)
+                return collectionView.dequeueConfiguredReusableCell(using: configCell, for: indexPath, item: item)
             }
         }
     }
 
     func setWeekdaysHeader() {
-        let headerRegistration = self.createMonthHeaderRegistration(textColor: self.startData.colors.text)
+        let headerView = self.createMonthHeaderRegistration(textColor: self.colors.text)
 
         self.dataSource.supplementaryViewProvider = { [weak self] (_, _, indexPath) in
-            let header = self?.collectionView
-                .dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+            let header = self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerView, for: indexPath)
 
             self?.monthHeader = header
 
@@ -228,7 +213,7 @@ private extension DeltaCalendarView {
     func compositionLayout() -> UICollectionViewLayout {
         let sectionProvider = { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
             -> NSCollectionLayoutSection? in
-            let isConfiguring = self?.viewModel.isConfiguring() ?? true
+            let isConfiguring = self?.presenter.isConfiguring() ?? true
 
             guard let section = Section(index: sectionIndex, isConfiguring: isConfiguring) else { return nil }
 
