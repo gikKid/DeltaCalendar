@@ -1,21 +1,20 @@
 import UIKit
 
 internal protocol YearsListCellRegistratable {
-	func yearSelected(_ data: UpdateSelectingModel)
+    func yearSelected(_ data: UpdateSelectingModel)
 }
 
 extension YearsListCellRegistratable where Self: AnyObject {
 
-	typealias YearsListCellRegistration = UICollectionView
-		.CellRegistration<YearsListCollectionViewCell, YearsItem>
+    typealias YearsListCellRegistration = UICollectionView.CellRegistration<YearsListCollectionViewCell, YearsItem>
 
     func createYearsCellRegistration(colors: Colors) -> YearsListCellRegistration {
-		YearsListCellRegistration { [weak self] (cell, _, item) in
-            cell.configure(with: item.data, colors: colors)
+        YearsListCellRegistration { [unowned self] (cell, _, item) in
+            cell.selectHandler = { updateData in
+                self.yearSelected(updateData)
+            }
 
-			cell.selectHandler = { updateData in
-				self?.yearSelected(updateData)
-			}
-		}
-	}
+            cell.configure(with: item.data, colors: colors)
+        }
+    }
 }

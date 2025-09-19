@@ -4,22 +4,22 @@ internal protocol ValueListLayout {}
 
 extension ValueListLayout {
 
-	func valueListLayout() -> NSCollectionLayoutSection {
+    func valueListLayout() -> NSCollectionLayoutSection {
+        let itemHeight = HeightResources.text
+        let yOffset = SpaceResources.moreMid
+        let xOffset = SpaceResources.big
 
-		let itemHeight = HeightResources.text
-		let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-											  heightDimension: .absolute(itemHeight))
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .absolute(itemHeight)
+        )
 
-		let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
 
-		let group = NSCollectionLayoutGroup.horizontal(layoutSize: itemSize, subitems: [item])
-
-		let section = NSCollectionLayoutSection(group: group)
-
-		let yOffset = SpaceResources.moreMid
-		let xOffset = SpaceResources.big
+        let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: yOffset, leading: xOffset, bottom: yOffset, trailing: xOffset)
 
-		return section
-	}
+        return section
+    }
 }

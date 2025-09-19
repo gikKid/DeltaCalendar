@@ -6,14 +6,13 @@ internal protocol MonthCellRegistratable {
 
 extension MonthCellRegistratable where Self: AnyObject  {
 
-    typealias MonthCellRegistration = UICollectionView
-        .CellRegistration<MonthCollectionViewCell, MonthItem>
+    typealias MonthCellRegistration = UICollectionView.CellRegistration<MonthCollectionViewCell, MonthItem>
 
     func createMonthCellRegistration(colors: Colors) -> MonthCellRegistration {
-        MonthCellRegistration { [weak self] (cell, _, item) in
+        MonthCellRegistration { [unowned self] (cell, _, item) in
 
             cell.daySelectedHandler = { index in
-                self?.daySelected(at: index)
+                self.daySelected(at: index)
             }
 
             cell.configure(with: item.days, colors: colors)

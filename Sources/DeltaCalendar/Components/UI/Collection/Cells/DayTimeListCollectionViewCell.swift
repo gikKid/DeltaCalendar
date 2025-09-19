@@ -19,8 +19,9 @@ internal final class DayTimeListCollectionViewCell: UICollectionViewCell {
         self.createDataSource()
     }()
 
-    private var colors: Colors = .def()
+    private var colors: Colors = .build()
     private var data = [DayTime]()
+
     private let noDataItem: ValueItem = {
         ValueItem.buildNoData(text: TextResources.noAvailableTime)
     }()
@@ -58,8 +59,11 @@ internal final class DayTimeListCollectionViewCell: UICollectionViewCell {
 
 extension DayTimeListCollectionViewCell: UICollectionViewDelegate {
 
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell,
-                        forItemAt indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didEndDisplaying cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred(intensity: Resources.feedbackVal)
     }
 
@@ -68,14 +72,14 @@ extension DayTimeListCollectionViewCell: UICollectionViewDelegate {
     }
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard !decelerate, let currentPath = self.collectionView.currentIndexPath()
-        else { return }
+        guard !decelerate, let currentPath = self.collectionView.currentIndexPath() else { return }
 
         self.selectTime(at: currentPath.row)
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard let currentPath = self.collectionView.currentIndexPath() else { return }
+
         self.selectTime(at: currentPath.row)
     }
 }
@@ -87,7 +91,9 @@ private extension DayTimeListCollectionViewCell {
     func setupView() {
         self.contentView.addSubview(self.collectionView)
 
-        self.collectionView.snp.makeConstraints { $0.edges.equalTo(self.contentView) }
+        self.collectionView.snp.makeConstraints {
+            $0.edges.equalTo(self.contentView)
+        }
     }
 
     func setNoDataCollection() {
@@ -109,7 +115,6 @@ private extension DayTimeListCollectionViewCell {
     }
 
     func setCollection(with data: [DayTime]) {
-
         var snapshot = self.dataSource.snapshot()
 
         let sections = snapshot.sectionIdentifiers
@@ -138,8 +143,7 @@ private extension DayTimeListCollectionViewCell {
     }
 
     func selectTime(at index: Int) {
-        guard let prevIndex = self.data.firstIndex(where: { $0.isSelected }), index != prevIndex
-        else { return }
+        guard let prevIndex = self.data.firstIndex(where: { $0.isSelected }), index != prevIndex else { return }
 
         self.data[index].isSelected.toggle()
         self.data[prevIndex].isSelected.toggle()
@@ -161,11 +165,10 @@ private extension DayTimeListCollectionViewCell {
     // MARK: - DataSource
 
     func createDataSource() -> DayTimeDataSource {
-
         let cellRegistration = self.createValueCellRegistration(colors: self.colors)
 
-        return DayTimeDataSource(collectionView: self.collectionView) {
-            [weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
+        return DayTimeDataSource(collectionView: self.collectionView) { [weak self] (collectionView, indexPath, _)
+            -> UICollectionViewCell? in
 
             guard let data = self?.data, !data.isEmpty else {
                 let item = self?.noDataItem
@@ -182,10 +185,8 @@ private extension DayTimeListCollectionViewCell {
     // MARK: - Layout
 
     func compositionLayout() -> UICollectionViewLayout {
-
         let sectionProvider = { [weak self] (sectionIndex: Int, collectionEnvironment: NSCollectionLayoutEnvironment)
             -> NSCollectionLayoutSection? in
-
             guard let data = self?.data, !data.isEmpty else {
                 return self?.noDataLayout()
             }
@@ -200,9 +201,10 @@ private extension DayTimeListCollectionViewCell {
     }
 
     func noDataLayout() -> NSCollectionLayoutSection {
-
-        let size = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
-                                          heightDimension: .fractionalHeight(1))
+        let size = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .fractionalHeight(1)
+        )
 
         let item = NSCollectionLayoutItem(layoutSize: size)
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitems: [item])

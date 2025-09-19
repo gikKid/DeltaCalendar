@@ -7,7 +7,6 @@ internal enum CalendarError: Error, CustomStringConvertible {
     case timeFormat(String)
 
     var description: String {
-        
         var text = "[ERROR]: "
 
         switch self {

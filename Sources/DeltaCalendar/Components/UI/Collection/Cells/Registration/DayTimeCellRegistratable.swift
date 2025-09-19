@@ -1,21 +1,21 @@
 import UIKit
 
 internal protocol DayTimeCellRegistratable {
-	func timeSelected(_ data: UpdateSelectingModel)
+    func timeSelected(_ data: UpdateSelectingModel)
 }
 
 extension DayTimeCellRegistratable where Self: AnyObject {
 
-	typealias DayTimeCellRegistration = UICollectionView
-		.CellRegistration<DayTimeListCollectionViewCell, DayTimeItem>
+    typealias DayTimeCellRegistration = UICollectionView.CellRegistration<DayTimeListCollectionViewCell, DayTimeItem>
 
     func createDayTimeRegistration(colors: Colors) -> DayTimeCellRegistration {
-		DayTimeCellRegistration { [weak self] (cell, _, item) in
-            cell.configure(with: item.data, colors: colors)
+        DayTimeCellRegistration { [unowned self] (cell, _, item) in
 
-			cell.selectHandler = { updateData in
-				self?.timeSelected(updateData)
-			}
-		}
-	}
+            cell.selectHandler = { updateData in
+                self.timeSelected(updateData)
+            }
+
+            cell.configure(with: item.data, colors: colors)
+        }
+    }
 }

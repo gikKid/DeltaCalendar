@@ -15,7 +15,9 @@ internal final class MockLoadingCollectionViewCell: UICollectionViewCell {
 
         self.contentView.addSubview(self.contentStackView)
 
-        self.contentStackView.snp.makeConstraints { $0.edges.equalTo(self.contentView) }
+        self.contentStackView.snp.makeConstraints {
+            $0.edges.equalTo(self.contentView)
+        }
     }
 
     required init?(coder: NSCoder) {

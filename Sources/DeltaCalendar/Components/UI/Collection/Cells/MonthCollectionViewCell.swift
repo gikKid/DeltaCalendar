@@ -14,10 +14,12 @@ internal final class MonthCollectionViewCell: UICollectionViewCell {
         return $0
     }(UICollectionView(frame: .zero, collectionViewLayout: .init()))
 
-    private var colors: Colors = .def()
+    private var colors: Colors = .build()
+
     private lazy var dataSource: DCMonthDataSource = {
         self.createDataSource()
     }()
+
     private var items: [DayItem] = [] {
         didSet {
             let ids = self.items.map { $0.id }
@@ -106,10 +108,8 @@ private extension MonthCollectionViewCell {
     // MARK: - Layout
 
     func createCompositionLayout() -> UICollectionViewLayout {
-
         let sectionProvider = { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
             -> NSCollectionLayoutSection? in
-
             let frame = self?.contentView.frame ?? .zero
 
             return self?.daysLayout(parentFrame: frame)
@@ -121,13 +121,12 @@ private extension MonthCollectionViewCell {
     // MARK: - DataSource
 
     func createDataSource() -> DCMonthDataSource {
-
         let dayRegistration = self.createDayCellRegistration(self.colors)
 
-        return DCMonthDataSource(collectionView: self.collectionView) {
-            [weak self] (collectionView, indexPath, _) -> UICollectionViewCell? in
-
+        return DCMonthDataSource(collectionView: self.collectionView) { [weak self] (collectionView, indexPath, _)
+            -> UICollectionViewCell? in
             let item = self?.items[indexPath.row]
+
             return collectionView.dequeueConfiguredReusableCell(using: dayRegistration, for: indexPath, item: item)
         }
     }

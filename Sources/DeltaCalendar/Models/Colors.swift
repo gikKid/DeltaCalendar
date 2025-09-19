@@ -13,7 +13,7 @@ public struct Colors {
         self.background = background
     }
 
-    static func def() -> Self {
+    static func build() -> Self {
         .init(text: .black, main: .blue, secondaryText: .lightGray, background: .white)
     }
 }

@@ -4,10 +4,15 @@ import UIKit
 internal enum Resources {
     static let weekends: [Int] = [7, 1] /// at gregorian a week starts from sunday
     static let mondayIndex: Int = 2
-    static let weekdays: [String] = [TextResources.mon.capitalized, TextResources.tue.capitalized,
-                                     TextResources.wed.capitalized, TextResources.thu.capitalized,
-                                     TextResources.fri.capitalized, TextResources.sat.capitalized,
-                                     TextResources.sun.capitalized]
+    static let weekdays: [String] = [
+        TextResources.mon.capitalized,
+        TextResources.tue.capitalized,
+        TextResources.wed.capitalized,
+        TextResources.thu.capitalized,
+        TextResources.fri.capitalized,
+        TextResources.sat.capitalized,
+        TextResources.sun.capitalized
+    ]
     static let monthCount: Int = 12
     static let monthHeight: CGFloat = 310.0
     static let feedbackVal: CGFloat = 0.5

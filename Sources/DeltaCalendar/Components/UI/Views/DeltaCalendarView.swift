@@ -16,6 +16,7 @@ public final class DeltaCalendarView: UIView {
     private let startData: StartModel
 
     private weak var monthHeader: MonthCollectionReusableView?
+
     private lazy var collectionView: UICollectionView = {
         $0.backgroundColor = .clear
         $0.bounces = false
@@ -29,18 +30,29 @@ public final class DeltaCalendarView: UIView {
     private lazy var dataSource: DeltaCalendarDataSource = {
         self.createDataSource()
     }()
+
     private lazy var viewModel: DeltaCalendarViewModel = {
         .init(with: self.startData)
     }()
+
     private lazy var presenter: DeltaCalendarViewPresentable = {
         DeltaCalendarViewPresenter(self.dataSource, self.viewModel)
     }()
 
-    public init(pickingYearData: PickingYearModel, showTimeData: ShowTimeModel,
-                colors: Colors, disablePreviousDays: Bool, orderGap: OrderingGap? = nil) {
-
-        self.startData = .init(pickingYearData: pickingYearData, showTimeData: showTimeData,
-                               colors: colors, disablePreviousDays: disablePreviousDays, orderGap: orderGap)
+    public init(
+        pickingYearData: PickingYearModel,
+        showTimeData: ShowTimeModel,
+        colors: Colors,
+        disablePreviousDays: Bool,
+        orderGap: OrderingGap? = nil
+    ) {
+        self.startData = .init(
+            pickingYearData: pickingYearData,
+            showTimeData: showTimeData,
+            colors: colors,
+            disablePreviousDays: disablePreviousDays,
+            orderGap: orderGap
+        )
 
         super.init(frame: .zero)
 
@@ -55,8 +67,11 @@ public final class DeltaCalendarView: UIView {
 // MARK: - CollectionViewDelegate
 
 extension DeltaCalendarView: UICollectionViewDelegate {
-    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell,
-                               forItemAt indexPath: IndexPath) {
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        didEndDisplaying cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
         guard let currentIndexPath = self.collectionView.currentIndexPath() else { return }
 
         self.presenter.itemScrolled(currentItem: currentIndexPath)
@@ -120,10 +135,11 @@ private extension DeltaCalendarView {
 
     func setupView() {
         self.backgroundColor = self.startData.colors.background
-
         self.addSubview(self.collectionView)
 
-        self.collectionView.snp.makeConstraints { $0.edges.equalTo(self) }
+        self.collectionView.snp.makeConstraints {
+            $0.edges.equalTo(self)
+        }
 
         self.setWeekdaysHeader()
 
@@ -144,8 +160,7 @@ private extension DeltaCalendarView {
     }
 
     func scrollToMonth(to index: Int) {
-        guard let section = self.dataSource.snapshot().indexOfSection(.month)
-        else { return }
+        guard let section = self.dataSource.snapshot().indexOfSection(.month) else { return }
 
         let indexPath = IndexPath(row: index, section: section)
         self.scrollTo(at: indexPath, animated: true)
@@ -166,7 +181,6 @@ private extension DeltaCalendarView {
     // MARK: - DataSource
 
     func createDataSource() -> DeltaCalendarDataSource {
-
         let monthRegistr = self.createMonthCellRegistration(colors: self.startData.colors)
         let yearsRegistr = self.createYearsCellRegistration(colors: self.startData.colors)
         let dayTimeRegistr = self.createDayTimeRegistration(colors: self.startData.colors)
@@ -197,11 +211,14 @@ private extension DeltaCalendarView {
     }
 
     func setWeekdaysHeader() {
-        let headerRegistr = self.createMonthHeaderRegistration(textColor: self.startData.colors.text)
+        let headerRegistration = self.createMonthHeaderRegistration(textColor: self.startData.colors.text)
 
         self.dataSource.supplementaryViewProvider = { [weak self] (_, _, indexPath) in
-            let header = self?.collectionView.dequeueConfiguredReusableSupplementary(using: headerRegistr, for: indexPath)
+            let header = self?.collectionView
+                .dequeueConfiguredReusableSupplementary(using: headerRegistration, for: indexPath)
+
             self?.monthHeader = header
+
             return header
         }
     }
@@ -209,10 +226,8 @@ private extension DeltaCalendarView {
     // MARK: - Layout
 
     func compositionLayout() -> UICollectionViewLayout {
-
         let sectionProvider = { [weak self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
             -> NSCollectionLayoutSection? in
-
             let isConfiguring = self?.viewModel.isConfiguring() ?? true
 
             guard let section = Section(index: sectionIndex, isConfiguring: isConfiguring) else { return nil }
