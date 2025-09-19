@@ -4,7 +4,7 @@ import Foundation
 
 public struct StartModel {
     let pickingYearData: PickingYearModel
-    let showTimeData: ShowTimeModel
+    let showTimeData: ShowTimeModel?
     let colors: Colors
     let orderGap: OrderingGap?
     let isDisablePreviousDays: Bool
@@ -12,7 +12,7 @@ public struct StartModel {
 
     public init(
         pickingYearData: PickingYearModel,
-        showTimeData: ShowTimeModel,
+        showTimeData: ShowTimeModel?,
         colors: Colors,
         orderGap: OrderingGap?,
         isDisablePreviousDays: Bool,

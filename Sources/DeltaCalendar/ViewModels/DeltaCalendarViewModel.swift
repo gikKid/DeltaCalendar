@@ -15,7 +15,7 @@ internal protocol DeltaCalendarViewModelProtocol: AnyObject {
     func updateSelecting(at date: SelectedModel, value: Bool)
     func toggleYearSelecting(_ data: UpdateSelectingModel)
     func date(selectedData: SelectedModel, timeIndex: Int) -> Date?
-    func month(yearIndex: Int, monthIndex: Int, isDisablePreviousDays: Bool, showTimeData: ShowTimeModel) -> MonthItem
+    func month(yearIndex: Int, monthIndex: Int, isDisablePreviousDays: Bool, showTimeData: ShowTimeModel?) -> MonthItem
 }
 
 internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
@@ -66,7 +66,7 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
         return DateFormatter.build(format: Resources.dateFormat).date(from: "\(dayText) \(time)")
     }
 
-    func month(yearIndex: Int, monthIndex: Int, isDisablePreviousDays: Bool, showTimeData: ShowTimeModel) -> MonthItem {
+    func month(yearIndex: Int, monthIndex: Int, isDisablePreviousDays: Bool, showTimeData: ShowTimeModel?) -> MonthItem {
         let month = self.yearItems[yearIndex].months[monthIndex]
 
         guard let cachedMonth = self.cachedMonths[month.id] else {
@@ -92,7 +92,7 @@ internal final class DeltaCalendarViewModel: DeltaCalendarViewModelProtocol {
 
 private extension DeltaCalendarViewModel {
 
-    func filledTimeMonth(yearIndex: Int, monthIndex: Int, isDisablePreviousDays: Bool, showTimeData: ShowTimeModel)
+    func filledTimeMonth(yearIndex: Int, monthIndex: Int, isDisablePreviousDays: Bool, showTimeData: ShowTimeModel?)
     -> MonthItem {
         var month = self.yearItems[yearIndex].months[monthIndex]
         let daysRange = self.calendar.range(of: .day, in: .month, for: month.date)!
@@ -189,7 +189,7 @@ private extension DeltaCalendarViewModel {
         month: Int,
         isFillTime: Bool,
         isDisablePreviousDays: Bool,
-        showTimeData: ShowTimeModel,
+        showTimeData: ShowTimeModel?,
         endGapDate: Date?
     ) -> [DayItem] {
         let today = Resources.today
@@ -261,8 +261,8 @@ private extension DeltaCalendarViewModel {
         }
     }
 
-    func dayTime(weekDay: Int, day: Int, resource: ShowTimeModel, endGapDate: Date?) -> [DayTime] {
-        guard let dayData = resource.data.first(where: { $0.weekday == weekDay }) else { return [] }
+    func dayTime(weekDay: Int, day: Int, resource: ShowTimeModel?, endGapDate: Date?) -> [DayTime] {
+        guard let resource, let dayData = resource.data.first(where: { $0.weekday == weekDay }) else { return [] }
 
         let startDate = DateComponents(
             calendar: self.calendar,
