@@ -63,9 +63,12 @@ extension DeltaCalendarView: UICollectionViewDelegate {
         didEndDisplaying cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        guard let currentIndexPath = self.collectionView.currentIndexPath() else { return }
+        /// There is setting wrong month after switching to next/prev year w/out deadline
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            guard let currentIndexPath = self.collectionView.currentIndexPath() else { return }
 
-        self.presenter.itemScrolled(currentItem: currentIndexPath)
+            self.presenter.itemScrolled(currentItem: currentIndexPath)
+        }
     }
 }
 
